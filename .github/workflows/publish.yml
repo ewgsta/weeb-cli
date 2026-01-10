@@ -55,7 +55,7 @@ jobs:
           
       - name: Build with PyInstaller
         run: |
-          pyinstaller --name weeb-cli --onefile weeb_cli/main.py --hidden-import=weeb_cli.commands --hidden-import=weeb_cli.ui
+          pyinstaller --name weeb-cli --onefile weeb_cli/__main__.py --collect-all weeb_cli
         
       - name: Rename Binary (Linux/Mac)
         if: matrix.os != 'windows-latest'
