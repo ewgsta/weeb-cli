@@ -1,0 +1,32 @@
+{
+    "menu": {
+        "title": "Main Menu",
+        "prompt": "What would you like to do?",
+        "options": {
+            "hello": "Say Hello",
+            "settings": "Settings",
+            "exit": "Exit"
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Change Language",
+        "back": "Back to Main Menu",
+        "language_changed": "Language changed to English."
+    },
+    "setup": {
+        "welcome": "Welcome to Weeb CLI!",
+        "language_prompt": "Select Language / Dil Seçiniz"
+    },
+    "hello": {
+        "greeting": "Hello, World!",
+        "prompt": "What is your name?",
+        "response": "Nice to meet you, {name}!"
+    },
+    "common": {
+        "error": "Error",
+        "processing": "Processing...",
+        "continue_key": "Press Enter to continue...",
+        "success": "Goodbye!"
+    }
+}

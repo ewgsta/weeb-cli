@@ -1,0 +1,32 @@
+{
+    "menu": {
+        "title": "Ana Menü",
+        "prompt": "Ne yapmak istersiniz?",
+        "options": {
+            "hello": "Merhaba De",
+            "settings": "Ayarlar",
+            "exit": "Çıkış"
+        }
+    },
+    "settings": {
+        "title": "Ayarlar",
+        "language": "Dil Değiştir",
+        "back": "Ana Menüye Dön",
+        "language_changed": "Dil Türkçe olarak değiştirildi."
+    },
+    "setup": {
+        "welcome": "Weeb CLI'a Hoş Geldiniz!",
+        "language_prompt": "Dil Seçiniz / Select Language"
+    },
+    "hello": {
+        "greeting": "Merhaba, Dünya!",
+        "prompt": "Adınız nedir?",
+        "response": "Tanıştığımıza memnun oldum, {name}!"
+    },
+    "common": {
+        "error": "Hata",
+        "processing": "İşlem yapılıyor...",
+        "continue_key": "Devam etmek için Enter'a basın...",
+        "success": "Görüşmek üzere!"
+    }
+}
