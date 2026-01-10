@@ -1,0 +1,9 @@
+typer[all]
+rich
+questionary
+requests
+build
+pyinstaller
+pyfiglet
+setuptools
+wheel
