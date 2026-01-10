@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "weeb-cli"
+version = "0.0.1"
+description = "Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi."
+readme = "README.md"
+authors = [{ name = "ewgsta", email = "ewgst@proton.me" }]
+license = { text = "CC-BY-NC-ND-4.0" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Environment :: Console",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "typer[all]",
+    "rich",
+    "questionary",
+    "requests"
+]
+
+[project.urls]
+Homepage = "https://github.com/ewgsta/weeb-cli"
+Repository = "https://github.com/ewgsta/weeb-cli"
+Issues = "https://github.com/ewgsta/weeb-cli/issues"
+
+[project.scripts]
+weeb-cli = "weeb_cli.main:app"
