@@ -141,14 +141,16 @@
                 <div class="grid grid-cols-2 gap-4">
                     <button @click="setLang('tr')"
                         class="group bg-surface border border-border hover:border-gray-600 p-6 rounded-sm transition-all flex flex-col items-center gap-4">
-                        <span
-                            class="text-4xl filter grayscale group-hover:grayscale-0 transition-all duration-300">🇹🇷</span>
+                        <img src="https://flagcdn.com/w160/tr.png"
+                            class="w-16 h-auto shadow-lg rounded mb-2 hover:scale-110 transition-transform"
+                            alt="Türkçe">
                         <span class="font-mono text-sm group-hover:text-white transition-colors">Türkçe</span>
                     </button>
                     <button @click="setLang('en')"
                         class="group bg-surface border border-border hover:border-gray-600 p-6 rounded-sm transition-all flex flex-col items-center gap-4">
-                        <span
-                            class="text-4xl filter grayscale group-hover:grayscale-0 transition-all duration-300">🇬🇧</span>
+                        <img src="https://flagcdn.com/w160/gb.png"
+                            class="w-16 h-auto shadow-lg rounded mb-2 hover:scale-110 transition-transform"
+                            alt="English">
                         <span class="font-mono text-sm group-hover:text-white transition-colors">English</span>
                     </button>
                 </div>
@@ -249,59 +251,7 @@
                         <p class="text-subtext font-light text-sm">{{ t('install.subtitle') }}</p>
                     </div>
 
-                    <div class="mt-8 mb-12 reveal delay-200">
-                        <h3 class="font-serif font-medium text-lg mb-6 text-center">{{ t('install.portable.title') }}
-                        </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-Windows.exe"
-                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
-                                <i
-                                    class="ph-fill ph-windows-logo text-3xl text-blue-400 group-hover:scale-110 transition-transform"></i>
-                                <div>
-                                    <div class="font-mono text-sm font-bold text-white">Windows</div>
-                                    <div class="text-[10px] text-subtext">.exe (Portable)</div>
-                                </div>
-                                <i
-                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
-                            </a>
-                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-Linux"
-                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
-                                <svg viewBox="0 0 24 24" fill="currentColor"
-                                    class="w-8 h-8 text-white group-hover:scale-110 transition-transform">
-                                    <path
-                                        d="M12.025 24c-5.83 0-7.31-3.692-7.31-7.692 0-3.692 0-6.77.615-9.231C6.462 2 12.025 0 12.025 0s5.565 2 6.693 7.077c.615 2.462.615 5.539.615 9.231 0 4-1.48 7.692-7.308 7.692z" />
-                                </svg>
-                                <div>
-                                    <div class="font-mono text-sm font-bold text-white">Linux</div>
-                                    <div class="text-[10px] text-subtext">Binary</div>
-                                </div>
-                                <i
-                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
-                            </a>
-                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-macOS"
-                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
-                                <i
-                                    class="ph-fill ph-apple-logo text-3xl text-gray-400 group-hover:scale-110 transition-transform"></i>
-                                <div>
-                                    <div class="font-mono text-sm font-bold text-white">macOS</div>
-                                    <div class="text-[10px] text-subtext">Binary</div>
-                                </div>
-                                <i
-                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="mt-12 p-6 border border-dashed border-border rounded-sm reveal delay-300">
-                        <h3 class="font-serif font-medium text-lg mb-2">{{ t('install.usage.title') }}</h3>
-                        <p class="text-subtext text-sm mb-4 leading-relaxed">
-                            {{ t('install.usage.desc') }} <code
-                                class="text-white bg-white/10 px-1 py-0.5 rounded select-text">weeb-cli</code> {{
-                            t('install.usage.desc2') }}
-                        </p>
-                    </div>
-
-                    <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal delay-300">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal delay-300 mb-20">
                         <!-- PyPI -->
                         <div class="group">
                             <div
@@ -433,6 +383,58 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="mt-8 mb-12 reveal delay-200">
+                        <h3 class="font-serif font-medium text-lg mb-6 text-center">{{ t('install.portable.title') }}
+                        </h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-Windows.exe"
+                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
+                                <i
+                                    class="ph-fill ph-windows-logo text-3xl text-blue-400 group-hover:scale-110 transition-transform"></i>
+                                <div>
+                                    <div class="font-mono text-sm font-bold text-white">Windows</div>
+                                    <div class="text-[10px] text-subtext">.exe (Portable)</div>
+                                </div>
+                                <i
+                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
+                            </a>
+                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-Linux"
+                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
+                                <svg viewBox="0 0 24 24" fill="currentColor"
+                                    class="w-8 h-8 text-white group-hover:scale-110 transition-transform">
+                                    <path
+                                        d="M12.025 24c-5.83 0-7.31-3.692-7.31-7.692 0-3.692 0-6.77.615-9.231C6.462 2 12.025 0 12.025 0s5.565 2 6.693 7.077c.615 2.462.615 5.539.615 9.231 0 4-1.48 7.692-7.308 7.692z" />
+                                </svg>
+                                <div>
+                                    <div class="font-mono text-sm font-bold text-white">Linux</div>
+                                    <div class="text-[10px] text-subtext">Binary</div>
+                                </div>
+                                <i
+                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
+                            </a>
+                            <a href="https://github.com/ewgsta/weeb-cli/releases/latest/download/weeb-cli-macOS"
+                                class="group bg-surface border border-border p-4 rounded-sm hover:border-gray-700 transition-colors flex flex-col items-center gap-3 text-center">
+                                <i
+                                    class="ph-fill ph-apple-logo text-3xl text-gray-400 group-hover:scale-110 transition-transform"></i>
+                                <div>
+                                    <div class="font-mono text-sm font-bold text-white">macOS</div>
+                                    <div class="text-[10px] text-subtext">Binary</div>
+                                </div>
+                                <i
+                                    class="ph-bold ph-download-simple text-subtext group-hover:text-white transition-colors"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mt-12 p-6 border border-dashed border-border rounded-sm reveal delay-300">
+                        <h3 class="font-serif font-medium text-lg mb-2">{{ t('install.usage.title') }}</h3>
+                        <p class="text-subtext text-sm mb-4 leading-relaxed">
+                            {{ t('install.usage.desc') }} <code
+                                class="text-white bg-white/10 px-1 py-0.5 rounded select-text">weeb-cli</code> {{
+                            t('install.usage.desc2') }}
+                        </p>
                     </div>
 
                     <div class="mt-24 flex flex-col items-center justify-center gap-6 reveal delay-300">
@@ -609,8 +611,9 @@
                 };
 
                 const t = (key) => {
-                    if (!lang.value) return '';
-                    return key.split('.').reduce((o, i) => o[i], translations[lang.value]);
+                    if (!lang.value || !translations[lang.value]) return '';
+                    const res = key.split('.').reduce((o, i) => (o ? o[i] : null), translations[lang.value]);
+                    return res !== undefined && res !== null ? res : key;
                 };
 
 
