@@ -37,14 +37,19 @@ def search_anime():
                 continue
 
             if isinstance(data, dict):
-                found = False
-                for key in ["results", "data", "items", "anime"]:
-                    if key in data and isinstance(data[key], list):
-                        data = data[key]
-                        found = True
-                        break
-                
-                if not found:                    pass
+                if "results" in data and isinstance(data["results"], list):
+                    data = data["results"]
+                elif "data" in data:
+                    inner = data["data"]
+                    if isinstance(inner, list):
+                        data = inner
+                    elif isinstance(inner, dict):
+                        if "results" in inner and isinstance(inner["results"], list):
+                            data = inner["results"]
+                        elif "animes" in inner and isinstance(inner["animes"], list):
+                            data = inner["animes"]
+                        elif "items" in inner and isinstance(inner["items"], list):
+                            data = inner["items"]
             
             if not data or not isinstance(data, list):
                 console.print(f"[red]{i18n.get('search.no_results')}[/red]")
