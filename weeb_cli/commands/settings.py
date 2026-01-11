@@ -5,8 +5,33 @@ from weeb_cli.config import config
 import time
 from weeb_cli.ui.header import show_header
 import os
+from weeb_cli.services.dependency_manager import dependency_manager
 
 console = Console()
+
+
+def toggle_config(key, name):
+    current = config.get(key)
+    new_val = not current
+    
+    if new_val:
+        dep_name = name.lower()
+        if "aria2" in dep_name: dep_name = "aria2"
+        elif "yt-dlp" in dep_name: dep_name = "yt-dlp"
+        
+        path = dependency_manager.check_dependency(dep_name)
+        if not path:
+             console.print(f"[cyan]{i18n.t('setup.downloading', tool=name)}...[/cyan]")
+             if not dependency_manager.install_dependency(dep_name):
+                 console.print(f"[red]{i18n.t('setup.failed', tool=name)}[/red]")
+                 time.sleep(1)
+                 return
+
+    config.set(key, new_val)
+    
+    msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
+    console.print(f"[green]{i18n.t(msg_key, tool=name)}[/green]")
+    time.sleep(0.5)
 
 def open_settings():
     while True:
@@ -116,14 +141,7 @@ def change_source():
     except KeyboardInterrupt:
         pass
         
-def toggle_config(key, name):
-    current = config.get(key)
-    new_val = not current
-    config.set(key, new_val)
-    
-    msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
-    console.print(f"[green]{i18n.t(msg_key, tool=name)}[/green]")
-    time.sleep(0.5)
+
 
 def aria2_settings_menu():
     while True:

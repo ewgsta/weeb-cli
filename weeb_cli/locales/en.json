@@ -91,5 +91,9 @@
         "invalid_ep_id": "Invalid Episode ID.",
         "download_wip": "Download feature coming soon...",
         "queueing": "Queueing {count} episodes... (Coming Soon)"
+    },
+    "player": {
+        "installing_mpv": "MPV not found. Installing...",
+        "install_failed": "Failed to install MPV. Please install manually."
     }
 }
