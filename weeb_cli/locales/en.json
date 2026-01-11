@@ -46,5 +46,13 @@
         "network_error": "No internet connection!",
         "ctrl_c_hint": "Tip: Use Ctrl+C to go back. (Exit on Main Menu)",
         "wip": "Work in progress..."
+    },
+    "search": {
+        "prompt": "Enter anime name",
+        "searching": "Searching...",
+        "no_results": "No results found.",
+        "results": "Search Results",
+        "cancel": "Cancel",
+        "error": "Search failed."
     }
 }

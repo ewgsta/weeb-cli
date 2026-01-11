@@ -46,5 +46,13 @@
         "network_error": "İnternet bağlantısı yok!",
         "ctrl_c_hint": "İpucu: Geri dönmek için Ctrl+C kullanın. (Ana menüde çıkış yapar)",
         "wip": "Çalışma devam ediyor..."
+    },
+    "search": {
+        "prompt": "Anime adı girin",
+        "searching": "Aranıyor...",
+        "no_results": "Sonuç bulunamadı.",
+        "results": "Arama Sonuçları",
+        "cancel": "İptal",
+        "error": "Arama başarısız."
     }
 }
