@@ -24,7 +24,16 @@ def open_settings():
         opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
         opt_ytdlp = f"{i18n.get('settings.ytdlp')} [{ytdlp_state}]"
         
-        choices = [opt_lang, opt_source, opt_aria2, opt_ytdlp]
+        opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
+        opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
+        
+        choices = [opt_lang, opt_source, opt_aria2]
+        if config.get("aria2_enabled"):
+            choices.append(opt_aria2_conf)
+            
+        choices.append(opt_ytdlp)
+        if config.get("ytdlp_enabled"):
+            choices.append(opt_ytdlp_conf)
         
         try:
             answer = questionary.select(
@@ -47,8 +56,12 @@ def open_settings():
             change_source()
         elif answer == opt_aria2:
             toggle_config("aria2_enabled", "Aria2")
+        elif answer == opt_aria2_conf:
+            aria2_settings_menu()
         elif answer == opt_ytdlp:
             toggle_config("ytdlp_enabled", "yt-dlp")
+        elif answer == opt_ytdlp_conf:
+            ytdlp_settings_menu()
         elif answer is None:
             return
 
@@ -92,7 +105,7 @@ def change_source():
         ).ask()
         
         if selected:
-            save_val = "local" if selected == "weeb" else selected
+            save_val = "local" if selected == "Weeb" else selected
             config.set("scraping_source", save_val)
             console.print(f"[green]{i18n.t('settings.source_changed', source=selected)}[/green]")
             time.sleep(1)
@@ -107,3 +120,60 @@ def toggle_config(key, name):
     msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
     console.print(f"[green]{i18n.t(msg_key, tool=name)}[/green]")
     time.sleep(0.5)
+
+def aria2_settings_menu():
+    while True:
+        console.clear()
+        show_header(i18n.get("settings.aria2_config"))
+        
+        curr_conn = config.get("aria2_max_connections", 16)
+        curr_dir = config.get("aria2_download_dir")
+        
+        opt_conn = f"{i18n.get('settings.max_conn')} [{curr_conn}]"
+        opt_dir = f"{i18n.get('settings.download_dir')} [{curr_dir}]"
+        
+        try:
+            sel = questionary.select(
+                i18n.get("settings.aria2_config"),
+                choices=[opt_conn, opt_dir],
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if sel == opt_conn:
+                val = questionary.text(f"{i18n.get('settings.enter_conn')}:", default=str(curr_conn)).ask()
+                if val and val.isdigit():
+                    config.set("aria2_max_connections", int(val))
+            elif sel == opt_dir:
+                val = questionary.text(f"{i18n.get('settings.enter_path')}:", default=str(curr_dir)).ask()
+                if val:
+                    config.set("aria2_download_dir", val)
+            elif sel is None:
+                return
+        except KeyboardInterrupt:
+            return
+
+def ytdlp_settings_menu():
+    while True:
+        console.clear()
+        show_header(i18n.get("settings.ytdlp_config"))
+        
+        curr_fmt = config.get("ytdlp_format", "best")
+        opt_fmt = f"{i18n.get('settings.format')} [{curr_fmt}]"
+        
+        try:
+            sel = questionary.select(
+                i18n.get("settings.ytdlp_config"), 
+                choices=[opt_fmt], 
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if sel == opt_fmt:
+                val = questionary.text(f"{i18n.get('settings.enter_format')}:", default=curr_fmt).ask()
+                if val:
+                    config.set("ytdlp_format", val)
+            elif sel is None:
+                return
+        except KeyboardInterrupt:
+            return

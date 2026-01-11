@@ -10,6 +10,9 @@ DEFAULT_CONFIG = {
     "language": None,  
     "aria2_enabled": True,
     "ytdlp_enabled": True,
+    "aria2_max_connections": 16,
+    "aria2_download_dir": str(Path.home() / "Downloads"),
+    "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "",
     "api_url": "https://weeb-api.ewgsta.me"
 }

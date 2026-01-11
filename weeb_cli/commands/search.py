@@ -99,13 +99,15 @@ def show_anime_details(anime):
         return
 
     console.clear()
-    show_header(i18n.get("details.title"))
-    
+    show_header(anime.get("title") or anime.get("name"))
     with console.status(i18n.get("common.processing"), spinner="dots"):
         details = get_details(slug)
     
-    if isinstance(details, dict) and "data" in details and isinstance(details["data"], dict):
-        details = details["data"]
+    if isinstance(details, dict) and "data" in details:
+        if isinstance(details["data"], dict):
+            details = details["data"]
+        elif isinstance(details["data"], list):
+            details = { "episodes": details["data"] }
 
     if not details:
         console.print(f"[red]{i18n.get('details.not_found')}[/red]")
@@ -113,13 +115,11 @@ def show_anime_details(anime):
         return
 
     title = details.get("title") or anime.get("title")
-    console.print(f"[bold cyan]{title}[/bold cyan]", justify="center")
-    
     desc = details.get("description") or details.get("synopsis") or details.get("desc")
     if desc:
         console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="center")
 
-    episodes = details.get("episodes") or details.get("episodes_list") or []
+    episodes = details.get("episodes") or details.get("episodes_list") or details.get("results") or []
     if not episodes:
         console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
         input(i18n.get("common.continue_key"))
