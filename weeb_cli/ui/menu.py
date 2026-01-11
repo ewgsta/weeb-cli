@@ -8,7 +8,7 @@ console = Console()
 
 def show_main_menu(action_map):
     console.clear()
-    show_header("Weeb API")
+    show_header("Weeb API", show_version=True, show_source=True)
     
     choices_map = {}
     for key, func in action_map.items():

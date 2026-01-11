@@ -14,7 +14,7 @@ def open_settings():
         
         lang = config.get("language")
         source = config.get("scraping_source", "local")
-        display_source = "Weeb" if source == "local" else source
+        display_source = "weeb" if source == "local" else source
 
         aria2_state = i18n.get("common.enabled") if config.get("aria2_enabled") else i18n.get("common.disabled")
         ytdlp_state = i18n.get("common.enabled") if config.get("ytdlp_enabled") else i18n.get("common.disabled")
