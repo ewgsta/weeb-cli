@@ -25,7 +25,11 @@ class Player:
         if headers:
             header_strs = [f"{k}: {v}" for k, v in headers.items()]
             cmd.append(f"--http-header-fields={','.join(header_strs)}")
+        
+        # Start in fullscreen
+        cmd.append("--fs")
 
+        # Enable save position on quit explicitly
         cmd.append("--save-position-on-quit")
             
         try:
