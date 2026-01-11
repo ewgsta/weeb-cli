@@ -1,4 +1,11 @@
 {
+    "update": {
+        "available": "New Update Available!",
+        "current": "Current Version",
+        "prompt": "Would you like to update now?",
+        "opening": "Opening download page in browser...",
+        "error": "Could not find download URL."
+    },
     "menu": {
         "title": "Main Menu",
         "prompt": "What would you like to do?",

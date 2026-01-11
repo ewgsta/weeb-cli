@@ -5,12 +5,13 @@ import time
 from rich.console import Console
 from weeb_cli.ui.menu import show_main_menu
 from weeb_cli.commands.search import search_anime
-from weeb_cli.commands.watchlist import open_watchlist
+from weeb_cli.commands.watchlist import show_watchlist
 from weeb_cli.commands.settings import open_settings
 from weeb_cli.config import config
 from weeb_cli.i18n import i18n
 from weeb_cli.commands.setup import start_setup_wizard
 from weeb_cli.services.dependency_manager import dependency_manager
+from weeb_cli.services.updater import update_prompt
 
 app = typer.Typer(add_completion=False)
 console = Console()
@@ -48,6 +49,9 @@ def check_ffmpeg_silent():
 def start():
     if not config.get("language"):
         run_setup()
+
+    # Check for updates silently first (the prompt internally handles silence during check)
+    update_prompt()
 
     check_network()
     check_ffmpeg_silent()

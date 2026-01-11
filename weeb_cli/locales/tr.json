@@ -1,4 +1,11 @@
 {
+    "update": {
+        "available": "Yeni Sürüm Mevcut!",
+        "current": "Mevcut Sürüm",
+        "prompt": "Şimdi güncellemek ister misiniz?",
+        "opening": "İndirme sayfası tarayıcıda açılıyor...",
+        "error": "İndirme bağlantısı bulunamadı."
+    },
     "menu": {
         "title": "Ana Menü",
         "prompt": "Ne yapmak istersiniz?",
