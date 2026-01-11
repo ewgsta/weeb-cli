@@ -23,6 +23,9 @@
         "enter_conn": "Connections (1-16)",
         "enter_path": "Download Path",
         "enter_format": "Format string",
+        "download_settings": "Download Settings",
+        "change_folder_name": "Change Folder Name",
+        "change_full_path": "Change Full Path",
         "language_changed": "Language changed to English.",
         "source_changed": "Source changed to {source}.",
         "toggle_on": "{tool} enabled.",
@@ -69,6 +72,10 @@
         "episode": "Episode",
         "select_episode": "Select Episode",
         "no_episodes": "No episodes available.",
-        "selected": "Selected: {episode}"
+        "selected": "Selected: {episode}",
+        "watch": "Watch",
+        "download": "Download",
+        "mark_watched": "Mark as watched?",
+        "action_prompt": "Select Action"
     }
 }

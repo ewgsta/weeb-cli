@@ -3,6 +3,10 @@ from rich.console import Console
 from weeb_cli.i18n import i18n
 from weeb_cli.ui.header import show_header
 from weeb_cli.services.search import search
+from weeb_cli.services.details import get_details
+from weeb_cli.services.watch import get_streams
+from weeb_cli.services.player import player
+from weeb_cli.services.progress import progress_tracker
 import time
 
 console = Console()
@@ -119,7 +123,7 @@ def show_anime_details(anime):
     
     desc = details.get("description") or details.get("synopsis") or details.get("desc")
     if desc:
-        console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="center")
+        console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="left")
 
     episodes = None
     for k in ["episodes", "episodes_list", "episode_list", "results", "chapters"]:

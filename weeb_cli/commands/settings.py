@@ -4,6 +4,7 @@ from weeb_cli.i18n import i18n
 from weeb_cli.config import config
 import time
 from weeb_cli.ui.header import show_header
+import os
 
 console = Console()
 
@@ -21,13 +22,14 @@ def open_settings():
         
         opt_lang = i18n.get("settings.language")
         opt_source = f"{i18n.get('settings.source')} [{display_source}]"
+        opt_download = i18n.get("settings.download_settings")
         opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
         opt_ytdlp = f"{i18n.get('settings.ytdlp')} [{ytdlp_state}]"
         
         opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
         opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
         
-        choices = [opt_lang, opt_source, opt_aria2]
+        choices = [opt_lang, opt_source, opt_download, opt_aria2]
         if config.get("aria2_enabled"):
             choices.append(opt_aria2_conf)
             
@@ -54,6 +56,8 @@ def open_settings():
             change_language()
         elif answer == opt_source:
             change_source()
+        elif answer == opt_download:
+            download_settings_menu()
         elif answer == opt_aria2:
             toggle_config("aria2_enabled", "Aria2")
         elif answer == opt_aria2_conf:
@@ -127,15 +131,13 @@ def aria2_settings_menu():
         show_header(i18n.get("settings.aria2_config"))
         
         curr_conn = config.get("aria2_max_connections", 16)
-        curr_dir = config.get("aria2_download_dir")
         
         opt_conn = f"{i18n.get('settings.max_conn')} [{curr_conn}]"
-        opt_dir = f"{i18n.get('settings.download_dir')} [{curr_dir}]"
         
         try:
             sel = questionary.select(
                 i18n.get("settings.aria2_config"),
-                choices=[opt_conn, opt_dir],
+                choices=[opt_conn],
                 pointer=">",
                 use_shortcuts=False
             ).ask()
@@ -144,14 +146,44 @@ def aria2_settings_menu():
                 val = questionary.text(f"{i18n.get('settings.enter_conn')}:", default=str(curr_conn)).ask()
                 if val and val.isdigit():
                     config.set("aria2_max_connections", int(val))
-            elif sel == opt_dir:
-                val = questionary.text(f"{i18n.get('settings.enter_path')}:", default=str(curr_dir)).ask()
-                if val:
-                    config.set("aria2_download_dir", val)
             elif sel is None:
                 return
         except KeyboardInterrupt:
             return
+
+def download_settings_menu():
+    while True:
+        console.clear()
+        show_header(i18n.get("settings.download_settings"))
+        
+        curr_dir = config.get("download_dir")
+        console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="center")
+        
+        opt_name = i18n.get("settings.change_folder_name")
+        opt_path = i18n.get("settings.change_full_path")
+        
+        try:
+            sel = questionary.select(
+                i18n.get("settings.download_settings"),
+                choices=[opt_name, opt_path],
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if sel == opt_name:
+                val = questionary.text("Folder Name:", default="weeb-downloads").ask()
+                if val:
+                    new_path = os.path.join(os.getcwd(), val)
+                    config.set("download_dir", new_path)
+            elif sel == opt_path:
+                val = questionary.text("Full Path:", default=curr_dir).ask()
+                if val:
+                    config.set("download_dir", val)
+            elif sel is None:
+                return
+        except KeyboardInterrupt:
+            return
+
 
 def ytdlp_settings_menu():
     while True:

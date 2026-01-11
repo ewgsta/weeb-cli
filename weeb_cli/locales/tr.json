@@ -23,6 +23,9 @@
         "enter_conn": "Bağlantı Sayısı (1-16)",
         "enter_path": "İndirme Yolu",
         "enter_format": "Format yapısı",
+        "download_settings": "İndirme Ayarları",
+        "change_folder_name": "Klasör Adını Değiştir",
+        "change_full_path": "Tam Yolu Değiştir",
         "language_changed": "Dil Türkçe olarak değiştirildi.",
         "source_changed": "Kaynak {source} olarak değiştirildi.",
         "toggle_on": "{tool} aktif edildi.",
@@ -69,6 +72,10 @@
         "episode": "Bölüm",
         "select_episode": "Bölüm Seçin",
         "no_episodes": "Bölüm bulunamadı.",
-        "selected": "Seçildi: {episode}"
+        "selected": "Seçildi: {episode}",
+        "watch": "İzle",
+        "download": "İndir",
+        "mark_watched": "İzlendi olarak işaretlensin mi?",
+        "action_prompt": "İşlem Seçin"
     }
 }
