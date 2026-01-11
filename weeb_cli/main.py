@@ -15,8 +15,7 @@ app = typer.Typer(add_completion=False)
 console = Console()
 
 def check_network():
-    console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
-    with console.status("", spinner="dots"):
+    with console.status(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]", spinner="dots"):
         time.sleep(1)
 
 def run_setup():
