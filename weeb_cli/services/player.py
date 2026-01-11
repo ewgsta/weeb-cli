@@ -12,7 +12,7 @@ class Player:
     def is_installed(self):
         return self.mpv_path is not None
 
-    def play(self, url, title=None, start_time=None):
+    def play(self, url, title=None, start_time=None, headers=None):
         if not self.mpv_path:
             console.print("[red]MPV not found. Please install mpv player.[/red]")
             return False
@@ -22,6 +22,10 @@ class Player:
         if title:
             cmd.extend([f"--force-media-title={title}"])
         
+        if headers:
+            header_strs = [f"{k}: {v}" for k, v in headers.items()]
+            cmd.append(f"--http-header-fields={','.join(header_strs)}")
+
         cmd.append("--save-position-on-quit")
             
         try:
