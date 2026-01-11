@@ -109,12 +109,19 @@ def show_anime_details(anime):
         with console.status(i18n.get("common.processing"), spinner="dots"):
             details = get_details(slug)
         
+        # Parse response structure: { data: { details: { ... } } }
         if isinstance(details, dict):
             if "data" in details and isinstance(details["data"], dict):
                 details = details["data"]
             
+            # Capture source
+            source = details.get("source")
+            
             if "details" in details and isinstance(details["details"], dict):
                 details = details["details"]
+                # Restore source if captured
+                if source:
+                    details["source"] = source
 
         if not details:
             console.print(f"[red]{i18n.get('details.not_found')}[/red]")
@@ -242,7 +249,11 @@ def handle_watch_flow(slug, details):
             console.print(f"[green]{i18n.get('details.player_starting')}[/green]")
             title = f"{details.get('title', 'Anime')} - Ep {ep_num}"
             
-            success = player.play(stream_url, title=title)
+            headers = {}
+            if details.get("source") == "hianime":
+                headers["Referer"] = "https://hianime.to"
+            
+            success = player.play(stream_url, title=title, headers=headers)
             
             if success:
                 try:
