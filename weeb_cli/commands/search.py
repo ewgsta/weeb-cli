@@ -212,7 +212,6 @@ def handle_watch_flow(slug, details):
 
             with console.status(i18n.get("common.processing"), spinner="dots"):
                 stream_resp = get_streams(slug, ep_id)
-            
             stream_url = None
             if stream_resp and isinstance(stream_resp, dict):
                  data_node = stream_resp
@@ -226,7 +225,7 @@ def handle_watch_flow(slug, details):
                  if isinstance(data_node, list):
                      sources = data_node
                  elif isinstance(data_node, dict):
-                     sources = data_node.get("sources")
+                     sources = data_node.get("links") or data_node.get("sources")
                  
                  if sources and isinstance(sources, list):
                      first = sources[0]
@@ -302,7 +301,6 @@ def handle_download_flow(slug, details):
         elif mode == opt_range:
              r_str = questionary.text(i18n.get("details.download_options.range_input")).ask()
              if not r_str: return
-             # Parse range
              nums = set()
              try:
                  parts = r_str.split(',')
