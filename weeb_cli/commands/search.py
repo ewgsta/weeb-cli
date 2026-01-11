@@ -32,8 +32,19 @@ def search_anime():
             with console.status(i18n.get("search.searching"), spinner="dots"):
                 data = search(query)
             
+            if data is None:
+                time.sleep(1)
+                continue
+
             if isinstance(data, dict):
-                data = data.get("results", []) or data.get("data", [])
+                found = False
+                for key in ["results", "data", "items", "anime"]:
+                    if key in data and isinstance(data[key], list):
+                        data = data[key]
+                        found = True
+                        break
+                
+                if not found:                    pass
             
             if not data or not isinstance(data, list):
                 console.print(f"[red]{i18n.get('search.no_results')}[/red]")
