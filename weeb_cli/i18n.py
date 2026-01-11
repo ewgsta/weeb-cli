@@ -3,12 +3,11 @@ import os
 from pathlib import Path
 from weeb_cli.config import config
 
-# Path to the locales directory
 LOCALES_DIR = Path(__file__).parent / "locales"
 
 class I18n:
     def __init__(self):
-        self.language = config.get("language", "en")  # Default to 'en' if not set, but setup should handle this
+        self.language = config.get("language", "en")
         self.translations = {}
         self.load_translations()
 
@@ -20,7 +19,6 @@ class I18n:
     def load_translations(self):
         file_path = LOCALES_DIR / f"{self.language}.json"
         if not file_path.exists():
-            # Fallback to English if file missing
             file_path = LOCALES_DIR / "en.json"
         
         try:
@@ -31,11 +29,6 @@ class I18n:
             self.translations = {}
 
     def get(self, key_path, **kwargs):
-        """
-        Get a translation string by dot-separated path.
-        Example: i18n.get("menu.title")
-        Supports formatting: i18n.get("hello.response", name="User")
-        """
         keys = key_path.split(".")
         value = self.translations
         
@@ -43,7 +36,7 @@ class I18n:
             if isinstance(value, dict):
                 value = value.get(key)
             else:
-                return key_path  # Key not found
+                return key_path
 
         if value is None:
             return key_path
@@ -55,6 +48,7 @@ class I18n:
                 return value
         
         return value
+    
+    t = get
 
-# Singleton instance
 i18n = I18n()

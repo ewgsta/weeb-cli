@@ -9,7 +9,7 @@ console = Console()
 def show_header():
     console.clear()
     
-    f = pyfiglet.Figlet(font='big')
+    f = pyfiglet.Figlet(font='slant')
     title_text = f.renderText('Weeb CLI')
     
     panel = Panel(
@@ -17,9 +17,10 @@ def show_header():
         subtitle="v0.0.1",
         subtitle_align="right",
         border_style="blue",
-        padding=(1, 2)
+        padding=(1, 5),
+        expand=False
     )
     
-    console.print(panel)
+    console.print(panel, justify="center")
     console.print("[dim italic]> Sadece sen ve anime.[/dim italic]", justify="center")
-    print() 
+    print()

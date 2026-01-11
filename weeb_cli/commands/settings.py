@@ -10,13 +10,11 @@ def open_settings():
     while True:
         console.clear()
         
-        # State Strings
         lang = config.get("language")
         source = config.get("scraping_source", "local")
         aria2_state = i18n.get("common.enabled") if config.get("aria2_enabled") else i18n.get("common.disabled")
         ytdlp_state = i18n.get("common.enabled") if config.get("ytdlp_enabled") else i18n.get("common.disabled")
         
-        # Menu Options map
         opt_lang = i18n.get("settings.language")
         opt_source = f"{i18n.get('settings.source')} [{source}]"
         opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
@@ -28,8 +26,8 @@ def open_settings():
         answer = questionary.select(
             i18n.get("settings.title"),
             choices=choices,
-            use_indicator=True,
             pointer=">",
+            use_shortcuts=False,
             style=questionary.Style([
                 ('pointer', 'fg:cyan bold'),
                 ('highlighted', 'fg:cyan'),
@@ -54,7 +52,7 @@ def change_language():
         "Select Language / Dil Seçiniz:",
         choices=list(langs.keys()),
         pointer=">",
-        use_indicator=True
+        use_shortcuts=False
     ).ask()
     
     if selected:
@@ -75,7 +73,7 @@ def change_source():
         i18n.get("settings.source"),
         choices=sources,
         pointer=">",
-        use_indicator=True
+        use_shortcuts=False
     ).ask()
     
     if selected:
