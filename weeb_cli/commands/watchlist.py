@@ -4,7 +4,7 @@ from weeb_cli.ui.header import show_header
 
 console = Console()
 
-def open_watchlist():
+def show_watchlist():
     console.clear()
     show_header(i18n.get("menu.options.watchlist"))
     try:
