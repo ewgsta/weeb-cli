@@ -67,7 +67,7 @@ def search_anime():
                 time.sleep(1.5)
                 continue
 
-            choices.append(questionary.Choice(i18n.get("search.cancel"), value="cancel"))
+
 
             selected = questionary.select(
                 i18n.get("search.results"),
@@ -84,11 +84,54 @@ def search_anime():
             if selected == "cancel" or selected is None:
                 continue
             
-            show_details_placeholder(selected)
+            show_anime_details(selected)
             
         except KeyboardInterrupt:
             return
 
-def show_details_placeholder(anime):
-    console.print(f"[yellow]{i18n.get('common.wip')}: {anime.get('title') or 'Anime'}[/yellow]")
-    input(i18n.get("common.continue_key"))
+from weeb_cli.services.details import get_details
+
+def show_anime_details(anime):
+    slug = anime.get("slug") or anime.get("id")
+    if not slug:
+        console.print("[red]Error: Invalid anime ID/Slug.[/red]")
+        time.sleep(1)
+        return
+
+    console.clear()
+    title = details.get("title") or anime.get("title")
+    show_header(anime.get("title") or anime.get("name"))
+    
+    with console.status(i18n.get("common.processing"), spinner="dots"):
+        details = get_details(slug)
+    
+    if not details:
+        console.print("[red]Details not found.[/red]")
+        time.sleep(1)
+        return
+    
+    desc = details.get("description") or details.get("synopsis")
+    if desc:
+        console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="center")
+
+    episodes = details.get("episodes", [])
+    if not episodes:
+        console.print("[yellow]No episodes available.[/yellow]")
+        input(i18n.get("common.continue_key"))
+        return
+
+    ep_choices = []
+    for ep in episodes:
+        name = f"Episode {ep.get('number', '?')}"
+        ep_choices.append(questionary.Choice(name, value=ep))
+
+    selected_ep = questionary.select(
+        "Select Episode:",
+        choices=ep_choices,
+        pointer=">",
+        use_shortcuts=False
+    ).ask()
+    
+    if selected_ep:
+        console.print(f"[green]Selected: {selected_ep}[/green]")
+        input(i18n.get("common.continue_key"))
