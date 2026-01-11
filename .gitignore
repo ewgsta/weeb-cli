@@ -15,4 +15,5 @@ homebrew_temp/
 scoop_temp/
 chocolatey_temp/
 .vscode/
+api.yaml
 .idea/

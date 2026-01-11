@@ -10,7 +10,9 @@ class WeebClient:
 
     @property
     def base_url(self):
-        return config.get("api_url", "http://127.0.0.1:8000")
+        if config.get("dev_mode", False):
+            return config.get("api_url")
+        return "https://weeb-api.ewgsta.me"
 
     def _get(self, endpoint, params=None):
         try:

@@ -15,6 +15,7 @@ DEFAULT_CONFIG = {
     "download_dir": os.path.join(os.getcwd(), "weeb-downloads"),
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "",
+    "dev_mode": False,
     "api_url": "http://127.0.0.1:8000"
 }
 
