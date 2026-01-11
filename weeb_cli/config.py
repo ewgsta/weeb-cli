@@ -10,7 +10,8 @@ DEFAULT_CONFIG = {
     "language": None,  
     "aria2_enabled": True,
     "ytdlp_enabled": True,
-    "scraping_source": ""       
+    "scraping_source": "",
+    "api_url": "https://weeb-api.ewgsta.me"
 }
 
 class Config:
