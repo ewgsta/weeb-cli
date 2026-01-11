@@ -26,14 +26,12 @@ class Player:
             header_strs = [f"{k}: {v}" for k, v in headers.items()]
             cmd.append(f"--http-header-fields={','.join(header_strs)}")
         
-        # Start in fullscreen
         cmd.append("--fs")
 
-        # Enable save position on quit explicitly
         cmd.append("--save-position-on-quit")
             
         try:
-            subprocess.run(cmd)
+            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return True
         except Exception as e:
             console.print(f"[red]Error running player: {e}[/red]")
