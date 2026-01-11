@@ -76,7 +76,7 @@ choco install weeb-cli
 Aracı terminalden başlatmak için:
 
 ```bash
-weeb
+weeb-cli
 ```
 
 ### Kontroller

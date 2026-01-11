@@ -74,7 +74,7 @@ choco install weeb-cli
 Simply run the tool from your terminal:
 
 ```bash
-weeb
+weeb-cli
 ```
 
 Or use specific commands:

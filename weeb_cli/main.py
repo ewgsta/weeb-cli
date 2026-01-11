@@ -12,6 +12,7 @@ from weeb_cli.i18n import i18n
 from weeb_cli.commands.setup import start_setup_wizard
 from weeb_cli.services.dependency_manager import dependency_manager
 from weeb_cli.services.updater import update_prompt
+from weeb_cli.ui.prompt import prompt
 
 app = typer.Typer(add_completion=False)
 console = Console()
@@ -26,19 +27,17 @@ def run_setup():
         "English": "en"
     }
     
-    selected = questionary.select(
-        "Select Language / Dil Seçiniz",
-        choices=list(langs.keys()),
-        use_indicator=True,
-        pointer=">"
-    ).ask()
+    choices = [(k, v) for k, v in langs.items()]
     
-    if selected:
-        lang_code = langs[selected]
-        i18n.set_language(lang_code)
-        
-        console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
-        start_setup_wizard()
+    selected_code = prompt.select(
+        "Select Language / Dil Seçiniz",
+        choices
+    )
+    
+    i18n.set_language(selected_code)
+    
+    console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
+    start_setup_wizard()
 
 def check_ffmpeg_silent():
     if not dependency_manager.check_dependency("ffmpeg"):
@@ -50,7 +49,6 @@ def start():
     if not config.get("language"):
         run_setup()
 
-    # Check for updates silently first (the prompt internally handles silence during check)
     update_prompt()
 
     check_network()

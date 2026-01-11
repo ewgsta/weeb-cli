@@ -31,7 +31,7 @@ include = ["weeb_cli*"]
 weeb_cli = ["locales/*.json"]
 
 [project.urls]
-Homepage = "https://github.com/ewgsta/weeb-cli"
+Homepage = "https://weeb-cli.ewgsta.me"
 Repository = "https://github.com/ewgsta/weeb-cli"
 Issues = "https://github.com/ewgsta/weeb-cli/issues"
 
