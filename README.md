@@ -36,7 +36,7 @@ Weeb CLI, anime severler için tasarlanmış güçlü, platformlar arası bir ko
   - Akıllı dosya isimlendirme (Örn: `Anime Adı - S1B1.mp4`).
 - **İzleme Geçmişi**: İlerlemenizi otomatik takip eder. Kaldığınız yeri (`●`) ve tamamlanan bölümleri (`✓`) işaretler.
 - **Çoklu Dil**: Tam Türkçe ve İngilizce arayüz desteği.
-- **Çoklu Kaynak**: HiAnime, AllAnime (İngilizce), Animecix, Anizle, Turkanime, Weeb (Türkçe)
+- **Çoklu Kaynak**: HiAnime, AllAnime (İngilizce), Animecix, Anizle, Turkanime, Weeb (Yerel Kaynak) (Türkçe)
 - **Otomatik Kurulum**: Gerekli araçları (MPV, FFmpeg, Aria2, yt-dlp) eksikse otomatik tespit eder ve kurar.
 
 ## Kurulum
