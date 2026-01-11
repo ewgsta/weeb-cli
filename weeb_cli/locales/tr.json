@@ -54,5 +54,14 @@
         "results": "Arama Sonuçları",
         "cancel": "İptal",
         "error": "Arama başarısız."
+    },
+    "details": {
+        "title": "Anime Detayı",
+        "error_slug": "Hata: Geçersiz anime ID.",
+        "not_found": "Detaylar bulunamadı.",
+        "episode": "Bölüm",
+        "select_episode": "Bölüm Seçin",
+        "no_episodes": "Bölüm bulunamadı.",
+        "selected": "Seçildi: {episode}"
     }
 }
