@@ -1,5 +1,8 @@
 import requests
+from rich.console import Console
 from weeb_cli.config import config
+
+console = Console()
 
 class WeebClient:
     def __init__(self):
@@ -7,7 +10,7 @@ class WeebClient:
 
     @property
     def base_url(self):
-        return config.get("api_url")
+        return config.get("api_url", "http://127.0.0.1:8000")
 
     def _get(self, endpoint, params=None):
         try:
@@ -15,7 +18,8 @@ class WeebClient:
             response = requests.get(url, params=params, timeout=10)
             response.raise_for_status()
             return response.json()
-        except requests.RequestException:
+        except requests.RequestException as e:
+            console.print(f"[red]Error: {e}[/red]")
             return None
 
     def search(self, query):

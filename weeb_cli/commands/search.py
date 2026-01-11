@@ -30,8 +30,6 @@ def search_anime():
                 continue
 
             with console.status(i18n.get("search.searching"), spinner="dots"):
-                # Simulating delay slightly for UX if local, or actual request
-                # time.sleep(0.5) 
                 data = search(query)
             
             if isinstance(data, dict):
