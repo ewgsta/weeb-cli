@@ -63,7 +63,12 @@ def change_language():
         ).ask()
         
         if selected:
-            i18n.set_language(langs[selected])
+            lang_code = langs[selected]
+            i18n.set_language(lang_code)
+            
+            new_source = "local" if lang_code == "tr" else "hianime"
+            config.set("scraping_source", new_source)
+            
             console.print(f"[green]{i18n.get('settings.language_changed')}[/green]")
             time.sleep(1)
     except KeyboardInterrupt:
@@ -87,7 +92,7 @@ def change_source():
         ).ask()
         
         if selected:
-            save_val = "local" if selected == "Weeb" else selected
+            save_val = "local" if selected == "weeb" else selected
             config.set("scraping_source", save_val)
             console.print(f"[green]{i18n.t('settings.source_changed', source=selected)}[/green]")
             time.sleep(1)
