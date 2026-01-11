@@ -35,7 +35,7 @@ Weeb CLI is a powerful, cross-platform command-line tool designed for anime enth
   - Queue system with concurrent download management.
   - Smart file naming (e.g., `Anime Name - S1E1.mp4`).
 - **Watch History**: Automatically tracks your progress. Resumes where you left off (`●` indicator) and marks completed episodes (`✓`).
-- **Multi-language**: Full support for **English** and **Turkish** (Türkçe) interfaces.
+- **Multi-language**: Full support for HiAnime, All Anime (English) and TurkAnime, Anizle, Animecix, Weeb (Local Source) (Turkish) interfaces.
 - **Auto-Dependency**: Automatically detects and installs necessary tools (MPV, FFmpeg, Aria2, yt-dlp) if missing.
 
 ## Installation
