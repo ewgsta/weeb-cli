@@ -28,19 +28,19 @@ class WeebClient:
         source = config.get("scraping_source")
         if source == "weeb": source = "local"
         
-        return self._get("/api/v1/anime/search", params={"query": query, "source": source})
+        return self._get("/api/v2/anime/search", params={"query": query, "source": source})
 
     def get_details(self, slug):
         source = config.get("scraping_source")
         if source == "weeb": source = "local"
-        return self._get(f"/api/v1/anime/detail/{slug}", params={"source": source})
+        return self._get(f"/api/v2/anime/detail/{slug}", params={"source": source})
 
     def get_streams(self, slug, episode):
         source = config.get("scraping_source")
         if source == "weeb": source = "local"
-        return self._get(f"/api/v1/anime/watch/{slug}/{episode}", params={"source": source})
+        return self._get(f"/api/v2/anime/watch/{slug}/{episode}", params={"source": source})
 
     def get_sources(self):
-        return self._get("/api/v1/sources/")
+        return self._get("/api/v2/sources/")
 
 api_client = WeebClient()
