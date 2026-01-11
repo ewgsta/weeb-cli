@@ -85,6 +85,11 @@
             "range_input": "Enter range (e.g. 1-5, 8)",
             "started": "Downloads started...",
             "range_error": "Invalid range format."
-        }
+        },
+        "player_starting": "Starting Player...",
+        "stream_not_found": "No stream URL found.",
+        "invalid_ep_id": "Invalid Episode ID.",
+        "download_wip": "Download feature coming soon...",
+        "queueing": "Queueing {count} episodes... (Coming Soon)"
     }
 }
