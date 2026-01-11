@@ -23,8 +23,12 @@ dependencies = [
     "requests"
 ]
 
-[tool.setuptools]
-packages = ["weeb_cli"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["weeb_cli*"]
+
+[tool.setuptools.package-data]
+weeb_cli = ["locales/*.json"]
 
 [project.urls]
 Homepage = "https://github.com/ewgsta/weeb-cli"
