@@ -103,15 +103,12 @@ def show_anime_details(anime):
     with console.status(i18n.get("common.processing"), spinner="dots"):
         details = get_details(slug)
     
-    for _ in range(3):
-        if isinstance(details, dict) and "data" in details:
-            if isinstance(details["data"], dict):
-                details = details["data"]
-            elif isinstance(details["data"], list):
-                details = { "episodes": details["data"] }
-                break 
-        else:
-            break
+    if isinstance(details, dict):
+        if "data" in details and isinstance(details["data"], dict):
+            details = details["data"]
+        
+        if "details" in details and isinstance(details["details"], dict):
+            details = details["details"]
 
     if not details:
         console.print(f"[red]{i18n.get('details.not_found')}[/red]")
@@ -119,6 +116,7 @@ def show_anime_details(anime):
         return
 
     title = details.get("title") or anime.get("title")
+    
     desc = details.get("description") or details.get("synopsis") or details.get("desc")
     if desc:
         console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="center")
