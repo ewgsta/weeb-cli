@@ -94,44 +94,55 @@ from weeb_cli.services.details import get_details
 def show_anime_details(anime):
     slug = anime.get("slug") or anime.get("id")
     if not slug:
-        console.print("[red]Error: Invalid anime ID/Slug.[/red]")
+        console.print(f"[red]{i18n.get('details.error_slug')}[/red]")
         time.sleep(1)
         return
 
     console.clear()
-    title = details.get("title") or anime.get("title")
-    show_header(anime.get("title") or anime.get("name"))
+    show_header(i18n.get("details.title"))
     
     with console.status(i18n.get("common.processing"), spinner="dots"):
         details = get_details(slug)
     
+    if isinstance(details, dict) and "data" in details and isinstance(details["data"], dict):
+        details = details["data"]
+
     if not details:
-        console.print("[red]Details not found.[/red]")
+        console.print(f"[red]{i18n.get('details.not_found')}[/red]")
         time.sleep(1)
         return
+
+    title = details.get("title") or anime.get("title")
+    console.print(f"[bold cyan]{title}[/bold cyan]", justify="center")
     
-    desc = details.get("description") or details.get("synopsis")
+    desc = details.get("description") or details.get("synopsis") or details.get("desc")
     if desc:
         console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="center")
 
-    episodes = details.get("episodes", [])
+    episodes = details.get("episodes") or details.get("episodes_list") or []
     if not episodes:
-        console.print("[yellow]No episodes available.[/yellow]")
+        console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
         input(i18n.get("common.continue_key"))
         return
 
     ep_choices = []
     for ep in episodes:
-        name = f"Episode {ep.get('number', '?')}"
+        num = ep.get('number') or ep.get('ep_num') or '?'
+        name = f"{i18n.get('details.episode')} {num}"
         ep_choices.append(questionary.Choice(name, value=ep))
 
-    selected_ep = questionary.select(
-        "Select Episode:",
-        choices=ep_choices,
-        pointer=">",
-        use_shortcuts=False
-    ).ask()
-    
-    if selected_ep:
-        console.print(f"[green]Selected: {selected_ep}[/green]")
-        input(i18n.get("common.continue_key"))
+    try:
+        selected_ep = questionary.select(
+            i18n.get("details.select_episode") + ":",
+            choices=ep_choices,
+            pointer=">",
+            use_shortcuts=False
+        ).ask()
+        
+        if selected_ep:
+            ep_num = selected_ep.get('number') or selected_ep.get('ep_num')
+            console.print(f"[green]{i18n.t('details.selected', episode=ep_num)}[/green]")
+            input(i18n.get("common.continue_key"))
+            
+    except KeyboardInterrupt:
+        return

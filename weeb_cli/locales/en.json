@@ -54,5 +54,14 @@
         "results": "Search Results",
         "cancel": "Cancel",
         "error": "Search failed."
+    },
+    "details": {
+        "title": "Anime Details",
+        "error_slug": "Error: Invalid anime ID.",
+        "not_found": "Details not found.",
+        "episode": "Episode",
+        "select_episode": "Select Episode",
+        "no_episodes": "No episodes available.",
+        "selected": "Selected: {episode}"
     }
 }
