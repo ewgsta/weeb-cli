@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "weeb-cli"
-version = "0.0.2"
+version = "0.1.0"
 description = "Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi."
 readme = "README.md"
 authors = [{ name = "ewgsta", email = "ewgst@proton.me" }]
