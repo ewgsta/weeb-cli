@@ -1,9 +1,20 @@
 import json
 import os
+import sys
 from pathlib import Path
 from weeb_cli.config import config
 
-LOCALES_DIR = Path(__file__).parent / "locales"
+def get_locales_dir():
+    if getattr(sys, 'frozen', False):
+        base_path = Path(sys._MEIPASS)
+        possible_path = base_path / "weeb_cli" / "locales"
+        if possible_path.exists():
+            return possible_path
+        return base_path / "locales"
+    
+    return Path(__file__).parent / "locales"
+
+LOCALES_DIR = get_locales_dir()
 
 class I18n:
     def __init__(self):

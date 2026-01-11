@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ewgsta/weeb-landing/main/public/logo.png" alt="Weeb CLI Logo" width="200" height="200" />
+  <img src="https://raw.githubusercontent.com/ewgsta/weeb-cli/refs/heads/main/weeb_landing/logo/256x256.webp" alt="Weeb CLI Logo" width="200" height="200" />
   <h1>Weeb CLI</h1>
   <p>
     <b>Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi.</b>
