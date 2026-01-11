@@ -7,6 +7,7 @@ from weeb_cli.services.details import get_details
 from weeb_cli.services.watch import get_streams
 from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
+from weeb_cli.services.downloader import queue_manager
 import time
 
 console = Console()
@@ -334,7 +335,11 @@ def handle_download_flow(slug, details):
              
         console.print(f"[green]{i18n.get('details.download_options.started')}[/green]")
         console.print(f"[dim]{i18n.t('details.queueing', count=len(selected_eps))}[/dim]")
-        input(i18n.get("common.continue_key"))
+        
+        anime_title = details.get("title") or "Unknown Anime"
+        queue_manager.add_to_queue(anime_title, selected_eps, slug)
+        
+        time.sleep(1.5)
         
     except KeyboardInterrupt:
         return
