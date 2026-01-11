@@ -18,13 +18,15 @@ def check_network():
     console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
     try:
         with console.status("", spinner="square"):
-            requests.get("https://www.google.com", timeout=3)
+            try:
+                requests.get("https://www.google.com", timeout=5)
+            except:
+                requests.get("https://1.1.1.1", timeout=5)
     except:
         console.print(f"[red]{i18n.t('common.network_error')}[/red]")
         sys.exit(1)
 
 def run_setup():
-    """First run setup to select language and install dependencies."""
     langs = {
         "Türkçe": "tr",
         "English": "en"
