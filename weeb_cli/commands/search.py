@@ -102,64 +102,229 @@ def show_anime_details(anime):
         time.sleep(1)
         return
 
-    console.clear()
-    show_header(anime.get("title") or anime.get("name"))
-    with console.status(i18n.get("common.processing"), spinner="dots"):
-        details = get_details(slug)
-    
-    if isinstance(details, dict):
-        if "data" in details and isinstance(details["data"], dict):
-            details = details["data"]
+    while True:
+        console.clear()
+        show_header(anime.get("title") or anime.get("name") or "Anime")
         
-        if "details" in details and isinstance(details["details"], dict):
-            details = details["details"]
+        with console.status(i18n.get("common.processing"), spinner="dots"):
+            details = get_details(slug)
+        
+        if isinstance(details, dict):
+            if "data" in details and isinstance(details["data"], dict):
+                details = details["data"]
+            
+            if "details" in details and isinstance(details["details"], dict):
+                details = details["details"]
 
-    if not details:
-        console.print(f"[red]{i18n.get('details.not_found')}[/red]")
-        time.sleep(1)
-        return
+        if not details:
+            console.print(f"[red]{i18n.get('details.not_found')}[/red]")
+            time.sleep(1)
+            return
+        
+        desc = details.get("description") or details.get("synopsis") or details.get("desc")
+        if desc:
+            console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="left")
 
-    title = details.get("title") or anime.get("title")
-    
-    desc = details.get("description") or details.get("synopsis") or details.get("desc")
-    if desc:
-        console.print(f"\n[dim]{desc[:300]}...[/dim]\n", justify="left")
+        opt_watch = i18n.get("details.watch")
+        opt_dl = i18n.get("details.download")
+        opt_cancel = i18n.get("search.cancel") or "Cancel"
+        
+        try:
+            action = questionary.select(
+                i18n.get("details.action_prompt"),
+                choices=[opt_watch, opt_dl, questionary.Choice(opt_cancel, value="cancel")],
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if action == "cancel" or action is None:
+                return
+            
+            if action == opt_dl:
+                handle_download_flow(slug, details)
+            elif action == opt_watch:
+                handle_watch_flow(slug, details)
+                
+        except KeyboardInterrupt:
+            return
 
+def get_episodes_safe(details):
     episodes = None
     for k in ["episodes", "episodes_list", "episode_list", "results", "chapters"]:
         if k in details and isinstance(details[k], list):
             episodes = details[k]
             break
-    
+            
     if not episodes:
         for v in details.values():
             if isinstance(v, list) and v and isinstance(v[0], dict) and ("number" in v[0] or "ep_num" in v[0] or "url" in v[0]):
                 episodes = v
                 break
+    return episodes
 
+def handle_watch_flow(slug, details):
+    episodes = get_episodes_safe(details)
     if not episodes:
         console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
-        input(i18n.get("common.continue_key"))
+        time.sleep(1.5)
         return
 
-    ep_choices = []
-    for ep in episodes:
-        num = ep.get('number') or ep.get('ep_num') or '?'
-        name = f"{i18n.get('details.episode')} {num}"
-        ep_choices.append(questionary.Choice(name, value=ep))
+    prog_data = progress_tracker.get_anime_progress(slug)
+    completed_ids = set(prog_data.get("completed", []))
+    last_watched = prog_data.get("last_watched", 0)
+    next_ep_num = last_watched + 1
+
+    while True:
+        ep_choices = []
+        for ep in episodes:
+            num_val = ep.get('number') or ep.get('ep_num')
+            try:
+                num = int(num_val)
+            except:
+                num = -1
+            
+            prefix = "   "
+            if num in completed_ids:
+                prefix = "✓  "
+            elif num == next_ep_num:
+                prefix = "●  "
+            
+            name = f"{prefix}{i18n.get('details.episode')} {num_val}"
+            ep_choices.append(questionary.Choice(name, value=ep))
+
+        opt_back = i18n.get("search.cancel") or "Back"
+        ep_choices.append(questionary.Choice(opt_back, value="back"))
+
+        try:
+            selected_ep = questionary.select(
+                i18n.get("details.select_episode") + ":",
+                choices=ep_choices,
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if selected_ep == "back" or selected_ep is None:
+                return
+
+            ep_id = selected_ep.get("id")
+            ep_num = selected_ep.get("number")
+            
+            if not ep_id:
+                console.print("[red]Invalid Episode ID[/red]")
+                time.sleep(1)
+                continue
+
+            with console.status(i18n.get("common.processing"), spinner="dots"):
+                stream_resp = get_streams(slug, ep_id)
+            
+            stream_url = None
+            if stream_resp and isinstance(stream_resp, dict):
+                 data_node = stream_resp
+                 if "data" in stream_resp:
+                     data_node = stream_resp["data"]
+                 
+                 sources = data_node.get("sources")
+                 if not sources and isinstance(data_node, list):
+                     sources = data_node
+                 
+                 if sources and isinstance(sources, list):
+                     stream_url = sources[0].get("url")
+                 elif "url" in data_node:
+                     stream_url = data_node["url"]
+            
+            if not stream_url:
+                console.print("[red]No stream URL found.[/red]")
+                time.sleep(1.5)
+                continue
+            
+            console.print(f"[green]Starting Player...[/green]")
+            title = f"{details.get('title', 'Anime')} - Ep {ep_num}"
+            
+            success = player.play(stream_url, title=title)
+            
+            if success:
+                try:
+                    ans = questionary.confirm(i18n.get("details.mark_watched")).ask()
+                    if ans:
+                        n = int(ep_num)
+                        progress_tracker.mark_watched(slug, n)
+                        
+                        completed_ids.add(n)
+                        if n >= next_ep_num:
+                            next_ep_num = n + 1
+                except:
+                    pass
+            
+        except KeyboardInterrupt:
+            return
+
+def handle_download_flow(slug, details):
+    episodes = get_episodes_safe(details)
+    if not episodes:
+        console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
+        time.sleep(1.5)
+        return
+
+    opt_all = i18n.get("details.download_options.all")
+    opt_manual = i18n.get("details.download_options.manual")
+    opt_range = i18n.get("details.download_options.range")
+    opt_cancel = i18n.get("search.cancel") or "Cancel"
 
     try:
-        selected_ep = questionary.select(
-            i18n.get("details.select_episode") + ":",
-            choices=ep_choices,
+        mode = questionary.select(
+            i18n.get("details.download_options.prompt"),
+            choices=[opt_all, opt_manual, opt_range, questionary.Choice(opt_cancel, value="cancel")],
             pointer=">",
             use_shortcuts=False
         ).ask()
         
-        if selected_ep:
-            ep_num = selected_ep.get('number') or selected_ep.get('ep_num')
-            console.print(f"[green]{i18n.t('details.selected', episode=ep_num)}[/green]")
-            input(i18n.get("common.continue_key"))
+        if mode == "cancel" or mode is None:
+            return
             
+        selected_eps = []
+        
+        if mode == opt_all:
+            selected_eps = episodes
+            
+        elif mode == opt_manual:
+             choices = []
+             for ep in episodes:
+                 name = f"{i18n.get('details.episode')} {ep.get('number')}"
+                 choices.append(questionary.Choice(name, value=ep))
+                 
+             selected_eps = questionary.checkbox(
+                 "Select Episodes:",
+                 choices=choices
+             ).ask()
+             
+        elif mode == opt_range:
+             r_str = questionary.text(i18n.get("details.download_options.range_input")).ask()
+             if not r_str: return
+             # Parse range
+             nums = set()
+             try:
+                 parts = r_str.split(',')
+                 for p in parts:
+                     p = p.strip()
+                     if '-' in p:
+                         s, e = p.split('-')
+                         for x in range(int(s), int(e)+1): nums.add(x)
+                     elif p.isdigit():
+                         nums.add(int(p))
+             except:
+                 console.print(f"[red]{i18n.get('details.download_options.range_error')}[/red]")
+                 time.sleep(1)
+                 return
+             
+             selected_eps = [ep for ep in episodes if int(ep.get('number', -1)) in nums]
+
+        if not selected_eps:
+             return
+             
+        console.print(f"[green]{i18n.get('details.download_options.started')}[/green]")
+        console.print(f"[dim]Queueing {len(selected_eps)} episodes... (Coming Soon)[/dim]")
+        # TODO: Implement actual download queue
+        input(i18n.get("common.continue_key"))
+        
     except KeyboardInterrupt:
         return

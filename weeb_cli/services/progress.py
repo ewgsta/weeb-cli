@@ -55,9 +55,6 @@ class ProgressTracker:
     def get_next_episode(self, slug):
         prog = self.get_anime_progress(slug)
         last = prog.get("last_watched", 0)
-        # If last is 0, start at 1. If 6, next is 7.
-        # But we should check if 7 is completed? (maybe skipped around)
-        # For simplicity, next is last + 1.
         return last + 1
 
 progress_tracker = ProgressTracker()

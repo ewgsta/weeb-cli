@@ -76,6 +76,15 @@
         "watch": "İzle",
         "download": "İndir",
         "mark_watched": "İzlendi olarak işaretlensin mi?",
-        "action_prompt": "İşlem Seçin"
+        "action_prompt": "İşlem Seçin",
+        "download_options": {
+            "all": "Tümünü Seç",
+            "manual": "Elle Seç",
+            "range": "Aralık Seç",
+            "prompt": "İndirme Modu Seçin",
+            "range_input": "Aralık girin (örn. 1-5, 8)",
+            "started": "İndirmeler başlatılıyor...",
+            "range_error": "Geçersiz aralık formatı."
+        }
     }
 }
