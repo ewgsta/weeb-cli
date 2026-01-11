@@ -2,7 +2,7 @@ import questionary
 from rich.console import Console
 from weeb_cli.i18n import i18n
 from weeb_cli.ui.header import show_header
-from weeb_cli.services.api import api_client
+from weeb_cli.services.search import search
 import time
 
 console = Console()
@@ -10,7 +10,7 @@ console = Console()
 def search_anime():
     while True:
         console.clear()
-        show_header(i18n.get("menu.options.search"))
+        show_header(i18n.get("menu.options.search"), show_source=True)
         
         try:
             query = questionary.text(
@@ -30,7 +30,9 @@ def search_anime():
                 continue
 
             with console.status(i18n.get("search.searching"), spinner="dots"):
-                data = api_client.search(query)
+                # Simulating delay slightly for UX if local, or actual request
+                # time.sleep(0.5) 
+                data = search(query)
             
             if isinstance(data, dict):
                 data = data.get("results", []) or data.get("data", [])

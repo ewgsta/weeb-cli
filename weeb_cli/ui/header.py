@@ -6,15 +6,25 @@ from weeb_cli import __version__
 
 console = Console()
 
-def show_header(title="Weeb API"):
+def show_header(title="Weeb API", show_version=False, show_source=False):
     console.clear()
-    
-    source = config.get("scraping_source", "local")
-    display_source = "Weeb" if source == "local" else source
     
     text = Text()
     text.append(f" {title} ", style="bold white on blue")
-    text.append(f" | {display_source} | v{__version__}", style="dim white")
+    
+    parts = []
+    
+    if show_source:
+        cfg_source = config.get("scraping_source", "local")
+        disp_source = "weeb" if cfg_source == "local" else cfg_source
+        parts.append(disp_source)
+        
+    if show_version:
+        parts.append(f"v{__version__}")
+        
+    if parts:
+        joined = " | ".join(parts)
+        text.append(f" | {joined}", style="dim white")
     
     console.print(text, justify="left")
     print()
