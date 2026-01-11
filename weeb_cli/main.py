@@ -1,7 +1,7 @@
 import typer
 import questionary
 import sys
-import requests
+import time
 from rich.console import Console
 from weeb_cli.ui.menu import show_main_menu
 from weeb_cli.commands.search import search_anime
@@ -16,15 +16,8 @@ console = Console()
 
 def check_network():
     console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
-    try:
-        with console.status("", spinner="square"):
-            try:
-                requests.get("https://www.google.com", timeout=5)
-            except:
-                requests.get("https://1.1.1.1", timeout=5)
-    except:
-        console.print(f"[red]{i18n.t('common.network_error')}[/red]")
-        sys.exit(1)
+    with console.status("", spinner="square"):
+        time.sleep(1)
 
 def run_setup():
     langs = {
