@@ -76,6 +76,15 @@
         "watch": "Watch",
         "download": "Download",
         "mark_watched": "Mark as watched?",
-        "action_prompt": "Select Action"
+        "action_prompt": "Select Action",
+        "download_options": {
+            "all": "Select All",
+            "manual": "Manual Select",
+            "range": "Range Select",
+            "prompt": "Select download mode",
+            "range_input": "Enter range (e.g. 1-5, 8)",
+            "started": "Downloads started...",
+            "range_error": "Invalid range format."
+        }
     }
 }
