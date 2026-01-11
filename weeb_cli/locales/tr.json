@@ -91,5 +91,9 @@
         "invalid_ep_id": "Geçersiz Bölüm ID.",
         "download_wip": "İndirme özelliği yakında...",
         "queueing": "{count} bölüm sıraya alınıyor... (Yakında)"
+    },
+    "player": {
+        "installing_mpv": "MPV bulunamadı. Kuruluyor...",
+        "install_failed": "MPV kurulamadı. Lütfen manuel kurun."
     }
 }

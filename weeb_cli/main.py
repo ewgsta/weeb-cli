@@ -10,6 +10,7 @@ from weeb_cli.commands.settings import open_settings
 from weeb_cli.config import config
 from weeb_cli.i18n import i18n
 from weeb_cli.commands.setup import start_setup_wizard
+from weeb_cli.services.dependency_manager import dependency_manager
 
 app = typer.Typer(add_completion=False)
 console = Console()
@@ -38,12 +39,18 @@ def run_setup():
         console.print(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]")
         start_setup_wizard()
 
+def check_ffmpeg_silent():
+    if not dependency_manager.check_dependency("ffmpeg"):
+         console.print(f"[cyan]{i18n.t('setup.downloading', tool='FFmpeg')}...[/cyan]")
+         dependency_manager.install_dependency("ffmpeg")
+
 @app.command()
 def start():
     if not config.get("language"):
         run_setup()
 
     check_network()
+    check_ffmpeg_silent()
 
     actions = {
         "search": search_anime,
