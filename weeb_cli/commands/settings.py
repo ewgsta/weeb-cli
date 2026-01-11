@@ -157,7 +157,7 @@ def download_settings_menu():
         show_header(i18n.get("settings.download_settings"))
         
         curr_dir = config.get("download_dir")
-        console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="center")
+        console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="left")
         
         opt_name = i18n.get("settings.change_folder_name")
         opt_path = i18n.get("settings.change_full_path")

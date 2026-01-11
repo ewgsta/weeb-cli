@@ -127,17 +127,16 @@ def show_anime_details(anime):
 
         opt_watch = i18n.get("details.watch")
         opt_dl = i18n.get("details.download")
-        opt_cancel = i18n.get("search.cancel") or "Cancel"
         
         try:
             action = questionary.select(
                 i18n.get("details.action_prompt"),
-                choices=[opt_watch, opt_dl, questionary.Choice(opt_cancel, value="cancel")],
+                choices=[opt_watch, opt_dl],
                 pointer=">",
                 use_shortcuts=False
             ).ask()
             
-            if action == "cancel" or action is None:
+            if action is None:
                 return
             
             if action == opt_dl:
@@ -192,9 +191,6 @@ def handle_watch_flow(slug, details):
             name = f"{prefix}{i18n.get('details.episode')} {num_val}"
             ep_choices.append(questionary.Choice(name, value=ep))
 
-        opt_back = i18n.get("search.cancel") or "Back"
-        ep_choices.append(questionary.Choice(opt_back, value="back"))
-
         try:
             selected_ep = questionary.select(
                 i18n.get("details.select_episode") + ":",
@@ -203,14 +199,14 @@ def handle_watch_flow(slug, details):
                 use_shortcuts=False
             ).ask()
             
-            if selected_ep == "back" or selected_ep is None:
+            if selected_ep is None:
                 return
 
             ep_id = selected_ep.get("id")
             ep_num = selected_ep.get("number")
             
             if not ep_id:
-                console.print("[red]Invalid Episode ID[/red]")
+                console.print(f"[red]{i18n.get('details.invalid_ep_id')}[/red]")
                 time.sleep(1)
                 continue
 
@@ -220,24 +216,31 @@ def handle_watch_flow(slug, details):
             stream_url = None
             if stream_resp and isinstance(stream_resp, dict):
                  data_node = stream_resp
-                 if "data" in stream_resp:
-                     data_node = stream_resp["data"]
+                 for _ in range(3):
+                     if "data" in data_node and isinstance(data_node["data"], (dict, list)):
+                         data_node = data_node["data"]
+                     else:
+                         break
                  
-                 sources = data_node.get("sources")
-                 if not sources and isinstance(data_node, list):
+                 sources = None
+                 if isinstance(data_node, list):
                      sources = data_node
+                 elif isinstance(data_node, dict):
+                     sources = data_node.get("sources")
                  
                  if sources and isinstance(sources, list):
-                     stream_url = sources[0].get("url")
-                 elif "url" in data_node:
+                     first = sources[0]
+                     if isinstance(first, dict):
+                        stream_url = first.get("url")
+                 elif isinstance(data_node, dict) and "url" in data_node:
                      stream_url = data_node["url"]
             
             if not stream_url:
-                console.print("[red]No stream URL found.[/red]")
+                console.print(f"[red]{i18n.get('details.stream_not_found')}[/red]")
                 time.sleep(1.5)
                 continue
             
-            console.print(f"[green]Starting Player...[/green]")
+            console.print(f"[green]{i18n.get('details.player_starting')}[/green]")
             title = f"{details.get('title', 'Anime')} - Ep {ep_num}"
             
             success = player.play(stream_url, title=title)
@@ -268,17 +271,16 @@ def handle_download_flow(slug, details):
     opt_all = i18n.get("details.download_options.all")
     opt_manual = i18n.get("details.download_options.manual")
     opt_range = i18n.get("details.download_options.range")
-    opt_cancel = i18n.get("search.cancel") or "Cancel"
 
     try:
         mode = questionary.select(
             i18n.get("details.download_options.prompt"),
-            choices=[opt_all, opt_manual, opt_range, questionary.Choice(opt_cancel, value="cancel")],
+            choices=[opt_all, opt_manual, opt_range],
             pointer=">",
             use_shortcuts=False
         ).ask()
         
-        if mode == "cancel" or mode is None:
+        if mode is None:
             return
             
         selected_eps = []
@@ -322,8 +324,7 @@ def handle_download_flow(slug, details):
              return
              
         console.print(f"[green]{i18n.get('details.download_options.started')}[/green]")
-        console.print(f"[dim]Queueing {len(selected_eps)} episodes... (Coming Soon)[/dim]")
-        # TODO: Implement actual download queue
+        console.print(f"[dim]{i18n.t('details.queueing', count=len(selected_eps))}[/dim]")
         input(i18n.get("common.continue_key"))
         
     except KeyboardInterrupt:

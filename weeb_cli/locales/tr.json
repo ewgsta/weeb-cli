@@ -85,6 +85,11 @@
             "range_input": "Aralık girin (örn. 1-5, 8)",
             "started": "İndirmeler başlatılıyor...",
             "range_error": "Geçersiz aralık formatı."
-        }
+        },
+        "player_starting": "Oynatıcı Başlatılıyor...",
+        "stream_not_found": "Yayın URL'si bulunamadı.",
+        "invalid_ep_id": "Geçersiz Bölüm ID.",
+        "download_wip": "İndirme özelliği yakında...",
+        "queueing": "{count} bölüm sıraya alınıyor... (Yakında)"
     }
 }
