@@ -11,6 +11,7 @@ DEFAULT_CONFIG = {
     "aria2_enabled": True,
     "ytdlp_enabled": True,
     "aria2_max_connections": 16,
+    "max_concurrent_downloads": 3,
     "download_dir": os.path.join(os.getcwd(), "weeb-downloads"),
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "",

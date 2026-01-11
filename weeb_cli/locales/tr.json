@@ -5,6 +5,7 @@
         "options": {
             "search": "Anime Ara",
             "watchlist": "İzlediklerim",
+            "downloads": "İndirmeler",
             "settings": "Ayarlar",
             "exit": "Çıkış"
         }
@@ -26,6 +27,8 @@
         "download_settings": "İndirme Ayarları",
         "change_folder_name": "Klasör Adını Değiştir",
         "change_full_path": "Tam Yolu Değiştir",
+        "concurrent_downloads": "Eşzamanlı İndirme Sayısı",
+        "enter_concurrent": "Eşzamanlı indirme sayısını girin (1-5)",
         "language_changed": "Dil Türkçe olarak değiştirildi.",
         "source_changed": "Kaynak {source} olarak değiştirildi.",
         "toggle_on": "{tool} aktif edildi.",

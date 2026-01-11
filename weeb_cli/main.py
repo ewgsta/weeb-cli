@@ -52,12 +52,7 @@ def start():
     check_network()
     check_ffmpeg_silent()
 
-    actions = {
-        "search": search_anime,
-        "watchlist": open_watchlist,
-        "settings": open_settings
-    }
-    show_main_menu(actions)
+    show_main_menu()
 
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):

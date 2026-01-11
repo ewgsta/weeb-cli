@@ -5,6 +5,7 @@
         "options": {
             "search": "Search Anime",
             "watchlist": "My Watchlist",
+            "downloads": "Downloads",
             "settings": "Settings",
             "exit": "Exit"
         }
@@ -26,6 +27,8 @@
         "download_settings": "Download Settings",
         "change_folder_name": "Change Folder Name",
         "change_full_path": "Change Full Path",
+        "concurrent_downloads": "Simultaneous Downloads",
+        "enter_concurrent": "Enter number of simultaneous downloads (1-5)",
         "language_changed": "Language changed to English.",
         "source_changed": "Source changed to {source}.",
         "toggle_on": "{tool} enabled.",

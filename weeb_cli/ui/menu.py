@@ -3,27 +3,34 @@ from rich.console import Console
 import sys
 from .header import show_header
 from weeb_cli.i18n import i18n
+from weeb_cli.commands.search import search_anime
+from weeb_cli.commands.settings import open_settings
+from weeb_cli.commands.watchlist import show_watchlist
+from weeb_cli.commands.downloads import show_downloads
 
 console = Console()
 
-def show_main_menu(action_map):
+def show_main_menu():
     console.clear()
     show_header("Weeb API", show_version=True, show_source=True)
     
-    choices_map = {}
-    for key, func in action_map.items():
-        display_text = i18n.get(f"menu.options.{key}")
-        choices_map[display_text] = func
-    
-    exit_text = i18n.get("menu.options.exit")
-    
-    choices = list(choices_map.keys()) + [exit_text]
+    opt_search = i18n.get("menu.options.search")
+    opt_watchlist = i18n.get("menu.options.watchlist")
+    opt_downloads = i18n.get("menu.options.downloads")
+    opt_settings = i18n.get("menu.options.settings")
+    opt_exit = i18n.get("menu.options.exit")
     
     try:
-        answer = questionary.select(
+        selected = questionary.select(
             i18n.get("menu.prompt"),
-            choices=choices,
-            pointer='>',
+            choices=[
+                opt_search,
+                opt_watchlist,
+                opt_downloads,
+                opt_settings,
+                opt_exit
+            ],
+            pointer=">",
             use_shortcuts=False,
             style=questionary.Style([
                 ('pointer', 'fg:cyan bold'),
@@ -34,15 +41,19 @@ def show_main_menu(action_map):
         
         console.clear()
         
-        if answer == exit_text or answer is None:
+        if selected == opt_search:
+            search_anime()
+        elif selected == opt_watchlist:
+            show_watchlist()
+        elif selected == opt_downloads:
+            show_downloads()
+        elif selected == opt_settings:
+            open_settings()
+        elif selected == opt_exit or selected is None:
             console.print(f"[yellow] {i18n.get('common.success')}...[/yellow]")
             sys.exit(0)
             
-        action = choices_map.get(answer)
-        if action:
-            action()
-            
-        show_main_menu(action_map)
+        show_main_menu()
         
     except KeyboardInterrupt:
         sys.exit(0)

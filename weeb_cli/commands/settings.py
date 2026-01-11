@@ -177,13 +177,16 @@ def download_settings_menu():
         curr_dir = config.get("download_dir")
         console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="left")
         
+        curr_concurrent = config.get("max_concurrent_downloads", 3)
+        
         opt_name = i18n.get("settings.change_folder_name")
         opt_path = i18n.get("settings.change_full_path")
+        opt_concurrent = f"{i18n.get('settings.concurrent_downloads')} [{curr_concurrent}]"
         
         try:
             sel = questionary.select(
                 i18n.get("settings.download_settings"),
-                choices=[opt_name, opt_path],
+                choices=[opt_name, opt_path, opt_concurrent],
                 pointer=">",
                 use_shortcuts=False
             ).ask()
@@ -197,6 +200,12 @@ def download_settings_menu():
                 val = questionary.text("Full Path:", default=curr_dir).ask()
                 if val:
                     config.set("download_dir", val)
+            elif sel == opt_concurrent:
+                val = questionary.text(i18n.get("settings.enter_concurrent"), default=str(curr_concurrent)).ask()
+                if val and val.isdigit():
+                    n = int(val)
+                    if 1 <= n <= 5:
+                        config.set("max_concurrent_downloads", n)
             elif sel is None:
                 return
         except KeyboardInterrupt:
