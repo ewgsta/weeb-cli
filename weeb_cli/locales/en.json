@@ -4,7 +4,16 @@
         "current": "Current Version",
         "prompt": "Would you like to update now?",
         "opening": "Opening download page in browser...",
-        "error": "Could not find download URL."
+        "error": "Update failed",
+        "downloading": "Downloading update",
+        "downloaded": "Download complete!",
+        "restarting": "Restarting application",
+        "updating_pip": "Updating via pip",
+        "success": "Update successful!",
+        "restart_required": "Please restart the application to apply changes.",
+        "no_asset": "No download file found for this platform.",
+        "download_url": "Download URL",
+        "manual_update": "Manual update required"
     },
     "menu": {
         "title": "Main Menu",
