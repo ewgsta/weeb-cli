@@ -343,11 +343,12 @@ class TurkAnimeProvider(BaseProvider):
         internal_id = anime_id_match[0] if anime_id_match else ""
         
         description = None
-        summary_match = re.search(r'class="ozet"[^>]*>(.*?)</p>', html, re.DOTALL | re.IGNORECASE)
-        if not summary_match:
-            summary_match = re.search(r'"ozet">(.*?)</p>', html, re.DOTALL)
-        if summary_match:
-            description = re.sub(r'<[^>]+>', '', summary_match.group(1)).strip()
+        desc_match = re.search(r'twitter:description"\s+content="([^"]+)"', html)
+        if not desc_match:
+            desc_match = re.search(r'og:description"\s+content="([^"]+)"', html)
+        if desc_match:
+            import html as html_module
+            description = html_module.unescape(desc_match.group(1)).strip()
         
         info = {}
         info_table = re.findall(r'<div id="animedetay">(<table.*?</table>)', html, re.DOTALL)
