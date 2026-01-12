@@ -45,6 +45,7 @@
         "enter_concurrent": "Enter number of simultaneous downloads (1-5)",
         "language_changed": "Language changed to English.",
         "source_changed": "Source changed to {source}.",
+        "no_sources": "No sources available for this language.",
         "toggle_on": "{tool} enabled.",
         "toggle_off": "{tool} disabled."
     },

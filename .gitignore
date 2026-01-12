@@ -17,3 +17,5 @@ chocolatey_temp/
 .vscode/
 api.yaml
 .idea/
+publish.py
+test/

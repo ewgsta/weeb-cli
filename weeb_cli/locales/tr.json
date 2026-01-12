@@ -45,6 +45,7 @@
         "enter_concurrent": "Eşzamanlı indirme sayısını girin (1-5)",
         "language_changed": "Dil Türkçe olarak değiştirildi.",
         "source_changed": "Kaynak {source} olarak değiştirildi.",
+        "no_sources": "Bu dil için kaynak bulunamadı.",
         "toggle_on": "{tool} aktif edildi.",
         "toggle_off": "{tool} devre dışı bırakıldı."
     },

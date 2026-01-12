@@ -95,6 +95,8 @@ def open_settings():
             return
 
 def change_language():
+    from weeb_cli.services.scraper import scraper
+    
     langs = {"Türkçe": "tr", "English": "en"}
     try:
         selected = questionary.select(
@@ -108,8 +110,10 @@ def change_language():
             lang_code = langs[selected]
             i18n.set_language(lang_code)
             
-            new_source = "local" if lang_code == "tr" else "hianime"
-            config.set("scraping_source", new_source)
+            # Dil için varsayılan kaynağı ayarla
+            sources = scraper.get_sources_for_lang(lang_code)
+            if sources:
+                config.set("scraping_source", sources[0])
             
             console.print(f"[green]{i18n.get('settings.language_changed')}[/green]")
             time.sleep(1)
@@ -117,13 +121,15 @@ def change_language():
         pass
 
 def change_source():
-    current_lang = config.get("language")
+    from weeb_cli.services.scraper import scraper
     
-    sources = []
-    if current_lang == "tr":
-        sources = ["weeb", "animecix", "turkanime", "anizle"]
-    else:
-        sources = ["hianime", "allanime"]
+    current_lang = config.get("language", "tr")
+    sources = scraper.get_sources_for_lang(current_lang)
+    
+    if not sources:
+        console.print(f"[yellow]{i18n.get('settings.no_sources')}[/yellow]")
+        time.sleep(1)
+        return
         
     try:
         selected = questionary.select(
@@ -134,8 +140,7 @@ def change_source():
         ).ask()
         
         if selected:
-            save_val = "local" if selected == "Weeb" else selected
-            config.set("scraping_source", save_val)
+            config.set("scraping_source", selected)
             console.print(f"[green]{i18n.t('settings.source_changed', source=selected)}[/green]")
             time.sleep(1)
     except KeyboardInterrupt:
