@@ -175,7 +175,11 @@ class AnimeCixProvider(BaseProvider):
     
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
         embed_path = episode_id.lstrip("/")
-        full_url = f"{BASE_URL}{quote(embed_path, safe='/:?=&')}"
+        
+        if embed_path.startswith("http"):
+            full_url = embed_path
+        else:
+            full_url = f"{BASE_URL}{quote(embed_path, safe='/:?=&')}"
         
         try:
             req = urllib.request.Request(full_url, headers=HEADERS)
@@ -187,10 +191,15 @@ class AnimeCixProvider(BaseProvider):
             p = urlparse(final_url)
             parts = p.path.strip("/").split("/")
             
-            if len(parts) < 2:
-                return []
+            embed_id = None
+            if len(parts) >= 2:
+                if parts[0] == "embed":
+                    embed_id = parts[1]
+                else:
+                    embed_id = parts[0]
+            elif len(parts) == 1 and parts[0]:
+                embed_id = parts[0]
             
-            embed_id = parts[1] if parts[0] == "embed" else parts[0]
             qs = parse_qs(p.query)
             vid = (qs.get("vid") or [None])[0]
             
