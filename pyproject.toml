@@ -20,7 +20,11 @@ dependencies = [
     "typer[all]",
     "rich",
     "questionary",
-    "requests"
+    "requests",
+    "packaging",
+    "pycryptodome",
+    "curl_cffi",
+    "appdirs"
 ]
 
 [tool.setuptools.packages.find]

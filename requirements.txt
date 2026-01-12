@@ -2,6 +2,10 @@ typer[all]
 rich
 questionary
 requests
+packaging
+pycryptodome
+curl_cffi
+appdirs
 build
 pyinstaller
 pyfiglet

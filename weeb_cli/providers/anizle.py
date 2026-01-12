@@ -13,6 +13,12 @@ from weeb_cli.providers.base import (
 )
 from weeb_cli.providers.registry import register_provider
 
+try:
+    from curl_cffi import requests as curl_requests
+    HAS_CURL_CFFI = True
+except ImportError:
+    HAS_CURL_CFFI = False
+
 BASE_URL = "https://anizm.pro"
 API_BASE_URL = "https://anizle.org"
 ANIME_LIST_URL = f"{BASE_URL}/getAnimeListForSearch"
@@ -20,6 +26,18 @@ PLAYER_BASE_URL = "https://anizmplayer.com"
 
 _anime_database: List[Dict[str, Any]] = []
 _database_loaded: bool = False
+_session = None
+
+
+def _get_session():
+    global _session
+    if _session is None:
+        if HAS_CURL_CFFI:
+            _session = curl_requests.Session(impersonate="chrome110")
+        else:
+            import requests
+            _session = requests.Session()
+    return _session
 
 
 @register_provider("anizle", lang="tr", region="TR")
@@ -91,8 +109,14 @@ class AnizleProvider(BaseProvider):
         )
     
     def get_episodes(self, anime_id: str) -> List[Episode]:
+        session = _get_session()
         url = f"{BASE_URL}/{anime_id}"
-        html = self._request(url, json_response=False)
+        
+        try:
+            response = session.get(url, headers=self.headers, timeout=30)
+            html = response.text
+        except Exception:
+            return []
         
         if not html:
             return []
@@ -176,7 +200,9 @@ class AnizleProvider(BaseProvider):
             return _anime_database
         
         try:
-            data = self._request(ANIME_LIST_URL)
+            session = _get_session()
+            response = session.get(ANIME_LIST_URL, headers=self.headers, timeout=120)
+            data = response.json()
             if isinstance(data, list):
                 _anime_database = data
                 _database_loaded = True
@@ -204,8 +230,14 @@ class AnizleProvider(BaseProvider):
         return f"https://anizm.pro/uploads/img/{poster}"
     
     def _get_translators(self, episode_slug: str) -> List[Dict[str, str]]:
+        session = _get_session()
         url = f"{API_BASE_URL}/{episode_slug}"
-        html = self._request(url, json_response=False)
+        
+        try:
+            response = session.get(url, headers=self.headers, timeout=30)
+            html = response.text
+        except Exception:
+            return []
         
         if not html:
             return []
@@ -223,10 +255,10 @@ class AnizleProvider(BaseProvider):
         return translators
     
     def _get_translator_videos(self, translator_url: str) -> List[Dict[str, str]]:
-        import requests
+        session = _get_session()
         
         try:
-            response = requests.get(
+            response = session.get(
                 translator_url,
                 headers={
                     **self.headers,
@@ -251,14 +283,14 @@ class AnizleProvider(BaseProvider):
             return []
     
     def _process_video(self, video_info: Dict[str, str]) -> Optional[StreamLink]:
-        import requests
+        session = _get_session()
         
         try:
             video_url = video_info["url"]
             fansub = video_info["fansub"]
             name = video_info["name"]
             
-            response = requests.get(
+            response = session.get(
                 video_url,
                 headers={
                     **self.headers,
@@ -277,7 +309,7 @@ class AnizleProvider(BaseProvider):
             
             player_id = iframe_match.group(1)
             
-            player_response = requests.get(
+            player_response = session.get(
                 f"{API_BASE_URL}/player/{player_id}",
                 headers={**self.headers, "Referer": f"{API_BASE_URL}/"},
                 timeout=15
@@ -287,15 +319,28 @@ class AnizleProvider(BaseProvider):
             if not fireplayer_id:
                 return None
             
-            video_response = requests.post(
-                f"{PLAYER_BASE_URL}/player/index.php?data={fireplayer_id}&do=getVideo",
-                headers={
-                    **self.headers,
-                    "Referer": f"{PLAYER_BASE_URL}/player/{fireplayer_id}",
-                    "Origin": PLAYER_BASE_URL,
-                },
-                timeout=15
-            )
+            if HAS_CURL_CFFI:
+                video_response = session.post(
+                    f"{PLAYER_BASE_URL}/player/index.php?data={fireplayer_id}&do=getVideo",
+                    headers={
+                        **self.headers,
+                        "Referer": f"{PLAYER_BASE_URL}/player/{fireplayer_id}",
+                        "Origin": PLAYER_BASE_URL,
+                    },
+                    timeout=15
+                )
+            else:
+                import requests
+                video_response = requests.post(
+                    f"{PLAYER_BASE_URL}/player/index.php?data={fireplayer_id}&do=getVideo",
+                    headers={
+                        **self.headers,
+                        "Referer": f"{PLAYER_BASE_URL}/player/{fireplayer_id}",
+                        "Origin": PLAYER_BASE_URL,
+                    },
+                    timeout=15
+                )
+            
             video_data = video_response.json()
             
             if video_data.get("securedLink"):
