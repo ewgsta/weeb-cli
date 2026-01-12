@@ -159,7 +159,6 @@ def show_anime_details(anime):
         
         while True:
             console.clear()
-            from weeb_cli.ui.header import show_header
             show_header(details.get("title", ""))
             
             if show_desc and desc:
