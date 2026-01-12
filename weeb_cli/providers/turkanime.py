@@ -32,9 +32,9 @@ try:
 except ImportError:
     HAS_APPDIRS = False
 
-BASE_URL = "https://turkanime.co"
+BASE_URL = "https://turkanime.tv"
 _session = None
-_base_url = BASE_URL
+_base_url = None
 _key_cache = None
 _csrf_cache = None
 
@@ -57,28 +57,37 @@ def _init_session():
         import requests
         _session = requests.Session()
     
+    _base_url = BASE_URL
+    
     try:
         res = _session.get(BASE_URL + "/", timeout=30)
         if res.status_code == 200:
-            _base_url = res.url.rstrip('/')
+            final_url = res.url if hasattr(res, 'url') else BASE_URL
+            _base_url = final_url.rstrip('/')
     except Exception:
-        pass
+        _base_url = BASE_URL
     
     return _session
 
 
 def _fetch(path: str, headers: Dict[str, str] = None) -> str:
+    global _base_url
     session = _init_session()
     
     if path is None:
         return ""
     
+    if _base_url is None:
+        _base_url = BASE_URL
+    
     path = path if path.startswith("/") else "/" + path
     url = _base_url + path
     
     default_headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "X-Requested-With": "XMLHttpRequest"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+        "X-Requested-With": "XMLHttpRequest",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "tr-TR,tr;q=0.9,en-US;q=0.8,en;q=0.7",
     }
     if headers:
         default_headers.update(headers)

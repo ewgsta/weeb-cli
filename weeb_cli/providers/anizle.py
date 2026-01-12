@@ -70,6 +70,16 @@ def _http_post(url: str, headers: Dict = None, data: Dict = None, timeout: int =
         return None
 
 
+def _strip_html(text: str) -> str:
+    if not text:
+        return ""
+    text = re.sub(r'<[^>]+>', '', text)
+    text = re.sub(r'&[a-zA-Z]+;', ' ', text)
+    text = re.sub(r'&#\d+;', ' ', text)
+    text = re.sub(r'\s+', ' ', text)
+    return text.strip()
+
+
 def _load_database() -> List[Dict[str, Any]]:
     global _anime_database, _database_loaded
     
@@ -202,10 +212,12 @@ class AnizleProvider(BaseProvider):
         year_str = anime_data.get("info_year", "")
         year = int(year_str) if year_str and str(year_str).isdigit() else None
         
+        description = _strip_html(anime_data.get("info_summary", ""))
+        
         return AnimeDetails(
             id=anime_id,
             title=anime_data.get("info_title", ""),
-            description=anime_data.get("info_summary"),
+            description=description,
             cover=self._get_poster_url(anime_data.get("info_poster", "")),
             genres=categories,
             year=year,
