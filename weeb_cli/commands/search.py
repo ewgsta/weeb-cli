@@ -255,7 +255,7 @@ def handle_watch_flow(slug, details):
                 selected_stream = streams_list[0]
             else:
                 selected_stream = questionary.select(
-                    i18n.get("details.select_source", "Kaynak seç:"),
+                    i18n.get("details.select_source"),
                     choices=stream_choices,
                     pointer=">",
                     use_shortcuts=False
