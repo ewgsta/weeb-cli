@@ -18,11 +18,9 @@ class QueueManager:
         self.queue = []
         self.active_downloads = 0
         self.lock = threading.Lock()
+        self.running = False
+        self.worker_thread = None
         self._load_queue()
-        
-        if config.get("background_download", True):
-            self.worker_thread = threading.Thread(target=self._manage_queue, daemon=True)
-            self.worker_thread.start()
 
     def _load_queue(self):
         if self.queue_file.exists():
@@ -37,17 +35,35 @@ class QueueManager:
             with open(self.queue_file, 'w', encoding='utf-8') as f:
                 json.dump(self.queue, f, indent=2, ensure_ascii=False)
 
+    def start_queue(self):
+        if self.running:
+            return
+        self.running = True
+        if self.worker_thread is None or not self.worker_thread.is_alive():
+            self.worker_thread = threading.Thread(target=self._manage_queue, daemon=True)
+            self.worker_thread.start()
+
+    def stop_queue(self):
+        self.running = False
+
+    def is_running(self):
+        return self.running and self.worker_thread is not None and self.worker_thread.is_alive()
+
     def has_incomplete_downloads(self):
         return any(item["status"] in ["pending", "processing"] for item in self.queue)
 
     def get_incomplete_count(self):
         return len([item for item in self.queue if item["status"] in ["pending", "processing"]])
 
+    def get_pending_count(self):
+        return len([item for item in self.queue if item["status"] == "pending"])
+
     def resume_incomplete(self):
         for item in self.queue:
             if item["status"] == "processing":
                 item["status"] = "pending"
         self._save_queue()
+        self.start_queue()
 
     def cancel_incomplete(self):
         self.queue = [item for item in self.queue if item["status"] not in ["pending", "processing"]]
@@ -88,11 +104,7 @@ class QueueManager:
         return re.sub(r'[<>:"/\\|?*]', '', name).strip()
 
     def _manage_queue(self):
-        while True:
-            if not config.get("background_download", True):
-                time.sleep(2)
-                continue
-                
+        while self.running:
             max_workers = config.get("max_concurrent_downloads", 3)
             
             with self.lock:
@@ -106,6 +118,10 @@ class QueueManager:
                 
                 t = threading.Thread(target=self._run_task, args=(to_start,))
                 t.start()
+            
+            if not pending and active_count == 0:
+                self.running = False
+                break
             
             time.sleep(1)
 

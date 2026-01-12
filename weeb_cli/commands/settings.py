@@ -45,20 +45,18 @@ def open_settings():
         aria2_state = i18n.get("common.enabled") if config.get("aria2_enabled") else i18n.get("common.disabled")
         ytdlp_state = i18n.get("common.enabled") if config.get("ytdlp_enabled") else i18n.get("common.disabled")
         desc_state = i18n.get("common.enabled") if config.get("show_description", True) else i18n.get("common.disabled")
-        bg_dl_state = i18n.get("common.enabled") if config.get("background_download", True) else i18n.get("common.disabled")
         
         opt_lang = i18n.get("settings.language")
         opt_source = f"{i18n.get('settings.source')} [{display_source}]"
         opt_download = i18n.get("settings.download_settings")
         opt_desc = f"{i18n.get('settings.show_description')} [{desc_state}]"
-        opt_bg_dl = f"{i18n.get('settings.background_download')} [{bg_dl_state}]"
         opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
         opt_ytdlp = f"{i18n.get('settings.ytdlp')} [{ytdlp_state}]"
         
         opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
         opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
         
-        choices = [opt_lang, opt_source, opt_download, opt_desc, opt_bg_dl, opt_aria2]
+        choices = [opt_lang, opt_source, opt_download, opt_desc, opt_aria2]
         if config.get("aria2_enabled"):
             choices.append(opt_aria2_conf)
             
@@ -89,8 +87,6 @@ def open_settings():
             download_settings_menu()
         elif answer == opt_desc:
             toggle_description()
-        elif answer == opt_bg_dl:
-            toggle_background_download()
         elif answer == opt_aria2:
             toggle_config("aria2_enabled", "Aria2")
         elif answer == opt_aria2_conf:
@@ -107,13 +103,6 @@ def toggle_description():
     config.set("show_description", not current)
     msg_key = "settings.toggle_on" if not current else "settings.toggle_off"
     console.print(f"[green]{i18n.t(msg_key, tool=i18n.get('settings.show_description'))}[/green]")
-    time.sleep(0.5)
-
-def toggle_background_download():
-    current = config.get("background_download", True)
-    config.set("background_download", not current)
-    msg_key = "settings.toggle_on" if not current else "settings.toggle_off"
-    console.print(f"[green]{i18n.t(msg_key, tool=i18n.get('settings.background_download'))}[/green]")
     time.sleep(0.5)
 
 def change_language():

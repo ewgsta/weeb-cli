@@ -31,7 +31,6 @@
         "aria2": "Aria2 Downloader",
         "ytdlp": "yt-dlp Support",
         "show_description": "Show Description",
-        "background_download": "Background Download",
         "aria2_config": "Aria2 Settings",
         "ytdlp_config": "yt-dlp Settings",
         "max_conn": "Max Connections",
@@ -152,6 +151,18 @@
         "resumed": "Downloads resuming...",
         "already_downloading": "This anime is already downloading.",
         "already_in_queue": "Selected episodes are already in queue.",
-        "queued": "{count} episode(s) added to queue."
+        "queued": "{count} episode(s) added to queue.",
+        "start_now": "Download Now",
+        "add_to_queue": "Add to Queue",
+        "action_prompt": "Select Action",
+        "view_queue": "View Queue",
+        "start_queue": "Start Queue",
+        "stop_queue": "Stop Queue",
+        "clear_completed": "Clear Completed",
+        "queue_started": "Queue started.",
+        "queue_stopped": "Queue stopped.",
+        "queue_running": "Running",
+        "pending_count": "{count} download(s) pending",
+        "cleared": "Cleared."
     }
 }

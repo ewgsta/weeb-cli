@@ -1,3 +1,4 @@
+import questionary
 from rich.console import Console
 from rich.live import Live
 from rich.table import Table
@@ -9,19 +10,71 @@ import time
 console = Console()
 
 def show_downloads():
-    console.clear()
-    show_header(i18n.get("downloads.title"))
-    
-    queue = queue_manager.queue
-    
-    if not queue:
-        console.print(f"[dim]{i18n.get('downloads.empty')}[/dim]")
+    while True:
+        console.clear()
+        show_header(i18n.get("downloads.title"))
+        
+        pending = queue_manager.get_pending_count()
+        is_running = queue_manager.is_running()
+        
+        if pending > 0:
+            status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
+            console.print(f"[cyan]{i18n.t('downloads.pending_count', count=pending)}[/cyan] - {status}\n")
+        
+        queue = queue_manager.queue
+        
+        if not queue:
+            console.print(f"[dim]{i18n.get('downloads.empty')}[/dim]")
+            try:
+                input(i18n.get("common.continue_key"))
+            except KeyboardInterrupt:
+                pass
+            return
+        
+        opt_view = i18n.get("downloads.view_queue")
+        opt_start = i18n.get("downloads.start_queue")
+        opt_stop = i18n.get("downloads.stop_queue")
+        opt_clear = i18n.get("downloads.clear_completed")
+        
+        choices = [opt_view]
+        if pending > 0:
+            if is_running:
+                choices.append(opt_stop)
+            else:
+                choices.append(opt_start)
+        choices.append(opt_clear)
+        
         try:
-            input(i18n.get("common.continue_key"))
+            action = questionary.select(
+                i18n.get("downloads.action_prompt"),
+                choices=choices,
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if action is None:
+                return
+            
+            if action == opt_view:
+                show_queue_live()
+            elif action == opt_start:
+                queue_manager.start_queue()
+                console.print(f"[green]{i18n.get('downloads.queue_started')}[/green]")
+                time.sleep(0.5)
+            elif action == opt_stop:
+                queue_manager.stop_queue()
+                console.print(f"[yellow]{i18n.get('downloads.queue_stopped')}[/yellow]")
+                time.sleep(0.5)
+            elif action == opt_clear:
+                queue_manager.queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
+                queue_manager._save_queue()
+                console.print(f"[green]{i18n.get('downloads.cleared')}[/green]")
+                time.sleep(0.5)
+                
         except KeyboardInterrupt:
-            pass
-        return
-    
+            return
+
+def show_queue_live():
     def generate_table():
         table = Table(show_header=True, header_style="bold cyan")
         table.add_column(i18n.get("watchlist.anime_title"), width=30)

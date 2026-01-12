@@ -31,7 +31,6 @@
         "aria2": "Aria2 İndirici",
         "ytdlp": "yt-dlp Desteği",
         "show_description": "Açıklama Göster",
-        "background_download": "Sessiz İndirme",
         "aria2_config": "Aria2 Ayarları",
         "ytdlp_config": "yt-dlp Ayarları",
         "max_conn": "Maksimum Bağlantı",
@@ -152,6 +151,18 @@
         "resumed": "İndirmeler devam ediyor...",
         "already_downloading": "Bu anime zaten indiriliyor.",
         "already_in_queue": "Seçilen bölümler zaten sırada.",
-        "queued": "{count} bölüm sıraya eklendi."
+        "queued": "{count} bölüm sıraya eklendi.",
+        "start_now": "Hemen İndir",
+        "add_to_queue": "Kuyruğa Ekle",
+        "action_prompt": "İşlem Seçin",
+        "view_queue": "Kuyruğu Görüntüle",
+        "start_queue": "Kuyruğu Başlat",
+        "stop_queue": "Kuyruğu Durdur",
+        "clear_completed": "Tamamlananları Temizle",
+        "queue_started": "Kuyruk başlatıldı.",
+        "queue_stopped": "Kuyruk durduruldu.",
+        "queue_running": "Çalışıyor",
+        "pending_count": "{count} indirme bekliyor",
+        "cleared": "Temizlendi."
     }
 }

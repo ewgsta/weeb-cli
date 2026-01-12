@@ -397,20 +397,32 @@ def handle_download_flow(slug, details):
         if not selected_eps:
              return
         
-        if queue_manager.is_downloading(slug):
-            console.print(f"[yellow]{i18n.get('downloads.already_downloading')}[/yellow]")
-            time.sleep(1.5)
-            return
-             
         anime_title = details.get("title") or "Unknown Anime"
+        
+        opt_now = i18n.get("downloads.start_now")
+        opt_queue = i18n.get("downloads.add_to_queue")
+        
+        action = questionary.select(
+            i18n.get("downloads.action_prompt"),
+            choices=[opt_now, opt_queue],
+            pointer=">",
+            use_shortcuts=False
+        ).ask()
+        
+        if action is None:
+            return
+        
         added = queue_manager.add_to_queue(anime_title, selected_eps, slug)
         
         if added > 0:
             console.print(f"[green]{i18n.t('downloads.queued', count=added)}[/green]")
+            
+            if action == opt_now:
+                queue_manager.start_queue()
         else:
             console.print(f"[yellow]{i18n.get('downloads.already_in_queue')}[/yellow]")
         
-        time.sleep(1.5)
+        time.sleep(1)
         
     except KeyboardInterrupt:
         return
