@@ -14,7 +14,8 @@ DEFAULT_CONFIG = {
     "max_concurrent_downloads": 3,
     "download_dir": os.path.join(os.getcwd(), "weeb-downloads"),
     "ytdlp_format": "bestvideo+bestaudio/best",
-    "scraping_source": "animecix"
+    "scraping_source": "animecix",
+    "show_description": True
 }
 
 class Config:

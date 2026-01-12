@@ -8,6 +8,7 @@ from weeb_cli.services.watch import get_streams
 from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.downloader import queue_manager
+from weeb_cli.services.scraper import scraper
 import time
 
 console = Console()
@@ -33,6 +34,10 @@ def search_anime():
         console.clear()
         show_header(i18n.get("menu.options.search"), show_source=True)
         
+        history = progress_tracker.get_search_history()
+        if history:
+            console.print(f"[dim]{i18n.get('search.recent')}: {', '.join(history[:5])}[/dim]\n", justify="left")
+        
         try:
             query = questionary.text(
                 i18n.get("search.prompt") + ":",
@@ -49,6 +54,8 @@ def search_anime():
             
             if not query.strip():
                 continue
+
+            progress_tracker.add_search_history(query.strip())
 
             with console.status(i18n.get("search.searching"), spinner="dots"):
                 data = search(query)
@@ -262,7 +269,10 @@ def handle_watch_flow(slug, details):
                     streams_list = sources
             
             if not streams_list:
-                console.print(f"[red]{i18n.get('details.stream_not_found')}[/red]")
+                error_msg = i18n.get('details.stream_not_found')
+                if scraper.last_error:
+                    error_msg += f" [{scraper.last_error}]"
+                console.print(f"[red]{error_msg}[/red]")
                 time.sleep(1.5)
                 continue
             
@@ -309,7 +319,13 @@ def handle_watch_flow(slug, details):
                     ans = questionary.confirm(i18n.get("details.mark_watched")).ask()
                     if ans:
                         n = int(ep_num)
-                        progress_tracker.mark_watched(slug, n)
+                        total_eps = details.get("total_episodes") or len(episodes)
+                        progress_tracker.mark_watched(
+                            slug, 
+                            n, 
+                            title=details.get("title"),
+                            total_episodes=total_eps
+                        )
                         
                         completed_ids.add(n)
                         if n >= next_ep_num:

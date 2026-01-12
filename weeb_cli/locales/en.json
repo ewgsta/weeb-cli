@@ -83,7 +83,8 @@
         "no_results": "No results found.",
         "results": "Search Results",
         "cancel": "Cancel",
-        "error": "Search failed."
+        "error": "Search failed.",
+        "recent": "Recent searches"
     },
     "details": {
         "error_slug": "Error: Invalid anime ID.",
@@ -115,5 +116,26 @@
     "player": {
         "installing_mpv": "MPV not found. Installing...",
         "install_failed": "Failed to install MPV. Please install manually."
+    },
+    "watchlist": {
+        "total_anime": "Total Anime",
+        "total_episodes": "Total Episodes",
+        "total_hours": "Total Time",
+        "last_watched": "Last Watched",
+        "completed": "Completed",
+        "in_progress": "In Progress",
+        "select_category": "Select Category",
+        "select_anime": "Select Anime",
+        "no_completed": "No completed anime.",
+        "no_in_progress": "No anime in progress.",
+        "anime_title": "Anime",
+        "episodes_watched": "Watched",
+        "next": "Next"
+    },
+    "errors": {
+        "provider_error": "Provider error: {error}",
+        "timeout": "Connection timeout",
+        "cloudflare": "Cloudflare protection active",
+        "no_streams": "No streams found"
     }
 }

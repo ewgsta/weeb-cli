@@ -1,7 +1,7 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from weeb_cli.config import config
 from weeb_cli.providers import get_provider, get_default_provider, list_providers
-from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink
+from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink, ProviderError
 
 
 class Scraper:
@@ -9,6 +9,7 @@ class Scraper:
     def __init__(self):
         self._provider = None
         self._provider_name = None
+        self.last_error = None
     
     @property
     def provider(self):
@@ -28,24 +29,56 @@ class Scraper:
         return self._provider
     
     def search(self, query: str) -> List[AnimeResult]:
+        self.last_error = None
         if not self.provider:
             return []
-        return self.provider.search(query)
+        try:
+            return self.provider.search(query)
+        except ProviderError as e:
+            self.last_error = e.code
+            return []
+        except Exception as e:
+            self.last_error = str(e)
+            return []
     
     def get_details(self, anime_id: str) -> Optional[AnimeDetails]:
+        self.last_error = None
         if not self.provider:
             return None
-        return self.provider.get_details(anime_id)
+        try:
+            return self.provider.get_details(anime_id)
+        except ProviderError as e:
+            self.last_error = e.code
+            return None
+        except Exception as e:
+            self.last_error = str(e)
+            return None
     
     def get_episodes(self, anime_id: str) -> List[Episode]:
+        self.last_error = None
         if not self.provider:
             return []
-        return self.provider.get_episodes(anime_id)
+        try:
+            return self.provider.get_episodes(anime_id)
+        except ProviderError as e:
+            self.last_error = e.code
+            return []
+        except Exception as e:
+            self.last_error = str(e)
+            return []
     
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
+        self.last_error = None
         if not self.provider:
             return []
-        return self.provider.get_streams(anime_id, episode_id)
+        try:
+            return self.provider.get_streams(anime_id, episode_id)
+        except ProviderError as e:
+            self.last_error = e.code
+            return []
+        except Exception as e:
+            self.last_error = str(e)
+            return []
     
     def get_available_sources(self) -> List[dict]:
         return list_providers()

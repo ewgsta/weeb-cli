@@ -83,7 +83,8 @@
         "no_results": "Sonuç bulunamadı.",
         "results": "Arama Sonuçları",
         "cancel": "İptal",
-        "error": "Arama başarısız."
+        "error": "Arama başarısız.",
+        "recent": "Son aramalar"
     },
     "details": {
         "error_slug": "Hata: Geçersiz anime ID.",
@@ -115,5 +116,26 @@
     "player": {
         "installing_mpv": "MPV bulunamadı. Kuruluyor...",
         "install_failed": "MPV kurulamadı. Lütfen manuel kurun."
+    },
+    "watchlist": {
+        "total_anime": "Toplam Anime",
+        "total_episodes": "Toplam Bölüm",
+        "total_hours": "Toplam Süre",
+        "last_watched": "Son İzlenen",
+        "completed": "Tamamlananlar",
+        "in_progress": "Devam Edenler",
+        "select_category": "Kategori Seçin",
+        "select_anime": "Anime Seçin",
+        "no_completed": "Tamamlanan anime yok.",
+        "no_in_progress": "Devam eden anime yok.",
+        "anime_title": "Anime",
+        "episodes_watched": "İzlenen",
+        "next": "Sonraki"
+    },
+    "errors": {
+        "provider_error": "Kaynak hatası: {error}",
+        "timeout": "Bağlantı zaman aşımı",
+        "cloudflare": "Cloudflare koruması aktif",
+        "no_streams": "Stream bulunamadı"
     }
 }
