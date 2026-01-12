@@ -240,7 +240,7 @@ class AnizleProvider(BaseProvider):
         matches1 = re.findall(pattern1, html, re.IGNORECASE)
         
         for ep_slug, order, title in matches1:
-            ep_slug = ep_slug.strip('/')
+            ep_slug = ep_slug.strip('/').replace('https://anizm.pro/', '').replace('https://anizle.org/', '')
             try:
                 order_num = int(order)
                 if order_num not in seen:
@@ -257,7 +257,7 @@ class AnizleProvider(BaseProvider):
         matches2 = re.findall(pattern2, html, re.IGNORECASE)
         
         for ep_slug, ep_num, title in matches2:
-            ep_slug = ep_slug.strip('/')
+            ep_slug = ep_slug.strip('/').replace('https://anizm.pro/', '').replace('https://anizle.org/', '')
             try:
                 order_num = int(ep_num)
                 if order_num not in seen:
