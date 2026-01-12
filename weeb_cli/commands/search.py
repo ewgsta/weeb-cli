@@ -396,12 +396,19 @@ def handle_download_flow(slug, details):
 
         if not selected_eps:
              return
-             
-        console.print(f"[green]{i18n.get('details.download_options.started')}[/green]")
-        console.print(f"[dim]{i18n.t('details.queueing', count=len(selected_eps))}[/dim]")
         
+        if queue_manager.is_downloading(slug):
+            console.print(f"[yellow]{i18n.get('downloads.already_downloading')}[/yellow]")
+            time.sleep(1.5)
+            return
+             
         anime_title = details.get("title") or "Unknown Anime"
-        queue_manager.add_to_queue(anime_title, selected_eps, slug)
+        added = queue_manager.add_to_queue(anime_title, selected_eps, slug)
+        
+        if added > 0:
+            console.print(f"[green]{i18n.t('downloads.queued', count=added)}[/green]")
+        else:
+            console.print(f"[yellow]{i18n.get('downloads.already_in_queue')}[/yellow]")
         
         time.sleep(1.5)
         

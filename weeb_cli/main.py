@@ -50,11 +50,31 @@ def start():
         run_setup()
 
     update_prompt()
+    check_incomplete_downloads()
 
     check_network()
     check_ffmpeg_silent()
 
     show_main_menu()
+
+def check_incomplete_downloads():
+    from weeb_cli.services.downloader import queue_manager
+    
+    if queue_manager.has_incomplete_downloads():
+        count = queue_manager.get_incomplete_count()
+        try:
+            ans = questionary.confirm(
+                i18n.t("downloads.resume_prompt", count=count),
+                default=True
+            ).ask()
+            
+            if ans:
+                queue_manager.resume_incomplete()
+                console.print(f"[green]{i18n.get('downloads.resumed')}[/green]")
+            else:
+                queue_manager.cancel_incomplete()
+        except KeyboardInterrupt:
+            queue_manager.cancel_incomplete()
 
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):

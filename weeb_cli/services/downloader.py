@@ -20,47 +20,79 @@ class QueueManager:
         self.lock = threading.Lock()
         self._load_queue()
         
-        self.worker_thread = threading.Thread(target=self._manage_queue, daemon=True)
-        self.worker_thread.start()
+        if config.get("background_download", True):
+            self.worker_thread = threading.Thread(target=self._manage_queue, daemon=True)
+            self.worker_thread.start()
 
     def _load_queue(self):
         if self.queue_file.exists():
             try:
                 with open(self.queue_file, 'r', encoding='utf-8') as f:
                     self.queue = json.load(f)
-                    for item in self.queue:
-                        if item["status"] == "processing":
-                            item["status"] = "pending"
             except:
                 self.queue = []
 
     def _save_queue(self):
         with self.lock:
-             with open(self.queue_file, 'w', encoding='utf-8') as f:
+            with open(self.queue_file, 'w', encoding='utf-8') as f:
                 json.dump(self.queue, f, indent=2, ensure_ascii=False)
 
+    def has_incomplete_downloads(self):
+        return any(item["status"] in ["pending", "processing"] for item in self.queue)
+
+    def get_incomplete_count(self):
+        return len([item for item in self.queue if item["status"] in ["pending", "processing"]])
+
+    def resume_incomplete(self):
+        for item in self.queue:
+            if item["status"] == "processing":
+                item["status"] = "pending"
+        self._save_queue()
+
+    def cancel_incomplete(self):
+        self.queue = [item for item in self.queue if item["status"] not in ["pending", "processing"]]
+        self._save_queue()
+
+    def is_downloading(self, slug, episode_id=None):
+        for item in self.queue:
+            if item["slug"] == slug and item["status"] in ["pending", "processing"]:
+                if episode_id is None or item["episode_id"] == episode_id:
+                    return True
+        return False
+
     def add_to_queue(self, anime_title, episodes, slug):
+        added = 0
         with self.lock:
             for ep in episodes:
+                ep_id = ep.get("id")
+                if self.is_downloading(slug, ep_id):
+                    continue
+                    
                 item = {
                     "anime_title": anime_title,
                     "episode_number": ep.get("number") or ep.get("ep_num"),
-                    "episode_id": ep.get("id"),
+                    "episode_id": ep_id,
                     "slug": slug,
                     "status": "pending",
                     "added_at": time.time(),
                     "progress": 0,
                     "eta": "?"
                 }
-                if not any(x['episode_id'] == item['episode_id'] for x in self.queue):
+                if not any(x['episode_id'] == item['episode_id'] and x['status'] in ['pending', 'processing'] for x in self.queue):
                     self.queue.append(item)
+                    added += 1
         self._save_queue()
+        return added
 
     def _sanitize_filename(self, name):
         return re.sub(r'[<>:"/\\|?*]', '', name).strip()
 
     def _manage_queue(self):
         while True:
+            if not config.get("background_download", True):
+                time.sleep(2)
+                continue
+                
             max_workers = config.get("max_concurrent_downloads", 3)
             
             with self.lock:
@@ -86,7 +118,7 @@ class QueueManager:
         except Exception as e:
             item["status"] = "failed"
             item["error"] = str(e)
-            item["eta"] = "Error"
+            item["eta"] = ""
         self._save_queue()
 
     def _download_item(self, item):
@@ -163,6 +195,7 @@ class QueueManager:
             "-x", str(conn),
             "-s", str(conn),
             "-j", "1",
+            "-c",
             "--summary-interval=2",
             "--console-log-level=warn" 
         ]
@@ -174,16 +207,17 @@ class QueueManager:
             if not line and process.poll() is not None:
                 break
             if line:
-                 if "ETA:" in line:
-                     try:
-                         parts = line.split("ETA:")
-                         eta_part = parts[1].split("]")[0]
-                         item["eta"] = eta_part.strip()
-                         
-                         match = re.search(r'\((\d+)%\)', line)
-                         if match:
-                              item["progress"] = int(match.group(1))
-                     except: pass
+                if "ETA:" in line:
+                    try:
+                        parts = line.split("ETA:")
+                        eta_part = parts[1].split("]")[0]
+                        item["eta"] = eta_part.strip()
+                        
+                        match = re.search(r'\((\d+)%\)', line)
+                        if match:
+                            item["progress"] = int(match.group(1))
+                    except:
+                        pass
         
         if process.returncode != 0:
             raise Exception("Aria2 failed")
@@ -211,12 +245,13 @@ class QueueManager:
                         item["progress"] = float(p_str)
                         if "ETA" in line:
                             item["eta"] = line.split("ETA")[-1].strip()
-                    except: pass
+                    except:
+                        pass
         if process.returncode != 0:
-             raise Exception("yt-dlp failed")
+            raise Exception("yt-dlp failed")
 
     def _download_ffmpeg(self, url, path, item):
-        item["eta"] = "N/A"
+        item["eta"] = ""
         ffmpeg = dependency_manager.check_dependency("ffmpeg")
         cmd = [
             ffmpeg,
@@ -250,7 +285,7 @@ class QueueManager:
                             eta_s = remaining / speed
                             item["eta"] = f"{int(eta_s)}s"
             else:
-                 with open(path, 'wb') as f:
+                with open(path, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):
                         f.write(chunk)
 

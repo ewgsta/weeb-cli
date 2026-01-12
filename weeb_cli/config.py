@@ -15,7 +15,8 @@ DEFAULT_CONFIG = {
     "download_dir": os.path.join(os.getcwd(), "weeb-downloads"),
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "animecix",
-    "show_description": True
+    "show_description": True,
+    "background_download": True
 }
 
 class Config:
