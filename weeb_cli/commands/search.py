@@ -12,6 +12,22 @@ import time
 
 console = Console()
 
+PLAYER_PRIORITY = [
+    "ALUCARD", "AMATERASU", "SIBNET", "MP4UPLOAD", "UQLOAD",
+    "MAIL", "DAILYMOTION", "SENDVID", "ODNOKLASSNIKI", "VK",
+    "VIDMOLY", "YOURUPLOAD", "MYVI", "GDRIVE", "PIXELDRAIN", "HDVID", "YADISK"
+]
+
+def _get_player_priority(server_name: str) -> int:
+    server_upper = server_name.upper()
+    for i, p in enumerate(PLAYER_PRIORITY):
+        if p in server_upper:
+            return i
+    return 999
+
+def _sort_streams(streams: list) -> list:
+    return sorted(streams, key=lambda s: _get_player_priority(s.get("server", "")))
+
 def search_anime():
     while True:
         console.clear()
@@ -243,6 +259,8 @@ def handle_watch_flow(slug, details):
                 console.print(f"[red]{i18n.get('details.stream_not_found')}[/red]")
                 time.sleep(1.5)
                 continue
+            
+            streams_list = _sort_streams(streams_list)
             
             stream_choices = []
             for idx, s in enumerate(streams_list):
