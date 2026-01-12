@@ -137,5 +137,15 @@
         "timeout": "Bağlantı zaman aşımı",
         "cloudflare": "Cloudflare koruması aktif",
         "no_streams": "Stream bulunamadı"
+    },
+    "downloads": {
+        "title": "Geçmiş İndirmeler",
+        "empty": "Henüz hiç indirme yapmamışsınız.",
+        "status": "Durum",
+        "progress": "İlerleme",
+        "status_processing": "İndiriliyor",
+        "status_completed": "Tamamlandı",
+        "status_failed": "Başarısız",
+        "status_pending": "Bekliyor"
     }
 }

@@ -137,5 +137,15 @@
         "timeout": "Connection timeout",
         "cloudflare": "Cloudflare protection active",
         "no_streams": "No streams found"
+    },
+    "downloads": {
+        "title": "Download History",
+        "empty": "You haven't downloaded anything yet.",
+        "status": "Status",
+        "progress": "Progress",
+        "status_processing": "Downloading",
+        "status_completed": "Completed",
+        "status_failed": "Failed",
+        "status_pending": "Pending"
     }
 }

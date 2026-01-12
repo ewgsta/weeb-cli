@@ -1,37 +1,40 @@
 from rich.console import Console
 from rich.live import Live
 from rich.table import Table
-from rich.progress import ProgressBar, BarColumn
 from weeb_cli.services.downloader import queue_manager
 from weeb_cli.i18n import i18n
+from weeb_cli.ui.header import show_header
 import time
 
 console = Console()
 
 def show_downloads():
     console.clear()
-    console.print(f"[bold cyan]{i18n.get('details.download')}[/bold cyan] ([dim]Ctrl+C to exit[/dim])\n")
+    show_header(i18n.get("downloads.title"))
+    
+    queue = queue_manager.queue
+    
+    if not queue:
+        console.print(f"[dim]{i18n.get('downloads.empty')}[/dim]")
+        try:
+            input(i18n.get("common.continue_key"))
+        except KeyboardInterrupt:
+            pass
+        return
     
     def generate_table():
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("Anime", width=30)
-        table.add_column("Ep", justify="right", width=5)
-        table.add_column("Status", width=15)
-        table.add_column("Progress", width=20)
-        table.add_column("ETA", width=10)
+        table = Table(show_header=True, header_style="bold cyan")
+        table.add_column(i18n.get("watchlist.anime_title"), width=30)
+        table.add_column(i18n.get("details.episode"), justify="right", width=5)
+        table.add_column(i18n.get("downloads.status"), width=15)
+        table.add_column(i18n.get("downloads.progress"), width=20)
         
-        queue = queue_manager.queue
-        
-        active = [i for i in queue if i["status"] == "processing"]
-        pending = [i for i in queue if i["status"] == "pending"]
-        finished = [i for i in queue if i["status"] in ["completed", "failed"]]
-        finished = finished[-5:] 
+        active = [i for i in queue_manager.queue if i["status"] == "processing"]
+        pending = [i for i in queue_manager.queue if i["status"] == "pending"]
+        finished = [i for i in queue_manager.queue if i["status"] in ["completed", "failed"]]
+        finished = finished[-10:]
         
         display_list = active + pending + finished
-        
-        if not display_list:
-            table.add_row("-", "-", "Empty", "-", "-")
-            return table
 
         for item in display_list:
             status = item["status"]
@@ -49,14 +52,14 @@ def show_downloads():
             bars = int(progress / 5)
             bar_str = "█" * bars + "░" * (20 - bars)
             
+            status_text = i18n.get(f"downloads.status_{status}", status.upper())
             p_text = f"{progress}%" if status == "processing" else ""
             
             table.add_row(
                 f"[{style}]{item['anime_title'][:28]}[/{style}]",
                 f"{item['episode_number']}",
-                f"[{style}]{status.upper()}[/{style}]",
-                f"[{style}]{bar_str} {p_text}[/{style}]",
-                f"{item.get('eta', '-')}"
+                f"[{style}]{status_text}[/{style}]",
+                f"[{style}]{bar_str} {p_text}[/{style}]"
             )
             
         return table
