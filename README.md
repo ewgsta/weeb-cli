@@ -114,6 +114,18 @@ Yapılandırma dosyası `~/.weeb-cli/config.json` konumunda saklanır. Uygulama 
 
 ---
 
+## Yıldız Geçmişi :3
+
+<a href="https://www.star-history.com/#ewgsta/weeb-cli&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
+ </picture>
+</a>
+
+---
+
 ## Lisans
 
 Bu proje Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Lisansı (CC BY-NC-ND 4.0) ile lisanslanmıştır.
