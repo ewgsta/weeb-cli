@@ -139,7 +139,7 @@
         "no_streams": "No streams found"
     },
     "downloads": {
-        "title": "Download History",
+        "title": "Downloads",
         "empty": "You haven't downloaded anything yet.",
         "status": "Status",
         "progress": "Progress",
@@ -163,6 +163,12 @@
         "queue_stopped": "Queue stopped.",
         "queue_running": "Running",
         "pending_count": "{count} download(s) pending",
-        "cleared": "Cleared."
+        "cleared": "Cleared.",
+        "completed_downloads": "Completed Downloads",
+        "active_downloads": "Active Downloads",
+        "manage_queue": "Queue Management",
+        "select_anime": "Select Anime",
+        "notification_title": "Weeb CLI",
+        "notification_complete": "{anime} - Episode {episode} downloaded"
     }
 }

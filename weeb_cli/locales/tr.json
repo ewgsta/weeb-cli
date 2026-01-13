@@ -139,7 +139,7 @@
         "no_streams": "Stream bulunamadı"
     },
     "downloads": {
-        "title": "Geçmiş İndirmeler",
+        "title": "İndirmeler",
         "empty": "Henüz hiç indirme yapmamışsınız.",
         "status": "Durum",
         "progress": "İlerleme",
@@ -163,6 +163,12 @@
         "queue_stopped": "Kuyruk durduruldu.",
         "queue_running": "Çalışıyor",
         "pending_count": "{count} indirme bekliyor",
-        "cleared": "Temizlendi."
+        "cleared": "Temizlendi.",
+        "completed_downloads": "Tamamlanan İndirmeler",
+        "active_downloads": "Aktif İndirmeler",
+        "manage_queue": "Kuyruk Yönetimi",
+        "select_anime": "Anime Seçin",
+        "notification_title": "Weeb CLI",
+        "notification_complete": "{anime} - {episode}. bölüm indirildi"
     }
 }

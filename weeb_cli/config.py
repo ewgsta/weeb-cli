@@ -8,14 +8,15 @@ CONFIG_FILE = CONFIG_DIR / "config.json"
 
 DEFAULT_CONFIG = {
     "language": None,  
-    "aria2_enabled": True,
-    "ytdlp_enabled": True,
+    "aria2_enabled": False,
+    "ytdlp_enabled": False,
     "aria2_max_connections": 16,
     "max_concurrent_downloads": 3,
     "download_dir": os.path.join(os.getcwd(), "weeb-downloads"),
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "animecix",
-    "show_description": True
+    "show_description": True,
+    "debug_mode": False
 }
 
 class Config:

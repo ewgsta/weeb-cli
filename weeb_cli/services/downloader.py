@@ -126,15 +126,30 @@ class QueueManager:
             time.sleep(1)
 
     def _run_task(self, item):
+        from weeb_cli.services.notifier import send_notification
+        from weeb_cli.services.logger import debug, error
+        from weeb_cli.i18n import i18n
+        
+        debug(f"Starting download: {item['anime_title']} - Ep {item['episode_number']}")
+        
         try:
             self._download_item(item)
             item["status"] = "completed"
             item["progress"] = 100
             item["eta"] = "-"
+            
+            debug(f"Download completed: {item['anime_title']} - Ep {item['episode_number']}")
+            
+            title = i18n.get("downloads.notification_title", "Weeb CLI")
+            msg = i18n.t("downloads.notification_complete", anime=item['anime_title'], episode=item['episode_number'])
+            send_notification(title, msg)
+            
         except Exception as e:
             item["status"] = "failed"
             item["error"] = str(e)
             item["eta"] = ""
+            error(f"Download failed: {item['anime_title']} - {str(e)}")
+        
         self._save_queue()
 
     def _download_item(self, item):
