@@ -73,27 +73,45 @@ def show_downloads():
             return
 
 def show_completed_library(library):
+    search_query = ""
+    
     while True:
         console.clear()
         show_header(i18n.get("downloads.completed_downloads"))
         
+        filtered = library
+        if search_query:
+            filtered = [a for a in library if search_query.lower() in a["title"].lower()]
+            console.print(f"[dim]{i18n.get('search.results')}: {len(filtered)}/{len(library)}[/dim]\n")
+        
+        if not filtered:
+            console.print(f"[dim]{i18n.get('search.no_results')}[/dim]")
+            search_query = ""
+            time.sleep(1)
+            continue
+        
         choices = []
-        for anime in library:
+        
+        opt_search = f"[{i18n.get('downloads.search_library')}]"
+        choices.append(questionary.Choice(opt_search, value="search"))
+        
+        for anime in filtered:
             progress = local_library.get_anime_progress(anime["title"])
             watched = len(progress.get("completed", []))
             total = anime["episode_count"]
             
-            if watched >= total:
+            if watched >= total and total > 0:
                 status = "[green]✓[/green]"
             elif watched > 0:
                 status = f"[cyan]{watched}/{total}[/cyan]"
             else:
-                status = f"[dim]0/{total}[/dim]"
+                status = ""
             
-            choices.append(questionary.Choice(
-                f"{anime['title']} [{total} {i18n.get('details.episode')}] {status}",
-                value=anime
-            ))
+            label = f"{anime['title']} [{total} {i18n.get('details.episode')}]"
+            if status:
+                label += f" {status}"
+            
+            choices.append(questionary.Choice(label, value=anime))
         
         try:
             selected = questionary.select(
@@ -105,6 +123,15 @@ def show_completed_library(library):
             
             if selected is None:
                 return
+            
+            if selected == "search":
+                q = questionary.text(
+                    i18n.get("search.prompt") + ":",
+                    qmark=">"
+                ).ask()
+                if q:
+                    search_query = q.strip()
+                continue
             
             show_anime_episodes(selected)
             

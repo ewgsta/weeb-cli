@@ -168,6 +168,7 @@
         "active_downloads": "Aktif İndirmeler",
         "manage_queue": "Kuyruk Yönetimi",
         "select_anime": "Anime Seçin",
+        "search_library": "Ara",
         "notification_title": "Weeb CLI",
         "notification_complete": "{anime} - {episode}. bölüm indirildi"
     }

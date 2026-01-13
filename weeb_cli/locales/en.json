@@ -168,6 +168,7 @@
         "active_downloads": "Active Downloads",
         "manage_queue": "Queue Management",
         "select_anime": "Select Anime",
+        "search_library": "Search",
         "notification_title": "Weeb CLI",
         "notification_complete": "{anime} - Episode {episode} downloaded"
     }
