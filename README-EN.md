@@ -1,140 +1,159 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/ewgsta/weeb-cli/refs/heads/main/weeb_landing/logo/256x256.webp" alt="Weeb CLI Logo" width="200" height="200" />
-  <h1>Weeb CLI</h1>
-  <p>
-    <b>No browser, no ads, no distractions. Just you and a unique anime watching experience.</b>
-  </p>
+<p align="center">
+  <img src="weeb_landing/logo/weeb-logo.png" alt="Weeb CLI Logo" width="120">
+</p>
 
-  <p>
-    <a href="./README.md">Türkçe Oku</a>
-  </p>
+<h1 align="center">Weeb CLI</h1>
 
-  <p>
-    <a href="https://pypi.org/project/weeb-cli/">
-      <img src="https://img.shields.io/pypi/v/weeb-cli?style=flat-square&color=blue" alt="PyPI Version" />
-    </a>
-    <a href="https://aur.archlinux.org/packages/weeb-cli">
-      <img src="https://img.shields.io/aur/version/weeb-cli?style=flat-square&color=magenta" alt="AUR Version" />
-    </a>
-    <img src="https://img.shields.io/github/license/ewgsta/weeb-cli?style=flat-square" alt="License" />
-    <img src="https://img.shields.io/badge/platform-win%20%7C%20linux%20%7C%20macos-lightgrey?style=flat-square" alt="Platform" />
-  </p>
-</div>
+<p align="center">
+  <strong>A powerful, cross-platform command-line tool for anime enthusiasts</strong>
+</p>
 
-Weeb CLI is a powerful, cross-platform command-line tool designed for anime enthusiasts. Stream, download, and track your favorite anime series directly from your terminal with a beautiful and interactive UI.
+<p align="center">
+  <a href="https://github.com/ewgsta/weeb-cli/releases"><img src="https://img.shields.io/github/v/release/ewgsta/weeb-cli?style=flat-square" alt="Release"></a>
+  <a href="https://github.com/ewgsta/weeb-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-blue?style=flat-square" alt="License"></a>
+  <a href="https://github.com/ewgsta/weeb-cli/stargazers"><img src="https://img.shields.io/github/stars/ewgsta/weeb-cli?style=flat-square" alt="Stars"></a>
+</p>
+
+<p align="center">
+  <a href="#installation">Installation</a> •
+  <a href="#features">Features</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#sources">Sources</a> •
+  <a href="README.md">Türkçe</a>
+</p>
 
 ---
 
 ## Features
 
-- **Advanced Search**: Quickly find anime with fuzzy search and detailed metadata. Recent searches are saved.
-- **Seamless Streaming**: Watch episodes instantly using **MPV** with high-quality streaming support (HLS/MP4).
-- **Smart Downloader**: 
-  - Integrated with **Aria2** for high-speed multi-connection downloads.
-  - **yt-dlp** support for complex streams.
-  - Queue system: Add multiple anime/episodes to queue, download concurrently.
-  - Background silent download mode.
-  - Resume incomplete downloads where you left off.
-  - Smart file naming (e.g., `Anime Name - S1E1.mp4`).
-- **Watchlist**: Total anime, episode and watch time statistics. Completed and in-progress anime in separate categories.
-- **Watch History**: Automatically tracks your progress. Resumes where you left off (`●` indicator) and marks completed episodes (`✓`).
-- **Multi-language**: Full support for HiAnime, All Anime (English) and TurkAnime, Anizle, Animecix, Weeb (Local Source) (Turkish) interfaces.
-- **Auto-Dependency**: Automatically detects and installs necessary tools (MPV, FFm
+### Multiple Sources
+- **Turkish**: Animecix, Turkanime, Anizle
+- **English**: HiAnime, AllAnime
+
+### Smart Streaming
+- High-quality HLS/MP4 playback with MPV
+- Resume from where you left off (timestamp-based)
+- Watch history and statistics
+- Completed (✓) and in-progress (●) episode markers
+
+### Powerful Download System
+- **Aria2** for multi-connection fast downloads
+- **yt-dlp** for complex stream support
+- Queue system with concurrent downloads
+- Resume interrupted downloads
+- Smart file naming (`Anime Name - S1E1.mp4`)
+
+### Local Library
+- Auto-scan downloaded anime
+- External drive support (USB, HDD)
+- Offline anime indexing
+- Search across all sources
+
+### Additional Features
+- SQLite database (fast and reliable)
+- System notifications on download completion
+- Search history
+- Debug mode and logging
+- Automatic update checks
+
+---
 
 ## Installation
 
-### PyPI (Universal)
+### Windows
+```powershell
+# Download .exe from Releases page
+# or via pip:
+pip install weeb-cli
+```
+
+### Linux / macOS
 ```bash
 pip install weeb-cli
 ```
 
-### AUR (Arch Linux)
+### Developer Setup
 ```bash
-yay -S weeb-cli
-```
-
-### Homebrew (macOS/Linux)
-```bash
-brew tap ewgsta/tap
-brew install weeb-cli
-```
-
-### Scoop (Windows)
-```bash
-scoop bucket add weeb-cli https://github.com/ewgsta/scoop-bucket
-scoop install weeb-cli
-```
-
-### Chocolatey (Windows)
-```bash
-choco install weeb-cli
+git clone https://github.com/ewgsta/weeb-cli.git
+cd weeb-cli
+pip install -e .
 ```
 
 ---
 
 ## Usage
 
-Simply run the tool from your terminal:
-
 ```bash
-weeb-cli
+weeb
 ```
 
-Or use specific commands:
-
-```bash
-weeb start       # Launch the main interactive menu
-weeb search      # Go directly to search
-```
-
-### Controls
-- **Arrow Keys**: Navigate menus.
-- **Enter**: Select option.
-- **Ctrl+C**: Go back / Exit.
+### Keyboard Controls
+| Key | Action |
+|-----|--------|
+| `↑` `↓` | Navigate menu |
+| `Enter` | Select |
+| `Ctrl+C` | Go back / Exit |
 
 ---
 
-## Roadmap & To-Do
+## Sources
 
-- [x] Core Search & Details
-- [x] Streaming with MPV
-- [x] Local Watch History & Progress Tracking
-- [x] Download Manager (Aria2/yt-dlp integration)
-- [x] Interactive Settings Menu
-- [ ] **Anilist / MAL Integration** (Sync your lists)
-- [ ] **Torrent Support** (Streaming & Downloading via Webtorrent)
-- [ ] **Custom Themes** (Change CLI colors)
-- [ ] **Notification System** (New episode alerts)
-- [ ] **Batch Download** (Download entire seasons with one click)
-- [ ] **Discord RPC** (Show what you're watching)
-
----
-
-## Star History
-
-<a href="https://www.star-history.com/#ewgsta/weeb-cli&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
- </picture>
-</a>
+| Source | Language | Status |
+|--------|----------|--------|
+| Animecix | Turkish | ✅ Active |
+| Turkanime | Turkish | ✅ Active |
+| Anizle | Turkish | ✅ Active |
+| HiAnime | English | ✅ Active |
+| AllAnime | English | ✅ Active |
 
 ---
 
 ## Configuration
 
-Configuration is stored in `~/.weeb-cli/config.json`. You can modify settings directly via the **Settings** menu in the app.
+Config location: `~/.weeb-cli/weeb.db` (SQLite)
 
 | Setting | Description | Default |
 |---------|-------------|---------|
-| `aria2_enabled` | Use Aria2 for faster downloads | `true` |
-| `max_concurrent_downloads` | Number of simultaneous downloads | `3` |
-| `download_dir` | Directory to save downloads | `./weeb-downloads` |
+| `aria2_enabled` | Use Aria2 | `true` |
+| `max_concurrent_downloads` | Concurrent downloads | `3` |
+| `download_dir` | Download folder | `./weeb-downloads` |
+| `debug_mode` | Debug logging | `false` |
+
+---
+
+## Roadmap
+
+### Completed
+- [x] Multiple source support (TR/EN)
+- [x] MPV streaming
+- [x] Watch history and progress tracking
+- [x] Aria2/yt-dlp download integration
+- [x] External drives and local library
+- [x] SQLite database
+- [x] Notification system
+- [x] Debug mode
+
+### Planned
+- [ ] MAL/AniList integration
+- [ ] Anime recommendations
+- [ ] Batch operations
+- [ ] Watch statistics (graphs)
+- [ ] Database backup/restore
+- [ ] Theme support
+- [ ] Keyboard shortcuts
+- [ ] Subtitle downloads
+- [ ] Torrent support (nyaa.si)
+- [ ] Watch party
 
 ---
 
 ## License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND 4.0).
-See the [LICENSE](LICENSE) file for details.
+This project is licensed under [CC BY-NC-ND 4.0](LICENSE).
+
+---
+
+<p align="center">
+  <a href="https://weeb-cli.ewgsta.me">Website</a> •
+  <a href="https://github.com/ewgsta/weeb-cli/issues">Report Issue</a>
+</p>

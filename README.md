@@ -1,134 +1,159 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/ewgsta/weeb-cli/refs/heads/main/weeb_landing/logo/256x256.webp" alt="Weeb CLI Logo" width="200" height="200" />
-  <h1>Weeb CLI</h1>
-  <p>
-    <b>Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi.</b>
-  </p>
-  
-  <p>
-    <a href="./README-EN.md">Read in English</a>
-  </p>
+<p align="center">
+  <img src="weeb_landing/logo/weeb-logo.png" alt="Weeb CLI Logo" width="120">
+</p>
 
-  <p>
-    <a href="https://pypi.org/project/weeb-cli/">
-      <img src="https://img.shields.io/pypi/v/weeb-cli?style=flat-square&color=blue" alt="PyPI Sürümü" />
-    </a>
-    <a href="https://aur.archlinux.org/packages/weeb-cli">
-      <img src="https://img.shields.io/aur/version/weeb-cli?style=flat-square&color=magenta" alt="AUR Sürümü" />
-    </a>
-    <img src="https://img.shields.io/github/license/ewgsta/weeb-cli?style=flat-square" alt="Lisans" />
-    <img src="https://img.shields.io/badge/platform-win%20%7C%20linux%20%7C%20macos-lightgrey?style=flat-square" alt="Platform" />
-  </p>
-</div>
+<h1 align="center">Weeb CLI</h1>
 
-Weeb CLI, anime severler için tasarlanmış güçlü, platformlar arası bir komut satırı aracıdır. Favori anime serilerinizi doğrudan terminalinizden arayın, izleyin ve indirin.
+<p align="center">
+  <strong>Anime severler için güçlü, platformlar arası komut satırı aracı</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/ewgsta/weeb-cli/releases"><img src="https://img.shields.io/github/v/release/ewgsta/weeb-cli?style=flat-square" alt="Release"></a>
+  <a href="https://github.com/ewgsta/weeb-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-blue?style=flat-square" alt="License"></a>
+  <a href="https://github.com/ewgsta/weeb-cli/stargazers"><img src="https://img.shields.io/github/stars/ewgsta/weeb-cli?style=flat-square" alt="Stars"></a>
+</p>
+
+<p align="center">
+  <a href="#kurulum">Kurulum</a> •
+  <a href="#özellikler">Özellikler</a> •
+  <a href="#kullanım">Kullanım</a> •
+  <a href="#kaynaklar">Kaynaklar</a> •
+  <a href="README-EN.md">English</a>
+</p>
 
 ---
 
 ## Özellikler
 
-- **Gelişmiş Arama**: Hızlı ve detaylı meta verilerle anime arama.
-- **Kesintisiz İzleme**: **MPV** entegrasyonu ile HLS/MP4 yayınlarını yüksek kalitede anında izleyin.
-- **Akıllı İndirici**:
-  - **Aria2** entegrasyonu ile çoklu bağlantılı yüksek hızlı indirmeler.
-  - Karmaşık yayınlar için **yt-dlp** desteği.
-  - Eşzamanlı indirme yönetimi ve kuyruk sistemi.
-  - Akıllı dosya isimlendirme (Örn: `Anime Adı - S1B1.mp4`).
-- **İzleme Geçmişi**: İlerlemenizi otomatik takip eder. Kaldığınız yeri (`●`) ve tamamlanan bölümleri (`✓`) işaretler.
-- **Çoklu Dil**: Tam Türkçe ve İngilizce arayüz desteği.
-- **Çoklu Kaynak**: HiAnime, AllAnime (İngilizce), Animecix, Anizle, Turkanime, Weeb (Yerel Kaynak) (Türkçe)
-- **Otomatik Kurulum**: Gerekli araçları (MPV, FFmpeg, Aria2, yt-dlp) eksikse otomatik tespit eder ve kurar.
+### Çoklu Kaynak Desteği
+- **Türkçe**: Animecix, Turkanime, Anizle
+- **İngilizce**: HiAnime, AllAnime
+
+### Akıllı İzleme
+- MPV entegrasyonu ile yüksek kaliteli HLS/MP4 yayınları
+- Kaldığınız yerden devam etme (dakika bazında)
+- İzleme geçmişi ve istatistikler
+- Tamamlanan (✓) ve devam eden (●) bölüm işaretleri
+
+### Güçlü İndirme Sistemi
+- **Aria2** ile çoklu bağlantılı hızlı indirme
+- **yt-dlp** ile karmaşık yayın desteği
+- Kuyruk sistemi ve eşzamanlı indirme
+- Yarım kalan indirmeleri devam ettirme
+- Akıllı dosya isimlendirme (`Anime Adı - S1B1.mp4`)
+
+### Yerel Kütüphane
+- İndirilen animeleri otomatik tarama
+- Harici disk desteği (USB, HDD)
+- Çevrimdışı anime indexleme
+- Tüm kaynaklarda arama
+
+### Ek Özellikler
+- SQLite veritabanı (hızlı ve güvenilir)
+- İndirme tamamlandığında sistem bildirimi
+- Arama geçmişi
+- Debug modu ve loglama
+- Otomatik güncelleme kontrolü
+
+---
 
 ## Kurulum
 
-### PyPI (Evrensel)
+### Windows
+```powershell
+# Releases sayfasından .exe dosyasını indirin
+# veya pip ile:
+pip install weeb-cli
+```
+
+### Linux / macOS
 ```bash
 pip install weeb-cli
 ```
 
-### AUR (Arch Linux)
+### Geliştirici Kurulumu
 ```bash
-yay -S weeb-cli
+git clone https://github.com/ewgsta/weeb-cli.git
+cd weeb-cli
+pip install -e .
 ```
-
-### Homebrew (macOS/Linux)
-```bash
-brew tap ewgsta/tap
-brew install weeb-cli
-```
-
-### Scoop (Windows)
-```bash
-scoop bucket add weeb-cli https://github.com/ewgsta/scoop-bucket
-scoop install weeb-cli
-```
-
-### Chocolatey (Windows)
-```bash
-choco install weeb-cli
-```
-
 
 ---
 
 ## Kullanım
 
-Aracı terminalden başlatmak için:
-
 ```bash
-weeb-cli
+weeb
 ```
 
-### Kontroller
-- **Ok Tuşları**: Menülerde gezinme.
-- **Enter**: Seçim yapma.
-- **Ctrl+C**: Geri gel / Çıkış.
+### Klavye Kontrolleri
+| Tuş | İşlev |
+|-----|-------|
+| `↑` `↓` | Menüde gezinme |
+| `Enter` | Seçim yapma |
+| `Ctrl+C` | Geri dön / Çıkış |
 
 ---
 
-## Yol Haritası (To-Do)
+## Kaynaklar
 
-- [x] Temel Arama ve Detaylar
-- [x] MPV ile İzleme
-- [x] Yerel İzleme Geçmişi ve İlerleme Takibi
-- [x] İndirme Yöneticisi (Aria2/yt-dlp Entegrasyonu)
-- [x] İnteraktif Ayarlar Menüsü
-- [ ] **Anilist / MAL Entegrasyonu** (Listeleri senkronize etme)
-- [ ] **Torrent Desteği** (Webtorrent ile izleme ve indirme)
-- [ ] **Özel Temalar** (Renk düzenini değiştirme)
-- [ ] **Bildirim Sistemi** (Yeni bölüm uyarıları)
-- [ ] **Toplu İndirme** (Tek tıkla tüm sezonu indirme)
-- [ ] **Discord RPC** (Ne izlediğini gösterme)
+| Kaynak | Dil | Durum |
+|--------|-----|-------|
+| Animecix | Türkçe | ✅ Aktif |
+| Turkanime | Türkçe | ✅ Aktif |
+| Anizle | Türkçe | ✅ Aktif |
+| HiAnime | İngilizce | ✅ Aktif |
+| AllAnime | İngilizce | ✅ Aktif |
 
 ---
 
 ## Ayarlar
 
-Yapılandırma dosyası `~/.weeb-cli/config.json` konumunda saklanır. Uygulama içindeki **Ayarlar** menüsünden de yönetilebilir.
+Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 
 | Ayar | Açıklama | Varsayılan |
 |------|----------|------------|
-| `aria2_enabled` | Hızlı indirme için Aria2 kullanımı | `true` |
-| `max_concurrent_downloads` | Eşzamanlı indirme sayısı | `3` |
+| `aria2_enabled` | Aria2 kullanımı | `true` |
+| `max_concurrent_downloads` | Eşzamanlı indirme | `3` |
 | `download_dir` | İndirme klasörü | `./weeb-downloads` |
+| `debug_mode` | Debug loglama | `false` |
 
 ---
 
-## Yıldız Geçmişi :3
+## Yol Haritası
 
-<a href="https://www.star-history.com/#ewgsta/weeb-cli&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=ewgsta/weeb-cli&type=date&legend=top-left" />
- </picture>
-</a>
+### Tamamlanan
+- [x] Çoklu kaynak desteği (TR/EN)
+- [x] MPV ile izleme
+- [x] İzleme geçmişi ve ilerleme takibi
+- [x] Aria2/yt-dlp indirme entegrasyonu
+- [x] Harici disk ve yerel kütüphane
+- [x] SQLite veritabanı
+- [x] Bildirim sistemi
+- [x] Debug modu
+
+### Planlanan
+- [ ] MAL/AniList entegrasyonu
+- [ ] Anime önerileri
+- [ ] Toplu işlemler
+- [ ] İzleme istatistikleri (grafik)
+- [ ] Veritabanı yedekleme/geri yükleme
+- [ ] Tema desteği
+- [ ] Klavye kısayolları
+- [ ] Altyazı indirme
+- [ ] Torrent desteği (nyaa.si)
+- [ ] Watch party
 
 ---
 
 ## Lisans
 
-Bu proje Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Lisansı (CC BY-NC-ND 4.0) ile lisanslanmıştır.
-Detaylar için [LICENSE](LICENSE) dosyasına bakınız.
+Bu proje [CC BY-NC-ND 4.0](LICENSE) lisansı ile lisanslanmıştır.
 
 ---
+
+<p align="center">
+  <a href="https://weeb-cli.ewgsta.me">Website</a> •
+  <a href="https://github.com/ewgsta/weeb-cli/issues">Sorun Bildir</a>
+</p>

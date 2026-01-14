@@ -380,7 +380,47 @@
 
                         <div
 
-                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal">
+                            class="lg:col-span-3 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal relative overflow-hidden">
+
+                            <div class="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5"></div>
+
+                            <div class="relative z-10">
+
+                                <div class="flex justify-between items-start">
+
+                                    <h3 class="text-xl font-serif font-medium">{{ t('features.sources.title') }}</h3>
+
+                                    <i class="ph ph-globe-hemisphere-west text-2xl text-subtext"></i>
+
+                                </div>
+
+                                <p class="text-subtext text-sm leading-relaxed max-w-2xl mt-4">
+
+                                    {{ t('features.sources.desc') }}
+
+                                </p>
+
+                                <div class="flex flex-wrap gap-2 mt-6">
+
+                                    <span class="text-[10px] font-mono border border-cyan-500/30 text-cyan-400/80 px-2 py-1 rounded">HiAnime</span>
+
+                                    <span class="text-[10px] font-mono border border-purple-500/30 text-purple-400/80 px-2 py-1 rounded">AllAnime</span>
+
+                                    <span class="text-[10px] font-mono border border-orange-500/30 text-orange-400/80 px-2 py-1 rounded">Animecix</span>
+
+                                    <span class="text-[10px] font-mono border border-green-500/30 text-green-400/80 px-2 py-1 rounded">Weeb API</span>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div
+
+                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-100">
 
                             <div class="flex justify-between items-start">
 
@@ -400,7 +440,7 @@
 
 
 
-                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-100">
+                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-200">
 
                             <div class="flex justify-between items-start">
 
@@ -420,7 +460,7 @@
 
 
 
-                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-200">
+                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-300">
 
                             <div class="flex justify-between items-start">
 
@@ -442,7 +482,7 @@
 
                         <div
 
-                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-300">
+                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-400">
 
                             <div class="flex justify-between items-start">
 
@@ -464,7 +504,7 @@
 
                         <div
 
-                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-400">
+                            class="lg:col-span-2 card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-500">
 
                             <div class="flex justify-between items-start">
 
@@ -484,7 +524,7 @@
 
 
 
-                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-500">
+                        <div class="card p-8 rounded-sm flex flex-col justify-between min-h-[240px] reveal delay-600">
 
                             <div class="flex justify-between items-start">
 
@@ -1020,6 +1060,14 @@
 
                     title: "İşte, Weeb CLI",
 
+                    sources: {
+
+                        title: "Çoklu Kaynak",
+
+                        desc: "HiAnime, AllAnime, Animecix ve Weeb API. Türkçe ve İngilizce altyazılı içerikler tek çatı altında. Kaynak çalışmıyorsa anında geçiş yapın."
+
+                    },
+
                     player: {
 
                         title: "Oynatıcı Özgürlüğü",
@@ -1100,7 +1148,7 @@
 
                     github_review: "GitHub'da İncele",
 
-                    version: "v0.0.1 - Geliştirme Aşaması",
+                    version: "v1.1.2",
 
                     opensource: "Projemiz açık kaynaklıdır. Gelişimine katkıda bulunmak için yıldız verebilirsiniz."
 
@@ -1129,6 +1177,14 @@
                 features: {
 
                     title: "Meet Weeb CLI",
+
+                    sources: {
+
+                        title: "Multiple Sources",
+
+                        desc: "HiAnime, AllAnime, Animecix and Weeb API. Turkish and English subtitled content under one roof. Switch instantly if a source is down."
+
+                    },
 
                     player: {
 
@@ -1210,7 +1266,7 @@
 
                     github_review: "View on GitHub",
 
-                    version: "v0.0.1 - Development Stage",
+                    version: "v1.1.2",
 
                     opensource: "Our project is open source. You can star it to contribute to its development."
 
