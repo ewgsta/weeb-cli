@@ -305,9 +305,9 @@ class Database:
                 (f'%{query}%',)
             ).fetchall()
             return [dict(row) for row in rows]
-
-db = Database()
-
+    
     def remove_indexed_anime(self, folder_path):
         with self._conn() as conn:
             conn.execute('DELETE FROM anime_index WHERE folder_path = ?', (folder_path,))
+
+db = Database()

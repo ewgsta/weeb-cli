@@ -159,8 +159,7 @@ def search_all_sources():
         try:
             selected_label = questionary.autocomplete(
                 i18n.get("downloads.search_anime"),
-                choices=all_choices,
-                meta_information=get_suggestions,
+                choices=get_suggestions,
                 match_middle=True,
             ).ask()
             
@@ -230,8 +229,7 @@ def show_offline_library(source):
         try:
             selected_label = questionary.autocomplete(
                 i18n.get("downloads.search_anime"),
-                choices=all_choices,
-                meta_information=get_suggestions,
+                choices=get_suggestions,
                 match_middle=True,
             ).ask()
             
@@ -285,8 +283,7 @@ def show_completed_library(library, source_name=None):
         try:
             selected_label = questionary.autocomplete(
                 i18n.get("downloads.search_anime"),
-                choices=all_choices,
-                meta_information=get_suggestions,
+                choices=get_suggestions,
                 match_middle=True,
                 style=questionary.Style([
                     ('answer', 'fg:cyan bold'),
