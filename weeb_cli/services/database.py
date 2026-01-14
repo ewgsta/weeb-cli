@@ -280,9 +280,7 @@ class Database:
     def update_drive_name(self, path, name):
         with self._conn() as conn:
             conn.execute('UPDATE external_drives SET name = ? WHERE path = ?', (name, path))
-
-db = Database()
-
+    
     def index_anime(self, title, source_path, source_name, folder_path, episode_count):
         with self._conn() as conn:
             conn.execute('DELETE FROM anime_index WHERE folder_path = ?', (folder_path,))
@@ -307,3 +305,5 @@ db = Database()
                 (f'%{query}%',)
             ).fetchall()
             return [dict(row) for row in rows]
+
+db = Database()
