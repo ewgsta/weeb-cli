@@ -98,7 +98,7 @@ pip install -e .
 ## Kullanım
 
 ```bash
-weeb
+weeb-cli
 ```
 
 ### Klavye Kontrolleri
