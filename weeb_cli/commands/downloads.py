@@ -14,13 +14,12 @@ import time
 console = Console()
 
 AUTOCOMPLETE_STYLE = questionary.Style([
-    ('qmark', 'fg:white'),
+    ('qmark', 'fg:cyan'),
     ('question', 'fg:white bold'),
-    ('answer', 'fg:white bold'),
+    ('answer', 'fg:cyan bold'),
     ('pointer', 'fg:cyan bold'),
-    ('highlighted', 'fg:black bg:white'),
+    ('highlighted', 'fg:white bg:ansiblack bold'),
     ('selected', 'fg:white'),
-    ('text', 'fg:white'),
 ])
 
 def show_downloads():

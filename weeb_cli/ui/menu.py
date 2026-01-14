@@ -15,8 +15,8 @@ def show_main_menu():
     show_header("Weeb API", show_version=True, show_source=True)
     
     opt_search = i18n.get("menu.options.search")
-    opt_watchlist = i18n.get("menu.options.watchlist")
     opt_downloads = i18n.get("menu.options.downloads")
+    opt_watchlist = i18n.get("menu.options.watchlist")
     opt_settings = i18n.get("menu.options.settings")
     opt_exit = i18n.get("menu.options.exit")
     
@@ -25,8 +25,8 @@ def show_main_menu():
             i18n.get("menu.prompt"),
             choices=[
                 opt_search,
-                opt_watchlist,
                 opt_downloads,
+                opt_watchlist,
                 opt_settings,
                 opt_exit
             ],

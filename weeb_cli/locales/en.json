@@ -180,7 +180,7 @@
         "manage_queue": "Queue Management",
         "select_anime": "Select Anime",
         "search_library": "Search",
-        "search_anime": "Search or select anime",
+        "search_anime": "Enter anime name",
         "search_all": "Search All Sources",
         "offline": "Offline",
         "reindex": "Reindex",
