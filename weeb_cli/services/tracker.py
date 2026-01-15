@@ -10,7 +10,7 @@ from weeb_cli.services import logger
 ANILIST_CLIENT_ID = "34596"
 ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
 
-CALLBACK_HTML = '''<!DOCTYPE html>
+CALLBACK_HTML_SUCCESS = '''<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -49,30 +49,21 @@ CALLBACK_HTML = '''<!DOCTYPE html>
             font-family: 'Shippori Mincho', serif;
             font-size: 2.5rem;
             font-weight: 500;
-            margin-bottom: 2rem;
+            margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #02a9ff;
+            margin-bottom: 2rem;
+            font-weight: 500;
         }
         .status {
             font-size: 1.1rem;
-            color: #888;
             margin-bottom: 1.5rem;
         }
         .status.success { color: #4ade80; }
         .status.error { color: #f87171; }
-        .spinner {
-            width: 24px; height: 24px;
-            border: 2px solid #333;
-            border-top-color: #e6e6e6;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 1.5rem;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .hint {
-            font-size: 0.75rem;
-            color: #555;
-            margin-top: 2rem;
-        }
         .checkmark {
             width: 48px; height: 48px;
             margin: 0 auto 1.5rem;
@@ -86,74 +77,119 @@ CALLBACK_HTML = '''<!DOCTYPE html>
             animation: draw 0.5s ease forwards;
         }
         @keyframes draw { to { stroke-dashoffset: 0; } }
+        .hint {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 2rem;
+        }
     </style>
 </head>
 <body>
     <div class="noise"></div>
     <div class="container">
         <div class="logo">Weeb CLI</div>
-        <div id="content">
-            <div class="spinner"></div>
-            <div class="status">Yetkilendiriliyor...</div>
-        </div>
-        <div class="hint">Bu pencere otomatik olarak kapanacak</div>
+        <div class="subtitle">AniList</div>
+        <svg class="checkmark" viewBox="0 0 24 24">
+            <path d="M4 12l6 6L20 6"/>
+        </svg>
+        <div class="status success">Başarılı!</div>
+        <div class="hint">Bu pencereyi kapatabilirsiniz</div>
     </div>
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const code = params.get('code');
-        const content = document.getElementById('content');
-        
-        if (code) {
-            fetch('/auth?code=' + encodeURIComponent(code))
-                .then(r => r.json())
-                .then(data => {
-                    if (data.success) {
-                        content.innerHTML = `
-                            <svg class="checkmark" viewBox="0 0 24 24">
-                                <path d="M4 12l6 6L20 6"/>
-                            </svg>
-                            <div class="status success">Başarılı!</div>
-                        `;
-                    } else {
-                        content.innerHTML = '<div class="status error">Hata: ' + (data.error || 'Bilinmeyen hata') + '</div>';
-                    }
-                })
-                .catch(() => {
-                    content.innerHTML = '<div class="status error">Bağlantı hatası</div>';
-                });
-        } else {
-            content.innerHTML = '<div class="status error">Yetkilendirme kodu bulunamadı</div>';
+</body>
+</html>'''
+
+CALLBACK_HTML_ERROR = '''<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weeb CLI - Yetkilendirme</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #050505;
+            color: #e6e6e6;
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
         }
-    </script>
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 3rem;
+            max-width: 400px;
+        }
+        .logo {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #02a9ff;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+        .status {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+        .status.error { color: #f87171; }
+        .hint {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="container">
+        <div class="logo">Weeb CLI</div>
+        <div class="subtitle">AniList</div>
+        <div class="status error">Yetkilendirme başarısız</div>
+        <div class="hint">Bu pencereyi kapatabilirsiniz</div>
+    </div>
 </body>
 </html>'''
 
 class TokenHandler(BaseHTTPRequestHandler):
-    token = None
+    code = None
     
     def log_message(self, format, *args):
         pass
     
     def do_GET(self):
         if self.path.startswith("/callback"):
-            self.send_response(200)
-            self.send_header("Content-type", "text/html; charset=utf-8")
-            self.end_headers()
-            self.wfile.write(CALLBACK_HTML.encode("utf-8"))
-        elif self.path.startswith("/auth"):
             query = parse_qs(urlparse(self.path).query)
             code = query.get("code", [None])[0]
             
             if code:
-                TokenHandler.token = code
-                response = json.dumps({"success": True})
+                TokenHandler.code = code
+                html = CALLBACK_HTML_SUCCESS
             else:
-                response = json.dumps({"success": False, "error": "No code"})
+                html = CALLBACK_HTML_ERROR
             
             self.send_response(200)
-            self.send_header("Content-type", "application/json")
+            self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
-            self.wfile.write(response.encode())
+            self.wfile.write(html.encode("utf-8"))
 
 class AniListTracker:
     def __init__(self):
@@ -187,7 +223,7 @@ class AniListTracker:
         return f"https://anilist.co/api/v2/oauth/authorize?client_id={ANILIST_CLIENT_ID}&redirect_uri={ANILIST_REDIRECT_URI}&response_type=code"
     
     def start_auth_server(self, timeout=120):
-        TokenHandler.token = None
+        TokenHandler.code = None
         server = HTTPServer(("localhost", 8765), TokenHandler)
         server.timeout = 1
         
@@ -197,10 +233,13 @@ class AniListTracker:
         start = time.time()
         while time.time() - start < timeout:
             server.handle_request()
-            if TokenHandler.token:
-                code = TokenHandler.token
+            if TokenHandler.code:
+                code = TokenHandler.code
                 server.server_close()
-                return self._exchange_code(code)
+                token = self._exchange_code(code)
+                if token:
+                    return token
+                return None
         
         server.server_close()
         return None
@@ -224,6 +263,7 @@ class AniListTracker:
                 return data.get("access_token")
             else:
                 logger.error(f"AniList token exchange failed: {resp.status_code}")
+                logger.error(f"Response: {resp.text}")
         except Exception as e:
             logger.error(f"AniList token exchange error: {e}")
         return None
