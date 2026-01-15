@@ -5,9 +5,9 @@ import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from threading import Thread
-from weeb_cli.services.logger import logger
+from weeb_cli.services import logger
 
-ANILIST_CLIENT_ID = "24285"
+ANILIST_CLIENT_ID = "34596"
 ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
 
 class TokenHandler(BaseHTTPRequestHandler):
@@ -201,7 +201,6 @@ class AniListTracker:
     def _queue_update(self, anime_title, episode, total_episodes):
         pending = self.db.get_config("anilist_pending") or []
         if isinstance(pending, str):
-            import json
             pending = json.loads(pending) if pending else []
         pending.append({
             "title": anime_title,
@@ -218,7 +217,6 @@ class AniListTracker:
         
         pending = self.db.get_config("anilist_pending") or []
         if isinstance(pending, str):
-            import json
             pending = json.loads(pending) if pending else []
         if not pending:
             return 0
@@ -243,7 +241,6 @@ class AniListTracker:
     def get_pending_count(self):
         pending = self.db.get_config("anilist_pending") or []
         if isinstance(pending, str):
-            import json
             pending = json.loads(pending) if pending else []
         return len(pending)
 
