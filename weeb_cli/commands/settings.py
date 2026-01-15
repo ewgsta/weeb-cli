@@ -68,6 +68,9 @@ def open_settings():
         opt_anilist = i18n.get("settings.anilist")
         choices.append(opt_anilist)
         
+        opt_mal = i18n.get("settings.mal")
+        choices.append(opt_mal)
+        
         try:
             answer = questionary.select(
                 i18n.get("settings.title"),
@@ -103,6 +106,8 @@ def open_settings():
             ytdlp_settings_menu()
         elif answer == opt_anilist:
             anilist_settings_menu()
+        elif answer == opt_mal:
+            mal_settings_menu()
         elif answer is None:
             return
 
@@ -468,6 +473,91 @@ def anilist_settings_menu():
                             console.print(f"[red]{i18n.get('settings.anilist_login_failed')}[/red]")
                     else:
                         console.print(f"[yellow]{i18n.get('settings.anilist_timeout')}[/yellow]")
+                    time.sleep(1)
+                        
+            except KeyboardInterrupt:
+                return
+
+
+def mal_settings_menu():
+    from weeb_cli.services.tracker import mal_tracker
+    
+    while True:
+        console.clear()
+        show_header("MyAnimeList")
+        
+        if mal_tracker.is_authenticated():
+            username = mal_tracker.get_username()
+            console.print(f"[green]{i18n.t('settings.mal_connected', user=username)}[/green]\n")
+            
+            pending = mal_tracker.get_pending_count()
+            if pending > 0:
+                console.print(f"[yellow]{i18n.t('settings.mal_pending', count=pending)}[/yellow]\n")
+            
+            opt_sync = i18n.get("settings.mal_sync")
+            opt_logout = i18n.get("settings.mal_logout")
+            
+            choices = []
+            if pending > 0:
+                choices.append(opt_sync)
+            choices.append(opt_logout)
+            
+            try:
+                sel = questionary.select(
+                    i18n.get("downloads.action_prompt"),
+                    choices=choices,
+                    pointer=">",
+                    use_shortcuts=False
+                ).ask()
+                
+                if sel is None:
+                    return
+                
+                if sel == opt_sync:
+                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                        synced = mal_tracker.sync_pending()
+                    console.print(f"[green]{i18n.t('settings.mal_synced', count=synced)}[/green]")
+                    time.sleep(1)
+                elif sel == opt_logout:
+                    confirm = questionary.confirm(
+                        i18n.get("settings.confirm_logout"),
+                        default=False
+                    ).ask()
+                    if confirm:
+                        mal_tracker.logout()
+                        console.print(f"[green]{i18n.get('settings.mal_logged_out')}[/green]")
+                        time.sleep(1)
+                        return
+                        
+            except KeyboardInterrupt:
+                return
+        else:
+            console.print(f"[dim]{i18n.get('settings.mal_not_connected')}[/dim]\n")
+            
+            opt_login = i18n.get("settings.mal_login")
+            
+            try:
+                sel = questionary.select(
+                    i18n.get("downloads.action_prompt"),
+                    choices=[opt_login],
+                    pointer=">",
+                    use_shortcuts=False
+                ).ask()
+                
+                if sel is None:
+                    return
+                
+                if sel == opt_login:
+                    console.print(f"\n[cyan]{i18n.get('settings.mal_opening_browser')}[/cyan]")
+                    console.print(f"[dim]{i18n.get('settings.mal_waiting')}[/dim]\n")
+                    
+                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                        user = mal_tracker.start_auth_flow(timeout=120)
+                    
+                    if user:
+                        console.print(f"[green]{i18n.get('settings.mal_login_success')}[/green]")
+                    else:
+                        console.print(f"[red]{i18n.get('settings.mal_login_failed')}[/red]")
                     time.sleep(1)
                         
             except KeyboardInterrupt:

@@ -75,7 +75,20 @@
         "anilist_login_success": "Successfully connected to AniList!",
         "anilist_login_failed": "Connection failed. Token may be invalid.",
         "anilist_logged_out": "Disconnected from AniList.",
-        "confirm_logout": "Are you sure you want to disconnect?"
+        "confirm_logout": "Are you sure you want to disconnect?",
+        "mal": "MyAnimeList",
+        "mal_connected": "Connected: {user}",
+        "mal_not_connected": "Connect your MAL account to sync your watch history.",
+        "mal_login": "Connect to MAL",
+        "mal_logout": "Disconnect",
+        "mal_sync": "Sync Pending Updates",
+        "mal_pending": "{count} updates pending",
+        "mal_synced": "{count} updates synced",
+        "mal_opening_browser": "Opening browser...",
+        "mal_waiting": "Log in via browser, it will be detected automatically...",
+        "mal_login_success": "Successfully connected to MAL!",
+        "mal_login_failed": "Connection failed. Please try again.",
+        "mal_logged_out": "Disconnected from MAL."
     },
     "setup": {
         "welcome": "Welcome to Weeb CLI!",

@@ -75,7 +75,20 @@
         "anilist_login_success": "AniList'e başarıyla bağlandı!",
         "anilist_login_failed": "Bağlantı başarısız. Token geçersiz olabilir.",
         "anilist_logged_out": "AniList bağlantısı kesildi.",
-        "confirm_logout": "Bağlantıyı kesmek istediğinize emin misiniz?"
+        "confirm_logout": "Bağlantıyı kesmek istediğinize emin misiniz?",
+        "mal": "MyAnimeList",
+        "mal_connected": "Bağlı: {user}",
+        "mal_not_connected": "MAL hesabınıza bağlanarak izleme geçmişinizi senkronize edebilirsiniz.",
+        "mal_login": "MAL'a Bağlan",
+        "mal_logout": "Bağlantıyı Kes",
+        "mal_sync": "Bekleyenleri Senkronize Et",
+        "mal_pending": "{count} güncelleme bekliyor",
+        "mal_synced": "{count} güncelleme senkronize edildi",
+        "mal_opening_browser": "Tarayıcı açılıyor...",
+        "mal_waiting": "Tarayıcıda giriş yapın, otomatik olarak algılanacak...",
+        "mal_login_success": "MAL'a başarıyla bağlandı!",
+        "mal_login_failed": "Bağlantı başarısız. Lütfen tekrar deneyin.",
+        "mal_logged_out": "MAL bağlantısı kesildi."
     },
     "setup": {
         "welcome": "Weeb CLI'a Hoş Geldiniz!",

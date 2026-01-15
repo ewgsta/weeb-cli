@@ -349,8 +349,13 @@ def play_local_episode(anime, episode):
                     anime["episode_count"]
                 )
                 
-                from weeb_cli.services.tracker import anilist_tracker
+                from weeb_cli.services.tracker import anilist_tracker, mal_tracker
                 anilist_tracker.update_progress(
+                    anime["title"],
+                    episode["number"],
+                    anime["episode_count"]
+                )
+                mal_tracker.update_progress(
                     anime["title"],
                     episode["number"],
                     anime["episode_count"]
