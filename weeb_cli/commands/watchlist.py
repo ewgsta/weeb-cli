@@ -1,4 +1,5 @@
 import questionary
+from pathlib import Path
 from rich.console import Console
 from rich.table import Table
 from weeb_cli.i18n import i18n
@@ -83,6 +84,8 @@ def show_completed_list():
 
 def show_in_progress_list():
     from weeb_cli.commands.search import show_anime_details
+    from weeb_cli.commands.downloads import show_local_anime_episodes
+    from weeb_cli.services.local_library import local_library
     
     console.clear()
     show_header(i18n.get("watchlist.in_progress"))
@@ -97,6 +100,8 @@ def show_in_progress_list():
             pass
         return
     
+    indexed_anime = {a["title"].lower(): a for a in local_library.get_indexed_anime()}
+    
     choices = []
     for anime in in_progress:
         watched = len(anime.get("completed", []))
@@ -104,9 +109,13 @@ def show_in_progress_list():
         total_str = str(total) if total > 0 else "?"
         title = anime.get("title", anime["slug"])
         next_ep = anime.get("last_watched", 0) + 1
+        
+        is_local = title.lower() in indexed_anime
+        prefix = "[dim]●[/dim] " if is_local else ""
+        
         choices.append(questionary.Choice(
             title=f"{title} [{watched}/{total_str}] - {i18n.get('watchlist.next')}: {next_ep}",
-            value=anime
+            value={"anime": anime, "is_local": is_local, "local_data": indexed_anime.get(title.lower())}
         ))
     
     try:
@@ -118,13 +127,26 @@ def show_in_progress_list():
         ).ask()
         
         if selected:
-            anime_data = {
-                "id": selected["slug"],
-                "slug": selected["slug"],
-                "title": selected.get("title", selected["slug"]),
-                "name": selected.get("title", selected["slug"])
-            }
-            show_anime_details(anime_data)
+            if selected["is_local"] and selected["local_data"]:
+                local_data = selected["local_data"]
+                anime_path = local_data["folder_path"]
+                anime_info = {
+                    "title": local_data["title"],
+                    "path": anime_path,
+                    "episodes": local_library._scan_anime_folder(Path(anime_path)),
+                    "episode_count": local_data["episode_count"],
+                    "source": local_data["source_name"]
+                }
+                show_local_anime_episodes(anime_info)
+            else:
+                anime = selected["anime"]
+                anime_data = {
+                    "id": anime["slug"],
+                    "slug": anime["slug"],
+                    "title": anime.get("title", anime["slug"]),
+                    "name": anime.get("title", anime["slug"])
+                }
+                show_anime_details(anime_data)
             
     except KeyboardInterrupt:
         pass
