@@ -69,6 +69,8 @@
         "anilist_pending": "{count} güncelleme bekliyor",
         "anilist_synced": "{count} güncelleme senkronize edildi",
         "anilist_opening_browser": "Tarayıcı açılıyor...",
+        "anilist_waiting": "Tarayıcıda giriş yapın, otomatik olarak algılanacak...",
+        "anilist_timeout": "Zaman aşımı. Lütfen tekrar deneyin.",
         "anilist_paste_token": "Tarayıcıda giriş yaptıktan sonra URL'deki token'ı buraya yapıştırın:",
         "anilist_login_success": "AniList'e başarıyla bağlandı!",
         "anilist_login_failed": "Bağlantı başarısız. Token geçersiz olabilir.",

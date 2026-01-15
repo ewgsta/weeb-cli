@@ -69,6 +69,8 @@
         "anilist_pending": "{count} updates pending",
         "anilist_synced": "{count} updates synced",
         "anilist_opening_browser": "Opening browser...",
+        "anilist_waiting": "Log in via browser, it will be detected automatically...",
+        "anilist_timeout": "Timeout. Please try again.",
         "anilist_paste_token": "After logging in, paste the token from the URL here:",
         "anilist_login_success": "Successfully connected to AniList!",
         "anilist_login_failed": "Connection failed. Token may be invalid.",

@@ -1,13 +1,46 @@
 import requests
 import webbrowser
 import time
+import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from threading import Thread
 from weeb_cli.services.logger import logger
 
 ANILIST_CLIENT_ID = "24285"
-ANILIST_REDIRECT_URI = "https://anilist.co/api/v2/oauth/pin"
+ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
+
+class TokenHandler(BaseHTTPRequestHandler):
+    token = None
+    
+    def log_message(self, format, *args):
+        pass
+    
+    def do_GET(self):
+        if self.path.startswith("/callback"):
+            html = """
+            <html><head><script>
+            const hash = window.location.hash.substring(1);
+            const params = new URLSearchParams(hash);
+            const token = params.get('access_token');
+            if (token) {
+                fetch('/token?access_token=' + token).then(() => {
+                    document.body.innerHTML = '<h2>Başarılı! Bu pencereyi kapatabilirsiniz.</h2>';
+                });
+            }
+            </script></head><body><h2>Yetkilendiriliyor...</h2></body></html>
+            """
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(html.encode())
+        elif self.path.startswith("/token"):
+            query = parse_qs(urlparse(self.path).query)
+            if "access_token" in query:
+                TokenHandler.token = query["access_token"][0]
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"OK")
 
 class AniListTracker:
     def __init__(self):
@@ -38,7 +71,25 @@ class AniListTracker:
         return self.token is not None
     
     def get_auth_url(self):
-        return f"https://anilist.co/api/v2/oauth/authorize?client_id={ANILIST_CLIENT_ID}&response_type=token"
+        return f"https://anilist.co/api/v2/oauth/authorize?client_id={ANILIST_CLIENT_ID}&redirect_uri={ANILIST_REDIRECT_URI}&response_type=token"
+    
+    def start_auth_server(self, timeout=120):
+        TokenHandler.token = None
+        server = HTTPServer(("localhost", 8765), TokenHandler)
+        server.timeout = 1
+        
+        auth_url = self.get_auth_url()
+        webbrowser.open(auth_url)
+        
+        start = time.time()
+        while time.time() - start < timeout:
+            server.handle_request()
+            if TokenHandler.token:
+                server.server_close()
+                return TokenHandler.token
+        
+        server.server_close()
+        return None
     
     def authenticate(self, token):
         self._token = token

@@ -387,7 +387,6 @@ def manage_drive(drive):
 
 def anilist_settings_menu():
     from weeb_cli.services.tracker import anilist_tracker
-    import webbrowser
     
     while True:
         console.clear()
@@ -455,26 +454,21 @@ def anilist_settings_menu():
                     return
                 
                 if sel == opt_login:
-                    auth_url = anilist_tracker.get_auth_url()
                     console.print(f"\n[cyan]{i18n.get('settings.anilist_opening_browser')}[/cyan]")
-                    webbrowser.open(auth_url)
+                    console.print(f"[dim]{i18n.get('settings.anilist_waiting')}[/dim]\n")
                     
-                    console.print(f"\n[dim]{i18n.get('settings.anilist_paste_token')}[/dim]\n")
-                    
-                    token = questionary.text(
-                        "Token:",
-                        qmark=">"
-                    ).ask()
+                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                        token = anilist_tracker.start_auth_server(timeout=120)
                     
                     if token:
-                        with console.status(i18n.get("common.processing"), spinner="dots"):
-                            success = anilist_tracker.authenticate(token.strip())
-                        
+                        success = anilist_tracker.authenticate(token)
                         if success:
                             console.print(f"[green]{i18n.get('settings.anilist_login_success')}[/green]")
                         else:
                             console.print(f"[red]{i18n.get('settings.anilist_login_failed')}[/red]")
-                        time.sleep(1)
+                    else:
+                        console.print(f"[yellow]{i18n.get('settings.anilist_timeout')}[/yellow]")
+                    time.sleep(1)
                         
             except KeyboardInterrupt:
                 return
