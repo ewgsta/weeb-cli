@@ -2,86 +2,41 @@ import requests
 import webbrowser
 import time
 import json
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
-from threading import Thread
+import socket
+from urllib.parse import parse_qs
 from weeb_cli.services import logger
+
+import socket
 
 ANILIST_CLIENT_ID = "34596"
 ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
+ANILIST_PORT = 8765
 
-CALLBACK_HTML_SUCCESS = '''<!DOCTYPE html>
+CALLBACK_HTML_SUCCESS = '''HTTP/1.1 200 OK\r
+Content-Type: text/html; charset=utf-8\r
+Connection: close\r
+\r
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - Yetkilendirme</title>
+    <title>Weeb CLI - AniList</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #050505;
-            color: #e6e6e6;
-            font-family: 'Zen Kaku Gothic New', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-        }
-        .noise {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-        }
-        .container {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 3rem;
-            max-width: 400px;
-        }
-        .logo {
-            font-family: 'Shippori Mincho', serif;
-            font-size: 2.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        .subtitle {
-            font-size: 0.85rem;
-            color: #02a9ff;
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-        .status {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        .status.success { color: #4ade80; }
-        .status.error { color: #f87171; }
-        .checkmark {
-            width: 48px; height: 48px;
-            margin: 0 auto 1.5rem;
-            stroke: #4ade80;
-            stroke-width: 2;
-            fill: none;
-        }
-        .checkmark path {
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            animation: draw 0.5s ease forwards;
-        }
-        @keyframes draw { to { stroke-dashoffset: 0; } }
-        .hint {
-            font-size: 0.75rem;
-            color: #555;
-            margin-top: 2rem;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+        .container{position:relative;z-index:2;text-align:center;padding:3rem}
+        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
+        .subtitle{font-size:0.85rem;color:#02a9ff;margin-bottom:2rem;font-weight:500}
+        .checkmark{width:48px;height:48px;margin:0 auto 1.5rem;stroke:#4ade80;stroke-width:2;fill:none}
+        .checkmark path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 0.5s ease forwards}
+        @keyframes draw{to{stroke-dashoffset:0}}
+        .status{font-size:1.1rem;color:#4ade80;margin-bottom:1.5rem}
+        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
     </style>
 </head>
 <body>
@@ -89,73 +44,35 @@ CALLBACK_HTML_SUCCESS = '''<!DOCTYPE html>
     <div class="container">
         <div class="logo">Weeb CLI</div>
         <div class="subtitle">AniList</div>
-        <svg class="checkmark" viewBox="0 0 24 24">
-            <path d="M4 12l6 6L20 6"/>
-        </svg>
-        <div class="status success">Başarılı!</div>
+        <svg class="checkmark" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>
+        <div class="status">Basarili!</div>
         <div class="hint">Bu pencereyi kapatabilirsiniz</div>
     </div>
 </body>
 </html>'''
 
-CALLBACK_HTML_ERROR = '''<!DOCTYPE html>
+CALLBACK_HTML_ERROR = '''HTTP/1.1 200 OK\r
+Content-Type: text/html; charset=utf-8\r
+Connection: close\r
+\r
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - Yetkilendirme</title>
+    <title>Weeb CLI - AniList</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #050505;
-            color: #e6e6e6;
-            font-family: 'Zen Kaku Gothic New', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-        }
-        .noise {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-        }
-        .container {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 3rem;
-            max-width: 400px;
-        }
-        .logo {
-            font-family: 'Shippori Mincho', serif;
-            font-size: 2.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        .subtitle {
-            font-size: 0.85rem;
-            color: #02a9ff;
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-        .status {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        .status.error { color: #f87171; }
-        .hint {
-            font-size: 0.75rem;
-            color: #555;
-            margin-top: 2rem;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+        .container{position:relative;z-index:2;text-align:center;padding:3rem}
+        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
+        .subtitle{font-size:0.85rem;color:#02a9ff;margin-bottom:2rem;font-weight:500}
+        .status{font-size:1.1rem;color:#f87171;margin-bottom:1.5rem}
+        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
     </style>
 </head>
 <body>
@@ -163,33 +80,61 @@ CALLBACK_HTML_ERROR = '''<!DOCTYPE html>
     <div class="container">
         <div class="logo">Weeb CLI</div>
         <div class="subtitle">AniList</div>
-        <div class="status error">Yetkilendirme başarısız</div>
+        <div class="status">Yetkilendirme basarisiz</div>
         <div class="hint">Bu pencereyi kapatabilirsiniz</div>
     </div>
 </body>
 </html>'''
 
-class TokenHandler(BaseHTTPRequestHandler):
-    code = None
+
+def wait_for_anilist_callback(timeout=120):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
-    def log_message(self, format, *args):
-        pass
-    
-    def do_GET(self):
-        if self.path.startswith("/callback"):
-            query = parse_qs(urlparse(self.path).query)
-            code = query.get("code", [None])[0]
-            
-            if code:
-                TokenHandler.code = code
-                html = CALLBACK_HTML_SUCCESS
-            else:
-                html = CALLBACK_HTML_ERROR
-            
-            self.send_response(200)
-            self.send_header("Content-type", "text/html; charset=utf-8")
-            self.end_headers()
-            self.wfile.write(html.encode("utf-8"))
+    try:
+        sock.bind(("127.0.0.1", ANILIST_PORT))
+        sock.listen(1)
+        sock.settimeout(timeout)
+        
+        while True:
+            try:
+                conn, addr = sock.accept()
+                conn.settimeout(10)
+                
+                data = conn.recv(4096).decode("utf-8", errors="ignore")
+                
+                code = None
+                if "GET " in data:
+                    first_line = data.split("\r\n")[0]
+                    if "?" in first_line:
+                        query_part = first_line.split("?")[1].split(" ")[0]
+                        params = parse_qs(query_part)
+                        code = params.get("code", [None])[0]
+                
+                if code:
+                    conn.sendall(CALLBACK_HTML_SUCCESS.encode("utf-8"))
+                else:
+                    conn.sendall(CALLBACK_HTML_ERROR.encode("utf-8"))
+                
+                conn.close()
+                
+                if code:
+                    sock.close()
+                    return code
+                    
+            except socket.timeout:
+                sock.close()
+                return None
+            except Exception:
+                continue
+                
+    except Exception as e:
+        logger.error(f"AniList callback server error: {e}")
+        try:
+            sock.close()
+        except:
+            pass
+        return None
 
 class AniListTracker:
     def __init__(self):
@@ -223,25 +168,13 @@ class AniListTracker:
         return f"https://anilist.co/api/v2/oauth/authorize?client_id={ANILIST_CLIENT_ID}&redirect_uri={ANILIST_REDIRECT_URI}&response_type=code"
     
     def start_auth_server(self, timeout=120):
-        TokenHandler.code = None
-        server = HTTPServer(("localhost", 8765), TokenHandler)
-        server.timeout = 1
-        
         auth_url = self.get_auth_url()
         webbrowser.open(auth_url)
         
-        start = time.time()
-        while time.time() - start < timeout:
-            server.handle_request()
-            if TokenHandler.code:
-                code = TokenHandler.code
-                server.server_close()
-                token = self._exchange_code(code)
-                if token:
-                    return token
-                return None
+        code = wait_for_anilist_callback(timeout)
         
-        server.server_close()
+        if code:
+            return self._exchange_code(code)
         return None
     
     def _exchange_code(self, code):
@@ -263,7 +196,6 @@ class AniListTracker:
                 return data.get("access_token")
             else:
                 logger.error(f"AniList token exchange failed: {resp.status_code}")
-                logger.error(f"Response: {resp.text}")
         except Exception as e:
             logger.error(f"AniList token exchange error: {e}")
         return None
@@ -427,78 +359,31 @@ anilist_tracker = AniListTracker()
 MAL_PROXY_URL = "https://weeb-mal-proxy.vercel.app"
 MAL_LOCAL_PORT = 8766
 
-MAL_CALLBACK_HTML = '''<!DOCTYPE html>
+MAL_CALLBACK_SUCCESS = '''HTTP/1.1 200 OK\r
+Content-Type: text/html; charset=utf-8\r
+Connection: close\r
+\r
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - MAL Yetkilendirme</title>
+    <title>Weeb CLI - MAL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            background: #050505;
-            color: #e6e6e6;
-            font-family: 'Zen Kaku Gothic New', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-        }
-        .noise {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-        }
-        .container {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 3rem;
-            max-width: 400px;
-        }
-        .logo {
-            font-family: 'Shippori Mincho', serif;
-            font-size: 2.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            letter-spacing: -0.02em;
-        }
-        .subtitle {
-            font-size: 0.85rem;
-            color: #2e51a2;
-            margin-bottom: 2rem;
-            font-weight: 500;
-        }
-        .status {
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
-        }
-        .status.success { color: #4ade80; }
-        .status.error { color: #f87171; }
-        .checkmark {
-            width: 48px; height: 48px;
-            margin: 0 auto 1.5rem;
-            stroke: #4ade80;
-            stroke-width: 2;
-            fill: none;
-        }
-        .checkmark path {
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
-            animation: draw 0.5s ease forwards;
-        }
-        @keyframes draw { to { stroke-dashoffset: 0; } }
-        .hint {
-            font-size: 0.75rem;
-            color: #555;
-            margin-top: 2rem;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+        .container{position:relative;z-index:2;text-align:center;padding:3rem}
+        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
+        .subtitle{font-size:0.85rem;color:#2e51a2;margin-bottom:2rem;font-weight:500}
+        .checkmark{width:48px;height:48px;margin:0 auto 1.5rem;stroke:#4ade80;stroke-width:2;fill:none}
+        .checkmark path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 0.5s ease forwards}
+        @keyframes draw{to{stroke-dashoffset:0}}
+        .status{font-size:1.1rem;color:#4ade80;margin-bottom:1.5rem}
+        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
     </style>
 </head>
 <body>
@@ -506,40 +391,97 @@ MAL_CALLBACK_HTML = '''<!DOCTYPE html>
     <div class="container">
         <div class="logo">Weeb CLI</div>
         <div class="subtitle">MyAnimeList</div>
-        <div id="content">
-            {{CONTENT}}
-        </div>
+        <svg class="checkmark" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>
+        <div class="status">Basarili!</div>
         <div class="hint">Bu pencereyi kapatabilirsiniz</div>
     </div>
 </body>
 </html>'''
 
-class MALCodeHandler(BaseHTTPRequestHandler):
-    code = None
+MAL_CALLBACK_ERROR = '''HTTP/1.1 200 OK\r
+Content-Type: text/html; charset=utf-8\r
+Connection: close\r
+\r
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weeb CLI - MAL</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
+        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
+        .container{position:relative;z-index:2;text-align:center;padding:3rem}
+        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
+        .subtitle{font-size:0.85rem;color:#2e51a2;margin-bottom:2rem;font-weight:500}
+        .status{font-size:1.1rem;color:#f87171;margin-bottom:1.5rem}
+        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="container">
+        <div class="logo">Weeb CLI</div>
+        <div class="subtitle">MyAnimeList</div>
+        <div class="status">Yetkilendirme basarisiz</div>
+        <div class="hint">Bu pencereyi kapatabilirsiniz</div>
+    </div>
+</body>
+</html>'''
+
+
+def wait_for_mal_callback(timeout=120):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
-    def log_message(self, format, *args):
-        pass
-    
-    def do_GET(self):
-        if self.path.startswith("/callback"):
-            query = parse_qs(urlparse(self.path).query)
-            if "code" in query:
-                MALCodeHandler.code = query["code"][0]
-                content = '''
-                    <svg class="checkmark" viewBox="0 0 24 24">
-                        <path d="M4 12l6 6L20 6"/>
-                    </svg>
-                    <div class="status success">Başarılı!</div>
-                '''
-            else:
-                content = '<div class="status error">Yetkilendirme başarısız</div>'
-            
-            html = MAL_CALLBACK_HTML.replace("{{CONTENT}}", content)
-            
-            self.send_response(200)
-            self.send_header("Content-type", "text/html; charset=utf-8")
-            self.end_headers()
-            self.wfile.write(html.encode("utf-8"))
+    try:
+        sock.bind(("127.0.0.1", MAL_LOCAL_PORT))
+        sock.listen(1)
+        sock.settimeout(timeout)
+        
+        while True:
+            try:
+                conn, addr = sock.accept()
+                conn.settimeout(10)
+                
+                data = conn.recv(4096).decode("utf-8", errors="ignore")
+                
+                code = None
+                if "GET " in data:
+                    first_line = data.split("\r\n")[0]
+                    if "?" in first_line:
+                        query_part = first_line.split("?")[1].split(" ")[0]
+                        params = parse_qs(query_part)
+                        code = params.get("code", [None])[0]
+                
+                if code:
+                    conn.sendall(MAL_CALLBACK_SUCCESS.encode("utf-8"))
+                else:
+                    conn.sendall(MAL_CALLBACK_ERROR.encode("utf-8"))
+                
+                conn.close()
+                
+                if code:
+                    sock.close()
+                    return code
+                    
+            except socket.timeout:
+                sock.close()
+                return None
+            except Exception:
+                continue
+                
+    except Exception as e:
+        logger.error(f"MAL callback server error: {e}")
+        try:
+            sock.close()
+        except:
+            pass
+        return None
 
 class MALTracker:
     def __init__(self):
@@ -586,20 +528,12 @@ class MALTracker:
             logger.error(f"MAL: Failed to get auth URL: {e}")
             return None
         
-        MALCodeHandler.code = None
-        server = HTTPServer(("localhost", MAL_LOCAL_PORT), MALCodeHandler)
-        server.timeout = 1
-        
         webbrowser.open(auth_url)
         
-        start = time.time()
-        while time.time() - start < timeout:
-            server.handle_request()
-            if MALCodeHandler.code:
-                server.server_close()
-                return self._exchange_code(MALCodeHandler.code, code_verifier)
+        code = wait_for_mal_callback(timeout)
         
-        server.server_close()
+        if code:
+            return self._exchange_code(code, code_verifier)
         return None
     
     def _exchange_code(self, code, code_verifier):

@@ -463,10 +463,10 @@ def anilist_settings_menu():
                     console.print(f"[dim]{i18n.get('settings.anilist_waiting')}[/dim]\n")
                     
                     with console.status(i18n.get("common.processing"), spinner="dots"):
-                        token = anilist_tracker.start_auth_server(timeout=120)
+                        code = anilist_tracker.start_auth_server(timeout=120)
                     
-                    if token:
-                        success = anilist_tracker.authenticate(token)
+                    if code:
+                        success = anilist_tracker.authenticate(code)
                         if success:
                             console.print(f"[green]{i18n.get('settings.anilist_login_success')}[/green]")
                         else:
