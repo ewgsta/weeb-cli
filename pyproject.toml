@@ -24,7 +24,8 @@ dependencies = [
     "packaging",
     "pycryptodome",
     "curl_cffi",
-    "appdirs"
+    "appdirs",
+    "prompt_toolkit>=3.0.36,<3.0.50"
 ]
 
 [tool.setuptools.packages.find]

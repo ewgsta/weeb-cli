@@ -6,6 +6,7 @@ packaging
 pycryptodome
 curl_cffi
 appdirs
+prompt_toolkit>=3.0.36,<3.0.50
 build
 pyinstaller
 pyfiglet
