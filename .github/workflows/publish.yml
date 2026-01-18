@@ -52,7 +52,7 @@ jobs:
             arch: x86
             artifact_name: weeb-cli-Windows-x86.exe
             binary_name: weeb-cli.exe
-          - os: macos-13 # Intel 
+          - os: macos-15 # Intel 
             arch: x64
             artifact_name: weeb-cli-macOS-x86_64
             binary_name: weeb-cli
