@@ -143,13 +143,13 @@ class DependencyManager:
         pkg_map = info.get("pkg", {})
         
         managers = {
-            "winget": ["winget", "install", "-e", "--id"],
-            "choco": ["choco", "install", "-y"],
             "scoop": ["scoop", "install"],
+            "choco": ["choco", "install", "-y"],
             "brew": ["brew", "install"],
             "yay": ["yay", "-S", "--noconfirm"],
             "pacman": ["sudo", "pacman", "-S", "--noconfirm"],
             "apt": ["sudo", "apt", "install", "-y"],
+            "winget": ["winget", "install", "-e", "--id"],
         }
         
         for mgr, cmd_prefix in managers.items():
@@ -159,7 +159,7 @@ class DependencyManager:
                 
                 full_cmd = cmd_prefix + [pkg_name]
                 try:
-                    subprocess.run(full_cmd, check=True)
+                    subprocess.run(full_cmd, check=True, timeout=60)
                     console.print(f"[green]{i18n.t('setup.success', tool=name)}[/green]")
                     return True
                 except subprocess.CalledProcessError:

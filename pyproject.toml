@@ -27,7 +27,8 @@ dependencies = [
     "appdirs",
     "prompt_toolkit>=3.0.36,<3.0.50",
     "beautifulsoup4",
-    "lxml"
+    "lxml",
+    "py7zr"
 ]
 
 [tool.setuptools.packages.find]

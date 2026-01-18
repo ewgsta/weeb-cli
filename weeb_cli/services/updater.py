@@ -155,8 +155,16 @@ def update_via_pip():
         console.print(f"[red]{i18n.get('update.error')}: {e}[/red]")
         return False
 
+from weeb_cli.config import config
+import time
+
 def update_prompt():
+    last_check = float(config.get("last_update_check") or 0)
+    if time.time() - last_check < 86400: # 24 hours
+        return
+
     is_available, latest_ver, assets = check_for_updates()
+    config.set("last_update_check", str(time.time()))
     
     if not is_available:
         return
