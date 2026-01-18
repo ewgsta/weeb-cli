@@ -39,14 +39,35 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            arch: x64
+            artifact_name: weeb-cli-Linux-x86_64
+            binary_name: weeb-cli
+          - os: windows-latest
+            arch: x64
+            artifact_name: weeb-cli-Windows-x86_64.exe
+            binary_name: weeb-cli.exe
+          - os: windows-latest
+            arch: x86
+            artifact_name: weeb-cli-Windows-x86.exe
+            binary_name: weeb-cli.exe
+          - os: macos-13 # Intel 
+            arch: x64
+            artifact_name: weeb-cli-macOS-x86_64
+            binary_name: weeb-cli
+          - os: macos-latest # ARM 
+            arch: arm64
+            artifact_name: weeb-cli-macOS-arm64
+            binary_name: weeb-cli
     steps:
       - uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' 
+          python-version: '3.11'
+          architecture: ${{ matrix.arch }} 
           
       - name: Install dependencies
         run: |
@@ -57,24 +78,43 @@ jobs:
         run: |
           pyinstaller --name weeb-cli --onefile --clean --noconfirm --icon weeb_landing/logo/favicon.ico weeb_cli/__main__.py --collect-all weeb_cli --collect-all rich --collect-all questionary --collect-all typer
         
-      - name: Rename Binary (Linux/Mac)
-        if: matrix.os != 'windows-latest'
-        run: mv dist/weeb-cli dist/weeb-cli-${{ runner.os }}
-        
-      - name: Rename Binary (Windows)
-        if: matrix.os == 'windows-latest'
-        run: ren dist\weeb-cli.exe weeb-cli-Windows.exe
-        shell: cmd
+      - name: Rename Binary
+        shell: bash
+        run: |
+          mv dist/${{ matrix.binary_name }} dist/${{ matrix.artifact_name }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: binary-${{ runner.os }}
-          path: dist/weeb-cli*
+          name: binary-${{ matrix.artifact_name }}
+          path: dist/${{ matrix.artifact_name }}
+
+  aur_publish:
+    name: Publish to AUR
+    needs: pypi_publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Update PKGBUILD version
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          sed -i "s/pkgver=0.0.0/pkgver=$VERSION/" distribution/aur/PKGBUILD
+          
+      - name: Publish to AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        with:
+          pkgname: weeb-cli
+          pkgbuild: ./distribution/aur/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update to ${{ github.ref_name }}
+          force_push: true
 
   release:
     name: Create GitHub Release
-    needs: build_binaries
+    needs: [build_binaries]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -85,12 +125,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          pattern: binary-*
+          merge-multiple: true
           
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/binary-Linux/weeb-cli-Linux
-            artifacts/binary-Windows/weeb-cli-Windows.exe
-            artifacts/binary-macOS/weeb-cli-macOS
+            artifacts/*
           generate_release_notes: true

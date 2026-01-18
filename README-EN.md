@@ -70,19 +70,6 @@ pip install weeb-cli
 yay -S weeb-cli
 ```
 
-### Homebrew (macOS/Linux)
-```bash
-brew install ewgsta/tap/weeb-cli
-```
-
-### ~~Chocolatey (Windows)~~ *(pending approval)*
-
-### Scoop (Windows)
-```powershell
-scoop bucket add weeb https://github.com/ewgsta/scoop-bucket.git
-scoop install weeb-cli
-```
-
 ### Portable
 Download the appropriate file for your platform from [Releases](https://github.com/ewgsta/weeb-cli/releases).
 
