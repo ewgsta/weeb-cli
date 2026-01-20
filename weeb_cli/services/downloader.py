@@ -200,12 +200,14 @@ class QueueManager:
                 return node["url"]
         return None
 
-    def _update_progress(self, item, progress=None, eta=None):
+    def _update_progress(self, item, progress=None, eta=None, speed=None):
         updates = {}
         if progress is not None:
             updates["progress"] = progress
         if eta is not None:
             updates["eta"] = eta
+        if speed is not None:
+            updates["speed"] = speed
         if updates:
             self.db.update_queue_item(item["episode_id"], **updates)
 
@@ -239,7 +241,14 @@ class QueueManager:
                         
                         match = re.search(r'\((\d+)%\)', line)
                         progress = int(match.group(1)) if match else None
-                        self._update_progress(item, progress=progress, eta=eta_part.strip())
+                        
+                        # Parse speed (e.g., "DL:1.2MiB")
+                        speed = None
+                        speed_match = re.search(r'DL:([\d.]+[KMG]?i?B)', line)
+                        if speed_match:
+                            speed = speed_match.group(1) + "/s"
+                        
+                        self._update_progress(item, progress=progress, eta=eta_part.strip(), speed=speed)
                     except:
                         pass
         
@@ -268,7 +277,14 @@ class QueueManager:
                         p_str = line.split("%")[0].split()[-1]
                         progress = float(p_str)
                         eta = line.split("ETA")[-1].strip() if "ETA" in line else None
-                        self._update_progress(item, progress=progress, eta=eta)
+                        
+                        # Parse speed (e.g., "at 1.5MiB/s")
+                        speed = None
+                        speed_match = re.search(r'at\s+([\d.]+[KMG]?i?B/s)', line)
+                        if speed_match:
+                            speed = speed_match.group(1)
+                        
+                        self._update_progress(item, progress=progress, eta=eta, speed=speed)
                     except:
                         pass
         if process.returncode != 0:
@@ -304,10 +320,19 @@ class QueueManager:
                         
                         elapsed = time.time() - start_time
                         if elapsed > 0:
-                            speed = downloaded / elapsed
+                            speed_bytes = downloaded / elapsed
                             remaining = total - downloaded
-                            eta_s = remaining / speed
-                            self._update_progress(item, progress=progress, eta=f"{int(eta_s)}s")
+                            eta_s = remaining / speed_bytes if speed_bytes > 0 else 0
+                            
+                            # Format speed
+                            if speed_bytes >= 1024 * 1024:
+                                speed_str = f"{speed_bytes / (1024*1024):.1f}MB/s"
+                            elif speed_bytes >= 1024:
+                                speed_str = f"{speed_bytes / 1024:.1f}KB/s"
+                            else:
+                                speed_str = f"{speed_bytes:.0f}B/s"
+                            
+                            self._update_progress(item, progress=progress, eta=f"{int(eta_s)}s", speed=speed_str)
             else:
                 with open(path, 'wb') as f:
                     for chunk in r.iter_content(chunk_size=8192):

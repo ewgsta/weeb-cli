@@ -236,10 +236,23 @@ class LocalLibrary:
         return added
     
     def smart_index_all(self):
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        
+        sources = [s for s in self.get_all_sources() if s["available"]]
+        if not sources:
+            return 0
+        
         total = 0
-        for source in self.get_all_sources():
-            if source["available"]:
-                total += self.smart_index_source(source["path"], source["name"])
+        with ThreadPoolExecutor(max_workers=min(4, len(sources))) as executor:
+            futures = {
+                executor.submit(self.smart_index_source, s["path"], s["name"]): s 
+                for s in sources
+            }
+            for future in as_completed(futures):
+                try:
+                    total += future.result()
+                except:
+                    pass
         return total
     
     def index_all_sources(self):

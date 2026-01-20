@@ -420,10 +420,12 @@ def manage_queue():
 def show_queue_live():
     def generate_table():
         table = Table(show_header=True, header_style="bold cyan")
-        table.add_column(i18n.get("watchlist.anime_title"), width=30)
-        table.add_column(i18n.get("details.episode"), justify="right", width=5)
-        table.add_column(i18n.get("downloads.status"), width=15)
-        table.add_column(i18n.get("downloads.progress"), width=20)
+        table.add_column(i18n.get("watchlist.anime_title"), width=28)
+        table.add_column(i18n.get("details.episode"), justify="right", width=4)
+        table.add_column(i18n.get("downloads.status"), width=12)
+        table.add_column(i18n.get("downloads.progress"), width=24)
+        table.add_column("Hız", width=10)
+        table.add_column("ETA", width=8)
         
         active = [i for i in queue_manager.queue if i["status"] == "processing"]
         pending = [i for i in queue_manager.queue if i["status"] == "pending"]
@@ -450,12 +452,16 @@ def show_queue_live():
             
             status_text = i18n.get(f"downloads.status_{status}", status.upper())
             p_text = f"{progress}%" if status == "processing" else ""
+            speed = item.get("speed", "") if status == "processing" else ""
+            eta = item.get("eta", "") if status == "processing" else ""
             
             table.add_row(
-                f"[{style}]{item['anime_title'][:28]}[/{style}]",
+                f"[{style}]{item['anime_title'][:26]}[/{style}]",
                 f"{item['episode_number']}",
                 f"[{style}]{status_text}[/{style}]",
-                f"[{style}]{bar_str} {p_text}[/{style}]"
+                f"[{style}]{bar_str} {p_text}[/{style}]",
+                f"[{style}]{speed}[/{style}]",
+                f"[{style}]{eta}[/{style}]"
             )
             
         return table
