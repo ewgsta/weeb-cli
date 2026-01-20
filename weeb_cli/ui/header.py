@@ -6,7 +6,7 @@ from weeb_cli import __version__
 
 console = Console()
 
-def show_header(title="Weeb API", show_version=False, show_source=False):
+def show_header(title="Weeb CLI", show_version=False, show_source=False):
     console.clear()
     
     text = Text()
