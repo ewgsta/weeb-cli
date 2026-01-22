@@ -16,6 +16,7 @@
     "menu": {
         "title": "Ana Menü",
         "prompt": "Ne yapmak istersiniz?",
+        "exit_confirm_downloads": "Aktif indirmeler var. Çıkmak istediğinize emin misiniz?",
         "options": {
             "search": "Anime Ara",
             "watchlist": "İzlediklerim",
@@ -221,6 +222,8 @@
         "connect_drive": "{name} diskini bağlayın",
         "notification_title": "Weeb CLI",
         "notification_complete": "{anime} - {episode}. bölüm indirildi",
+        "retry_failed": "Başarısızları Yeniden Dene",
+        "retrying": "{count} indirme yeniden deneniyor...",
         "episode_short": "Blm"
     }
 }

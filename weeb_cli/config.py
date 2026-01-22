@@ -14,7 +14,9 @@ DEFAULT_CONFIG = {
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": "animecix",
     "show_description": True,
-    "debug_mode": False
+    "debug_mode": False,
+    "download_max_retries": 3,
+    "download_retry_delay": 10
 }
 
 class Config:

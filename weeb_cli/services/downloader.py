@@ -63,6 +63,22 @@ class QueueManager:
             if item["status"] in ["pending", "processing"]:
                 self.db.update_queue_item(item["episode_id"], status="cancelled")
 
+    def retry_failed(self):
+        count = 0
+        for item in self.queue:
+            if item["status"] == "failed":
+                self.db.update_queue_item(item["episode_id"], status="pending", progress=0, error="", eta="?")
+                count += 1
+        if count > 0:
+            self.start_queue()
+        return count
+
+    def get_failed_count(self):
+        return len([item for item in self.queue if item["status"] == "failed"])
+
+    def get_active_count(self):
+        return len([item for item in self.queue if item["status"] == "processing"])
+
     def is_downloading(self, slug, episode_id=None):
         for item in self.queue:
             if item["slug"] == slug and item["status"] in ["pending", "processing"]:
@@ -121,21 +137,42 @@ class QueueManager:
         from weeb_cli.services.logger import debug, error
         from weeb_cli.i18n import i18n
         
+        max_retries = config.get("download_max_retries", 3)
+        retry_delay = config.get("download_retry_delay", 10)
+        
         debug(f"Starting download: {item['anime_title']} - Ep {item['episode_number']}")
         
-        try:
-            self._download_item(item)
-            self.db.update_queue_item(item["episode_id"], status="completed", progress=100, eta="-")
-            
-            debug(f"Download completed: {item['anime_title']} - Ep {item['episode_number']}")
-            
-            title = i18n.get("downloads.notification_title", "Weeb CLI")
-            msg = i18n.t("downloads.notification_complete", anime=item['anime_title'], episode=item['episode_number'])
-            send_notification(title, msg)
-            
-        except Exception as e:
-            self.db.update_queue_item(item["episode_id"], status="failed", error=str(e), eta="")
-            error(f"Download failed: {item['anime_title']} - {str(e)}")
+        for attempt in range(max_retries):
+            try:
+                if attempt > 0:
+                    debug(f"Retry attempt {attempt + 1}/{max_retries}")
+                    self._update_progress(item, eta=f"Yeniden deneniyor ({attempt + 1}/{max_retries})...")
+                    time.sleep(retry_delay)
+                
+                self._download_item(item)
+                self.db.update_queue_item(item["episode_id"], status="completed", progress=100, eta="-", retry_count=0)
+                
+                debug(f"Download completed: {item['anime_title']} - Ep {item['episode_number']}")
+                
+                title = i18n.get("downloads.notification_title", "Weeb CLI")
+                msg = i18n.t("downloads.notification_complete", anime=item['anime_title'], episode=item['episode_number'])
+                send_notification(title, msg)
+                return
+                
+            except Exception as e:
+                error(f"Download attempt {attempt + 1} failed: {item['anime_title']} - {str(e)}")
+                
+                if attempt < max_retries - 1:
+                    continue
+                
+                self.db.update_queue_item(
+                    item["episode_id"], 
+                    status="failed", 
+                    error=str(e), 
+                    eta="",
+                    retry_count=attempt + 1
+                )
+                error(f"Download failed after {max_retries} attempts: {item['anime_title']}")
 
     def _download_item(self, item):
         from weeb_cli.services.watch import get_streams

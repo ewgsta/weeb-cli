@@ -11,6 +11,33 @@ from weeb_cli.services.downloader import queue_manager
 
 console = Console()
 
+def _handle_exit():
+    active_count = queue_manager.get_active_count()
+    pending_count = queue_manager.get_pending_count()
+    
+    if active_count > 0 or pending_count > 0:
+        total = active_count + pending_count
+        try:
+            confirm = questionary.confirm(
+                i18n.get("menu.exit_confirm_downloads", f"{total} aktif indirme var. Çıkmak istediğinize emin misiniz?"),
+                default=False
+            ).ask()
+            
+            if confirm:
+                queue_manager.stop_queue()
+                console.print(f"[yellow]{i18n.get('downloads.queue_stopped')}[/yellow]")
+                console.print(f"[yellow] {i18n.get('common.success')}...[/yellow]")
+                sys.exit(0)
+            else:
+                return False 
+        except KeyboardInterrupt:
+            return False
+    else:
+        console.print(f"[yellow] {i18n.get('common.success')}...[/yellow]")
+        sys.exit(0)
+    
+    return True
+
 def show_main_menu():
     console.clear()
     show_header("Weeb CLI", show_version=True, show_source=True)
@@ -63,13 +90,13 @@ def show_main_menu():
         elif selected == opt_settings:
             open_settings()
         elif selected == opt_exit or selected is None:
-            console.print(f"[yellow] {i18n.get('common.success')}...[/yellow]")
-            sys.exit(0)
+            _handle_exit()
             
         show_main_menu()
         
     except KeyboardInterrupt:
-        sys.exit(0)
+        if not _handle_exit():
+            show_main_menu()
 
 def show_active_downloads_menu():
     while True:
@@ -77,16 +104,21 @@ def show_active_downloads_menu():
         show_header(i18n.get("downloads.active_downloads"))
         
         pending = queue_manager.get_pending_count()
+        failed = queue_manager.get_failed_count()
         is_running = queue_manager.is_running()
         
         if pending > 0:
             status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
             console.print(f"[cyan]{i18n.t('downloads.pending_count', count=pending)}[/cyan] - {status}\n")
         
+        if failed > 0:
+            console.print(f"[red]{failed} başarısız indirme[/red]\n")
+        
         opt_view = i18n.get("downloads.view_queue")
         opt_start = i18n.get("downloads.start_queue")
         opt_stop = i18n.get("downloads.stop_queue")
         opt_clear = i18n.get("downloads.clear_completed")
+        opt_retry = i18n.get("downloads.retry_failed", "Başarısızları Yeniden Dene")
         
         choices = [opt_view]
         if pending > 0:
@@ -94,6 +126,8 @@ def show_active_downloads_menu():
                 choices.append(opt_stop)
             else:
                 choices.append(opt_start)
+        if failed > 0:
+            choices.append(opt_retry)
         choices.append(opt_clear)
         
         try:
@@ -117,6 +151,10 @@ def show_active_downloads_menu():
             elif action == opt_stop:
                 queue_manager.stop_queue()
                 console.print(f"[yellow]{i18n.get('downloads.queue_stopped')}[/yellow]")
+                time.sleep(0.5)
+            elif action == opt_retry:
+                count = queue_manager.retry_failed()
+                console.print(f"[green]{count} indirme yeniden deneniyor...[/green]")
                 time.sleep(0.5)
             elif action == opt_clear:
                 queue_manager.clear_completed()
