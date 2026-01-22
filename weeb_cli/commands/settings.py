@@ -202,15 +202,19 @@ def download_settings_menu():
         console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="left")
         
         curr_concurrent = config.get("max_concurrent_downloads", 3)
+        curr_retries = config.get("download_max_retries", 3)
+        curr_delay = config.get("download_retry_delay", 10)
         
         opt_name = i18n.get("settings.change_folder_name")
         opt_path = i18n.get("settings.change_full_path")
         opt_concurrent = f"{i18n.get('settings.concurrent_downloads')} [{curr_concurrent}]"
+        opt_retries = f"{i18n.get('settings.max_retries')} [{curr_retries}]"
+        opt_delay = f"{i18n.get('settings.retry_delay')} [{curr_delay}s]"
         
         try:
             sel = questionary.select(
                 i18n.get("settings.download_settings"),
-                choices=[opt_name, opt_path, opt_concurrent],
+                choices=[opt_name, opt_path, opt_concurrent, opt_retries, opt_delay],
                 pointer=">",
                 use_shortcuts=False
             ).ask()
@@ -230,6 +234,16 @@ def download_settings_menu():
                     n = int(val)
                     if 1 <= n <= 5:
                         config.set("max_concurrent_downloads", n)
+            elif sel == opt_retries:
+                val = questionary.text(i18n.get("settings.enter_max_retries"), default=str(curr_retries)).ask()
+                if val and val.isdigit():
+                    n = int(val)
+                    if 0 <= n <= 10:
+                        config.set("download_max_retries", n)
+            elif sel == opt_delay:
+                val = questionary.text(i18n.get("settings.enter_retry_delay"), default=str(curr_delay)).ask()
+                if val and val.isdigit():
+                    config.set("download_retry_delay", int(val))
             elif sel is None:
                 return
         except KeyboardInterrupt:

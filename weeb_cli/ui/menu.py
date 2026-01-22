@@ -85,7 +85,7 @@ def show_main_menu():
             show_watchlist()
         elif selected == opt_downloads:
             show_downloads()
-        elif selected == opt_active:
+        elif opt_active and selected == opt_active:
             show_active_downloads_menu()
         elif selected == opt_settings:
             open_settings()
