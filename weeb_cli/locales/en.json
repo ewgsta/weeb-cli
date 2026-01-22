@@ -16,6 +16,7 @@
     "menu": {
         "title": "Main Menu",
         "prompt": "What would you like to do?",
+        "exit_confirm_downloads": "There are active downloads. Are you sure you want to exit?",
         "options": {
             "search": "Search Anime",
             "watchlist": "My Watchlist",
@@ -221,6 +222,9 @@
         "connect_drive": "Connect {name} drive",
         "notification_title": "Weeb CLI",
         "notification_complete": "{anime} - Episode {episode} downloaded",
+        "retry_failed": "Retry Failed",
+        "retrying": "Retrying {count} downloads...",
+        "disk_full": "Insufficient disk space!",
         "episode_short": "Ep"
     }
 }
