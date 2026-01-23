@@ -34,7 +34,6 @@
         "ytdlp": "yt-dlp Desteği",
         "show_description": "Açıklama Göster",
         "discord_rpc": "Discord RPC",
-        "discord_rpc_install_required": "Discord RPC için pypresence kütüphanesi gerekli.",
         "aria2_config": "Aria2 Ayarları",
         "ytdlp_config": "yt-dlp Ayarları",
         "max_conn": "Maksimum Bağlantı",

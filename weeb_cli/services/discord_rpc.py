@@ -1,18 +1,8 @@
 import time
-import threading
 import requests
 from typing import Optional
-from rich.console import Console
+from pypresence import Presence
 from weeb_cli.config import config
-from weeb_cli.i18n import i18n
-
-console = Console()
-
-try:
-    from pypresence import Presence
-    PYPRESENCE_AVAILABLE = True
-except ImportError:
-    PYPRESENCE_AVAILABLE = False
 
 class DiscordRPC:
     def __init__(self):
@@ -22,15 +12,11 @@ class DiscordRPC:
         self.current_anime = None
         self.current_episode = None
         self.start_time = None
-        self._connect_thread = None
         
     def is_enabled(self):
         return config.get("discord_rpc_enabled", False)
     
     def connect(self):
-        if not PYPRESENCE_AVAILABLE:
-            return False
-            
         if not self.is_enabled():
             return False
             

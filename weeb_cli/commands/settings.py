@@ -118,13 +118,7 @@ def toggle_description():
     time.sleep(0.5)
 
 def toggle_discord_rpc():
-    from weeb_cli.services.discord_rpc import PYPRESENCE_AVAILABLE, discord_rpc
-    
-    if not PYPRESENCE_AVAILABLE:
-        console.print(f"[yellow]{i18n.get('settings.discord_rpc_install_required')}[/yellow]")
-        console.print(f"[dim]pip install pypresence[/dim]")
-        time.sleep(2)
-        return
+    from weeb_cli.services.discord_rpc import discord_rpc
     
     current = config.get("discord_rpc_enabled", False)
     new_val = not current
