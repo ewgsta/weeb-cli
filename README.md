@@ -94,7 +94,14 @@ weeb-cli
 |-----|-------|
 | `↑` `↓` | Menüde gezinme |
 | `Enter` | Seçim yapma |
+| `s` | Anime Ara (Ana menüde) |
+| `d` | İndirmeler (Ana menüde) |
+| `w` | İzlediklerim (Ana menüde) |
+| `c` | Ayarlar (Ana menüde) |
+| `q` | Çıkış (Ana menüde) |
 | `Ctrl+C` | Geri dön / Çıkış |
+
+**Not:** Tüm kısayollar Ayarlar > Klavye Kısayolları menüsünden özelleştirilebilir.
 
 ---
 
@@ -137,13 +144,13 @@ Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 - [x] Debug modu
 - [x] MAL/AniList entegrasyonu
 - [x] Veritabanı yedekleme/geri yükleme
+- [x] Klavye kısayolları
 
 ### Planlanan
 - [ ] Anime önerileri
 - [ ] Toplu işlemler
 - [ ] İzleme istatistikleri (grafik)
 - [ ] Tema desteği
-- [ ] Klavye kısayolları
 - [ ] Altyazı indirme
 - [ ] Torrent desteği (nyaa.si)
 - [ ] Watch party

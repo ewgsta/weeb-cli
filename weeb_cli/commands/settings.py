@@ -59,6 +59,7 @@ def open_settings():
         opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
         opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
         opt_backup = i18n.get("settings.backup_restore")
+        opt_shortcuts = i18n.get("settings.shortcuts")
         
         choices = [opt_lang, opt_source, opt_download, opt_drives, opt_desc, opt_discord_rpc, opt_aria2]
         if config.get("aria2_enabled"):
@@ -71,6 +72,7 @@ def open_settings():
         opt_trackers = i18n.get("settings.trackers")
         choices.append(opt_trackers)
         choices.append(opt_backup)
+        choices.append(opt_shortcuts)
         
         try:
             answer = questionary.select(
@@ -111,6 +113,8 @@ def open_settings():
             trackers_menu()
         elif answer == opt_backup:
             backup_restore_menu()
+        elif answer == opt_shortcuts:
+            shortcuts_menu()
         elif answer is None:
             return
 
@@ -737,3 +741,107 @@ def restore_backup():
         pass
 
 # dursun zaman dokunduğunda sana yine yakınlaştığımda bana öyle baktığındaaaaaaa sessizzceeee  uyandığında sana yine dokunduğumda dursun zaman
+
+
+def shortcuts_menu():
+    from weeb_cli.services.shortcuts import shortcut_manager, DEFAULT_SHORTCUTS
+    
+    while True:
+        console.clear()
+        show_header(i18n.get("settings.shortcuts"))
+        
+        shortcuts = shortcut_manager.get_shortcuts()
+        
+        console.print(f"[dim]{i18n.get('settings.shortcuts_hint')}[/dim]\n")
+        
+        opt_search = f"{i18n.get('settings.shortcut_search')} [{shortcuts['search']}]"
+        opt_downloads = f"{i18n.get('settings.shortcut_downloads')} [{shortcuts['downloads']}]"
+        opt_watchlist = f"{i18n.get('settings.shortcut_watchlist')} [{shortcuts['watchlist']}]"
+        opt_settings = f"{i18n.get('settings.shortcut_settings')} [{shortcuts['settings']}]"
+        opt_exit = f"{i18n.get('settings.shortcut_exit')} [{shortcuts['exit']}]"
+        opt_next = f"{i18n.get('settings.shortcut_next_episode')} [{shortcuts['next_episode']}]"
+        opt_prev = f"{i18n.get('settings.shortcut_prev_episode')} [{shortcuts['prev_episode']}]"
+        opt_back = f"{i18n.get('settings.shortcut_back')} [{shortcuts['back']}]"
+        opt_help = f"{i18n.get('settings.shortcut_help')} [{shortcuts['help']}]"
+        opt_reset = i18n.get("settings.shortcuts_reset")
+        
+        choices = [
+            opt_search,
+            opt_downloads,
+            opt_watchlist,
+            opt_settings,
+            opt_exit,
+            opt_next,
+            opt_prev,
+            opt_back,
+            opt_help,
+            opt_reset
+        ]
+        
+        try:
+            sel = questionary.select(
+                i18n.get("downloads.action_prompt"),
+                choices=choices,
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if sel is None:
+                return
+            
+            if sel == opt_reset:
+                confirm = questionary.confirm(
+                    i18n.get("settings.shortcuts_reset_confirm"),
+                    default=False
+                ).ask()
+                if confirm:
+                    shortcut_manager.reset_shortcuts()
+                    console.print(f"[green]{i18n.get('settings.shortcuts_reset_success')}[/green]")
+                    time.sleep(1)
+            else:
+                action_map = {
+                    opt_search: "search",
+                    opt_downloads: "downloads",
+                    opt_watchlist: "watchlist",
+                    opt_settings: "settings",
+                    opt_exit: "exit",
+                    opt_next: "next_episode",
+                    opt_prev: "prev_episode",
+                    opt_back: "back",
+                    opt_help: "help"
+                }
+                
+                action = action_map.get(sel)
+                if action:
+                    change_shortcut(action)
+                    
+        except KeyboardInterrupt:
+            return
+
+def change_shortcut(action):
+    from weeb_cli.services.shortcuts import shortcut_manager, DEFAULT_SHORTCUTS
+    
+    current = shortcut_manager.get_shortcut(action)
+    default = DEFAULT_SHORTCUTS.get(action, "")
+    
+    try:
+        new_key = questionary.text(
+            i18n.t("settings.enter_shortcut", action=action),
+            default=current,
+            qmark=">"
+        ).ask()
+        
+        if not new_key:
+            return
+        
+        if len(new_key) > 1:
+            console.print(f"[yellow]{i18n.get('settings.shortcut_single_char')}[/yellow]")
+            time.sleep(1)
+            return
+        
+        shortcut_manager.set_shortcut(action, new_key)
+        console.print(f"[green]{i18n.get('settings.shortcut_changed')}[/green]")
+        time.sleep(0.5)
+        
+    except KeyboardInterrupt:
+        pass

@@ -94,7 +94,14 @@ weeb-cli
 |-----|--------|
 | `↑` `↓` | Navigate menu |
 | `Enter` | Select |
+| `s` | Search Anime (Main menu) |
+| `d` | Downloads (Main menu) |
+| `w` | Watchlist (Main menu) |
+| `c` | Settings (Main menu) |
+| `q` | Exit (Main menu) |
 | `Ctrl+C` | Go back / Exit |
+
+**Note:** All shortcuts can be customized in Settings > Keyboard Shortcuts.
 
 ---
 
@@ -137,6 +144,7 @@ Config location: `~/.weeb-cli/weeb.db` (SQLite)
 - [x] Debug mode
 - [x] MAL/AniList integration
 - [x] Database backup/restore
+- [x] Keyboard shortcuts
 
 
 ### Planned
@@ -144,7 +152,6 @@ Config location: `~/.weeb-cli/weeb.db` (SQLite)
 - [ ] Batch operations
 - [ ] Watch statistics (graphs)
 - [ ] Theme support
-- [ ] Keyboard shortcuts
 - [ ] Subtitle downloads
 - [ ] Torrent support (nyaa.si)
 - [ ] Watch party

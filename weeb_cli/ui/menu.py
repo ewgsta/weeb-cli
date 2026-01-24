@@ -8,6 +8,7 @@ from weeb_cli.commands.settings import open_settings
 from weeb_cli.commands.watchlist import show_watchlist
 from weeb_cli.commands.downloads import show_downloads, show_queue_live, manage_queue
 from weeb_cli.services.downloader import queue_manager
+from weeb_cli.services.shortcuts import shortcut_manager
 
 console = Console()
 
@@ -42,16 +43,18 @@ def show_main_menu():
     console.clear()
     show_header("Weeb CLI", show_version=True, show_source=True)
     
-    opt_search = i18n.get("menu.options.search")
-    opt_downloads = i18n.get("menu.options.downloads")
-    opt_watchlist = i18n.get("menu.options.watchlist")
-    opt_settings = i18n.get("menu.options.settings")
-    opt_exit = i18n.get("menu.options.exit")
+    shortcuts = shortcut_manager.get_shortcuts()
+    
+    opt_search = f"{i18n.get('menu.options.search')} [{shortcuts['search']}]"
+    opt_downloads = f"{i18n.get('menu.options.downloads')} [{shortcuts['downloads']}]"
+    opt_watchlist = f"{i18n.get('menu.options.watchlist')} [{shortcuts['watchlist']}]"
+    opt_settings = f"{i18n.get('menu.options.settings')} [{shortcuts['settings']}]"
+    opt_exit = f"{i18n.get('menu.options.exit')} [{shortcuts['exit']}]"
     
     choices = [
-        opt_search,
-        opt_downloads,
-        opt_watchlist,
+        questionary.Choice(opt_search, shortcut_key=shortcuts['search']),
+        questionary.Choice(opt_downloads, shortcut_key=shortcuts['downloads']),
+        questionary.Choice(opt_watchlist, shortcut_key=shortcuts['watchlist']),
     ]
     
     active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
@@ -60,16 +63,19 @@ def show_main_menu():
         is_running = queue_manager.is_running()
         status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
         opt_active = f"{i18n.get('downloads.active_downloads')} ({len(active_queue)}) - {status}"
-        choices.append(opt_active)
+        choices.append(questionary.Choice(opt_active))
     
-    choices.extend([opt_settings, opt_exit])
+    choices.extend([
+        questionary.Choice(opt_settings, shortcut_key=shortcuts['settings']),
+        questionary.Choice(opt_exit, shortcut_key=shortcuts['exit'])
+    ])
     
     try:
         selected = questionary.select(
             i18n.get("menu.prompt"),
             choices=choices,
             pointer=">",
-            use_shortcuts=False,
+            use_shortcuts=True,
             style=questionary.Style([
                 ('pointer', 'fg:cyan bold'),
                 ('highlighted', 'fg:cyan'),
