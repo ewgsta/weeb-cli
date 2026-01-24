@@ -17,7 +17,8 @@ DEFAULT_CONFIG = {
     "debug_mode": False,
     "download_max_retries": 3,
     "download_retry_delay": 10,
-    "discord_rpc_enabled": False
+    "discord_rpc_enabled": False,
+    "shortcuts_enabled": True
 }
 
 class Config:

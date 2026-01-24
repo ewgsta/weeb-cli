@@ -44,18 +44,25 @@ def show_main_menu():
     show_header("Weeb CLI", show_version=True, show_source=True)
     
     shortcuts = shortcut_manager.get_shortcuts()
+    shortcuts_enabled = shortcut_manager.is_enabled()
     
-    opt_search = f"{i18n.get('menu.options.search')} [{shortcuts['search']}]"
-    opt_downloads = f"{i18n.get('menu.options.downloads')} [{shortcuts['downloads']}]"
-    opt_watchlist = f"{i18n.get('menu.options.watchlist')} [{shortcuts['watchlist']}]"
-    opt_settings = f"{i18n.get('menu.options.settings')} [{shortcuts['settings']}]"
-    opt_exit = f"{i18n.get('menu.options.exit')} [{shortcuts['exit']}]"
+    opt_search = i18n.get("menu.options.search")
+    opt_downloads = i18n.get("menu.options.downloads")
+    opt_watchlist = i18n.get("menu.options.watchlist")
+    opt_settings = i18n.get("menu.options.settings")
     
-    choices = [
-        questionary.Choice(opt_search, shortcut_key=shortcuts['search']),
-        questionary.Choice(opt_downloads, shortcut_key=shortcuts['downloads']),
-        questionary.Choice(opt_watchlist, shortcut_key=shortcuts['watchlist']),
-    ]
+    if shortcuts_enabled:
+        choices = [
+            questionary.Choice(opt_search, shortcut_key=shortcuts.get('search')),
+            questionary.Choice(opt_downloads, shortcut_key=shortcuts.get('downloads')),
+            questionary.Choice(opt_watchlist, shortcut_key=shortcuts.get('watchlist')),
+        ]
+    else:
+        choices = [
+            opt_search,
+            opt_downloads,
+            opt_watchlist,
+        ]
     
     active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
     opt_active = None
@@ -63,19 +70,22 @@ def show_main_menu():
         is_running = queue_manager.is_running()
         status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
         opt_active = f"{i18n.get('downloads.active_downloads')} ({len(active_queue)}) - {status}"
-        choices.append(questionary.Choice(opt_active))
+        if shortcuts_enabled:
+            choices.append(questionary.Choice(opt_active))
+        else:
+            choices.append(opt_active)
     
-    choices.extend([
-        questionary.Choice(opt_settings, shortcut_key=shortcuts['settings']),
-        questionary.Choice(opt_exit, shortcut_key=shortcuts['exit'])
-    ])
+    if shortcuts_enabled:
+        choices.append(questionary.Choice(opt_settings, shortcut_key=shortcuts.get('settings')))
+    else:
+        choices.append(opt_settings)
     
     try:
         selected = questionary.select(
             i18n.get("menu.prompt"),
             choices=choices,
             pointer=">",
-            use_shortcuts=True,
+            use_shortcuts=shortcuts_enabled,
             style=questionary.Style([
                 ('pointer', 'fg:cyan bold'),
                 ('highlighted', 'fg:cyan'),
@@ -95,7 +105,7 @@ def show_main_menu():
             show_active_downloads_menu()
         elif selected == opt_settings:
             open_settings()
-        elif selected == opt_exit or selected is None:
+        elif selected is None:
             _handle_exit()
             
         show_main_menu()

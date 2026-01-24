@@ -46,6 +46,7 @@ def open_settings():
         ytdlp_state = i18n.get("common.enabled") if config.get("ytdlp_enabled") else i18n.get("common.disabled")
         desc_state = i18n.get("common.enabled") if config.get("show_description", True) else i18n.get("common.disabled")
         discord_rpc_state = i18n.get("common.enabled") if config.get("discord_rpc_enabled", False) else i18n.get("common.disabled")
+        shortcuts_state = i18n.get("common.enabled") if config.get("shortcuts_enabled", True) else i18n.get("common.disabled")
         
         opt_lang = i18n.get("settings.language")
         opt_source = f"{i18n.get('settings.source')} [{display_source}]"
@@ -53,15 +54,21 @@ def open_settings():
         opt_drives = i18n.get("settings.external_drives")
         opt_desc = f"{i18n.get('settings.show_description')} [{desc_state}]"
         opt_discord_rpc = f"{i18n.get('settings.discord_rpc')} [{discord_rpc_state}]"
+        opt_shortcuts_toggle = f"{i18n.get('settings.shortcuts')} [{shortcuts_state}]"
         opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
         opt_ytdlp = f"{i18n.get('settings.ytdlp')} [{ytdlp_state}]"
         
         opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
         opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
+        opt_shortcuts_conf = f"  ↳ {i18n.get('settings.shortcuts_config')}"
         opt_backup = i18n.get("settings.backup_restore")
-        opt_shortcuts = i18n.get("settings.shortcuts")
         
-        choices = [opt_lang, opt_source, opt_download, opt_drives, opt_desc, opt_discord_rpc, opt_aria2]
+        choices = [opt_lang, opt_source, opt_download, opt_drives, opt_desc, opt_discord_rpc, opt_shortcuts_toggle]
+        
+        if config.get("shortcuts_enabled", True):
+            choices.append(opt_shortcuts_conf)
+        
+        choices.append(opt_aria2)
         if config.get("aria2_enabled"):
             choices.append(opt_aria2_conf)
             
@@ -72,7 +79,6 @@ def open_settings():
         opt_trackers = i18n.get("settings.trackers")
         choices.append(opt_trackers)
         choices.append(opt_backup)
-        choices.append(opt_shortcuts)
         
         try:
             answer = questionary.select(
@@ -101,6 +107,10 @@ def open_settings():
             toggle_description()
         elif answer == opt_discord_rpc:
             toggle_discord_rpc()
+        elif answer == opt_shortcuts_toggle:
+            toggle_shortcuts()
+        elif answer == opt_shortcuts_conf:
+            shortcuts_menu()
         elif answer == opt_aria2:
             toggle_config("aria2_enabled", "Aria2")
         elif answer == opt_aria2_conf:
@@ -113,8 +123,6 @@ def open_settings():
             trackers_menu()
         elif answer == opt_backup:
             backup_restore_menu()
-        elif answer == opt_shortcuts:
-            shortcuts_menu()
         elif answer is None:
             return
 
@@ -139,6 +147,15 @@ def toggle_discord_rpc():
     
     msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
     console.print(f"[green]{i18n.t(msg_key, tool='Discord RPC')}[/green]")
+    time.sleep(0.5)
+
+def toggle_shortcuts():
+    current = config.get("shortcuts_enabled", True)
+    new_val = not current
+    config.set("shortcuts_enabled", new_val)
+    
+    msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
+    console.print(f"[green]{i18n.t(msg_key, tool=i18n.get('settings.shortcuts'))}[/green]")
     time.sleep(0.5)
 
 def change_language():

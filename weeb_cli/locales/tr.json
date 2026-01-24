@@ -111,6 +111,7 @@
         "backup_not_found": "Yedek dosyası bulunamadı.",
         "restart_required": "Değişikliklerin uygulanması için uygulamayı yeniden başlatın.",
         "shortcuts": "Klavye Kısayolları",
+        "shortcuts_config": "Kısayol Ayarları",
         "shortcuts_hint": "Menülerde hızlı erişim için tek tuşla seçim yapabilirsiniz",
         "shortcut_search": "Anime Ara",
         "shortcut_downloads": "İndirmeler",

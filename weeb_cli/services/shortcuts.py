@@ -16,7 +16,13 @@ class ShortcutManager:
     def __init__(self):
         self._shortcuts = None
     
+    def is_enabled(self):
+        return config.get("shortcuts_enabled", True)
+    
     def get_shortcuts(self):
+        if not self.is_enabled():
+            return {}
+        
         if self._shortcuts is None:
             self._shortcuts = {}
             for key, default_value in DEFAULT_SHORTCUTS.items():
@@ -25,6 +31,8 @@ class ShortcutManager:
         return self._shortcuts
     
     def get_shortcut(self, action):
+        if not self.is_enabled():
+            return None
         shortcuts = self.get_shortcuts()
         return shortcuts.get(action, DEFAULT_SHORTCUTS.get(action))
     

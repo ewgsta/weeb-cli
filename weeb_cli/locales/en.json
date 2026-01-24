@@ -111,6 +111,7 @@
         "backup_not_found": "Backup file not found.",
         "restart_required": "Please restart the application to apply changes.",
         "shortcuts": "Keyboard Shortcuts",
+        "shortcuts_config": "Shortcut Settings",
         "shortcuts_hint": "Use single key shortcuts for quick access in menus",
         "shortcut_search": "Search Anime",
         "shortcut_downloads": "Downloads",
