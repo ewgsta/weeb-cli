@@ -309,5 +309,33 @@ class Database:
     def remove_indexed_anime(self, folder_path):
         with self._conn() as conn:
             conn.execute('DELETE FROM anime_index WHERE folder_path = ?', (folder_path,))
+    
+    def backup_database(self, backup_path):
+        import shutil
+        try:
+            shutil.copy2(self.db_path, backup_path)
+            return True
+        except Exception as e:
+            return False
+    
+    def restore_database(self, backup_path):
+        import shutil
+        try:
+            if not Path(backup_path).exists():
+                return False
+            
+            backup_temp = self.db_path.with_suffix('.db.restore_backup')
+            shutil.copy2(self.db_path, backup_temp)
+            
+            try:
+                shutil.copy2(backup_path, self.db_path)
+                backup_temp.unlink()
+                return True
+            except Exception:
+                shutil.copy2(backup_temp, self.db_path)
+                backup_temp.unlink()
+                return False
+        except Exception:
+            return False
 
 db = Database()

@@ -95,7 +95,21 @@
         "mal_waiting": "Tarayıcıda giriş yapın, otomatik olarak algılanacak...",
         "mal_login_success": "MAL'a başarıyla bağlandı!",
         "mal_login_failed": "Bağlantı başarısız. Lütfen tekrar deneyin.",
-        "mal_logged_out": "MAL bağlantısı kesildi."
+        "mal_logged_out": "MAL bağlantısı kesildi.",
+        "backup_restore": "Yedekleme & Geri Yükleme",
+        "db_location": "Veritabanı Konumu",
+        "db_size": "Boyut",
+        "create_backup": "Yedek Oluştur",
+        "restore_backup": "Yedeği Geri Yükle",
+        "backup_path": "Yedek dosyası adı veya yolu",
+        "restore_path": "Yedek dosyası yolu",
+        "backup_success": "Yedekleme başarılı!",
+        "backup_failed": "Yedekleme başarısız.",
+        "restore_confirm": "Mevcut veritabanı yedeğin üzerine yazılacak. Emin misiniz?",
+        "restore_success": "Geri yükleme başarılı!",
+        "restore_failed": "Geri yükleme başarısız.",
+        "backup_not_found": "Yedek dosyası bulunamadı.",
+        "restart_required": "Değişikliklerin uygulanması için uygulamayı yeniden başlatın."
     },
     "setup": {
         "welcome": "Weeb CLI'a Hoş Geldiniz!",

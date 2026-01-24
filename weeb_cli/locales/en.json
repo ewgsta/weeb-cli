@@ -95,7 +95,21 @@
         "mal_waiting": "Log in via browser, it will be detected automatically...",
         "mal_login_success": "Successfully connected to MAL!",
         "mal_login_failed": "Connection failed. Please try again.",
-        "mal_logged_out": "Disconnected from MAL."
+        "mal_logged_out": "Disconnected from MAL.",
+        "backup_restore": "Backup & Restore",
+        "db_location": "Database Location",
+        "db_size": "Size",
+        "create_backup": "Create Backup",
+        "restore_backup": "Restore Backup",
+        "backup_path": "Backup file name or path",
+        "restore_path": "Backup file path",
+        "backup_success": "Backup successful!",
+        "backup_failed": "Backup failed.",
+        "restore_confirm": "Current database will be overwritten. Are you sure?",
+        "restore_success": "Restore successful!",
+        "restore_failed": "Restore failed.",
+        "backup_not_found": "Backup file not found.",
+        "restart_required": "Please restart the application to apply changes."
     },
     "setup": {
         "welcome": "Welcome to Weeb CLI!",

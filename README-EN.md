@@ -100,13 +100,13 @@ weeb-cli
 
 ## Sources
 
-| Source | Language | Status |
-|--------|----------|--------|
-| Animecix | Turkish | ✅ Active |
-| Turkanime | Turkish | ✅ Active |
-| Anizle | Turkish | ✅ Active |
-| HiAnime | English | ✅ Active |
-| AllAnime | English | ✅ Active |
+| Source | Language |
+|--------|----------|
+| Animecix | Turkish |
+| Turkanime | Turkish |
+| Anizle | Turkish |
+| HiAnime | English |
+| AllAnime | English |
 
 ---
 
@@ -136,13 +136,13 @@ Config location: `~/.weeb-cli/weeb.db` (SQLite)
 - [x] Notification system
 - [x] Debug mode
 - [x] MAL/AniList integration
+- [x] Database backup/restore
 
 
 ### Planned
 - [ ] Anime recommendations
 - [ ] Batch operations
 - [ ] Watch statistics (graphs)
-- [ ] Database backup/restore
 - [ ] Theme support
 - [ ] Keyboard shortcuts
 - [ ] Subtitle downloads

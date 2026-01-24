@@ -58,6 +58,7 @@ def open_settings():
         
         opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
         opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
+        opt_backup = i18n.get("settings.backup_restore")
         
         choices = [opt_lang, opt_source, opt_download, opt_drives, opt_desc, opt_discord_rpc, opt_aria2]
         if config.get("aria2_enabled"):
@@ -69,6 +70,7 @@ def open_settings():
         
         opt_trackers = i18n.get("settings.trackers")
         choices.append(opt_trackers)
+        choices.append(opt_backup)
         
         try:
             answer = questionary.select(
@@ -107,6 +109,8 @@ def open_settings():
             ytdlp_settings_menu()
         elif answer == opt_trackers:
             trackers_menu()
+        elif answer == opt_backup:
+            backup_restore_menu()
         elif answer is None:
             return
 
@@ -619,3 +623,117 @@ def mal_settings_menu():
                         
             except KeyboardInterrupt:
                 return
+
+
+def backup_restore_menu():
+    from weeb_cli.services.database import db
+    from pathlib import Path
+    
+    while True:
+        console.clear()
+        show_header(i18n.get("settings.backup_restore"))
+        
+        db_size = db.db_path.stat().st_size / 1024
+        console.print(f"[dim]{i18n.get('settings.db_location')}: {db.db_path}[/dim]")
+        console.print(f"[dim]{i18n.get('settings.db_size')}: {db_size:.2f} KB[/dim]\n")
+        
+        opt_backup = i18n.get("settings.create_backup")
+        opt_restore = i18n.get("settings.restore_backup")
+        
+        try:
+            sel = questionary.select(
+                i18n.get("downloads.action_prompt"),
+                choices=[opt_backup, opt_restore],
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if sel is None:
+                return
+            
+            if sel == opt_backup:
+                create_backup()
+            elif sel == opt_restore:
+                restore_backup()
+                
+        except KeyboardInterrupt:
+            return
+
+def create_backup():
+    from weeb_cli.services.database import db
+    from pathlib import Path
+    from datetime import datetime
+    
+    default_name = f"weeb-backup-{datetime.now().strftime('%Y%m%d-%H%M%S')}.db"
+    
+    try:
+        path = questionary.text(
+            i18n.get("settings.backup_path"),
+            default=default_name,
+            qmark=">"
+        ).ask()
+        
+        if not path:
+            return
+        
+        backup_path = Path(path)
+        if not backup_path.suffix:
+            backup_path = backup_path.with_suffix('.db')
+        
+        with console.status(i18n.get("common.processing"), spinner="dots"):
+            success = db.backup_database(backup_path)
+        
+        if success:
+            console.print(f"[green]{i18n.get('settings.backup_success')}[/green]")
+            console.print(f"[dim]{backup_path.absolute()}[/dim]")
+        else:
+            console.print(f"[red]{i18n.get('settings.backup_failed')}[/red]")
+        
+        time.sleep(2)
+        
+    except KeyboardInterrupt:
+        pass
+
+def restore_backup():
+    from weeb_cli.services.database import db
+    from pathlib import Path
+    
+    try:
+        path = questionary.text(
+            i18n.get("settings.restore_path"),
+            qmark=">"
+        ).ask()
+        
+        if not path:
+            return
+        
+        backup_path = Path(path)
+        
+        if not backup_path.exists():
+            console.print(f"[red]{i18n.get('settings.backup_not_found')}[/red]")
+            time.sleep(1.5)
+            return
+        
+        confirm = questionary.confirm(
+            i18n.get("settings.restore_confirm"),
+            default=False
+        ).ask()
+        
+        if not confirm:
+            return
+        
+        with console.status(i18n.get("common.processing"), spinner="dots"):
+            success = db.restore_database(backup_path)
+        
+        if success:
+            console.print(f"[green]{i18n.get('settings.restore_success')}[/green]")
+            console.print(f"[yellow]{i18n.get('settings.restart_required')}[/yellow]")
+        else:
+            console.print(f"[red]{i18n.get('settings.restore_failed')}[/red]")
+        
+        time.sleep(2)
+        
+    except KeyboardInterrupt:
+        pass
+
+# dursun zaman dokunduğunda sana yine yakınlaştığımda bana öyle baktığındaaaaaaa sessizzceeee  uyandığında sana yine dokunduğumda dursun zaman

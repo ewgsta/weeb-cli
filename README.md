@@ -100,13 +100,13 @@ weeb-cli
 
 ## Kaynaklar
 
-| Kaynak | Dil | Durum |
-|--------|-----|-------|
-| Animecix | Türkçe | ✅ Aktif |
-| Turkanime | Türkçe | ✅ Aktif |
-| Anizle | Türkçe | ✅ Aktif |
-| HiAnime | İngilizce | ✅ Aktif |
-| AllAnime | İngilizce | ✅ Aktif |
+| Kaynak | Dil |
+|--------|-----|
+| Animecix | Türkçe |
+| Turkanime | Türkçe |
+| Anizle | Türkçe |
+| HiAnime | İngilizce |
+| AllAnime | İngilizce |
 
 ---
 
@@ -136,12 +136,12 @@ Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 - [x] Bildirim sistemi
 - [x] Debug modu
 - [x] MAL/AniList entegrasyonu
+- [x] Veritabanı yedekleme/geri yükleme
 
 ### Planlanan
 - [ ] Anime önerileri
 - [ ] Toplu işlemler
 - [ ] İzleme istatistikleri (grafik)
-- [ ] Veritabanı yedekleme/geri yükleme
 - [ ] Tema desteği
 - [ ] Klavye kısayolları
 - [ ] Altyazı indirme
