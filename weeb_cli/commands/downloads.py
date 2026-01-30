@@ -213,20 +213,59 @@ def show_offline_library(source):
         
         all_choices = list(anime_map.keys())
         
+        choices = [
+            questionary.Choice(f"⌕ {i18n.get('downloads.search_anime')}", value="search"),
+        ]
+        for label in all_choices:
+            choices.append(questionary.Choice(label, value=label))
+        
         try:
-            selected_label = questionary.autocomplete(
-                i18n.get("downloads.search_anime"),
-                choices=all_choices,
-                match_middle=True,
-                style=AUTOCOMPLETE_STYLE,
+            selected = questionary.select(
+                i18n.get("downloads.action_prompt"),
+                choices=choices,
+                pointer=">",
+                use_shortcuts=False,
             ).ask()
             
-            if selected_label is None:
+            if selected is None:
                 return
             
-            if selected_label in anime_map:
-                console.print(f"[yellow]{i18n.t('downloads.connect_drive', name=source['name'])}[/yellow]")
-                time.sleep(1.5)
+            if selected == "search":
+                search_result = questionary.autocomplete(
+                    i18n.get("downloads.search_anime"),
+                    choices=all_choices,
+                    match_middle=True,
+                    style=AUTOCOMPLETE_STYLE,
+                ).ask()
+                
+                if search_result and search_result in anime_map:
+                    anime_info = anime_map[search_result]
+                    if not local_library.is_source_available(anime_info["source_path"]):
+                        console.print(f"[yellow]{i18n.t('downloads.connect_drive', name=source['name'])}[/yellow]")
+                        console.print(f"[dim]{i18n.get('downloads.drive_not_connected')}[/dim]")
+                        time.sleep(2)
+                    else:
+                        anime_data = {
+                            "title": anime_info["title"],
+                            "path": anime_info["folder_path"],
+                            "episode_count": anime_info["episode_count"],
+                            "episodes": local_library._scan_anime_folder(Path(anime_info["folder_path"]))
+                        }
+                        show_anime_episodes(anime_data)
+            elif selected in anime_map:
+                anime_info = anime_map[selected]
+                if not local_library.is_source_available(anime_info["source_path"]):
+                    console.print(f"[yellow]{i18n.t('downloads.connect_drive', name=source['name'])}[/yellow]")
+                    console.print(f"[dim]{i18n.get('downloads.drive_not_connected')}[/dim]")
+                    time.sleep(2)
+                else:
+                    anime_data = {
+                        "title": anime_info["title"],
+                        "path": anime_info["folder_path"],
+                        "episode_count": anime_info["episode_count"],
+                        "episodes": local_library._scan_anime_folder(Path(anime_info["folder_path"]))
+                    }
+                    show_anime_episodes(anime_data)
             
         except KeyboardInterrupt:
             return
@@ -358,20 +397,49 @@ def play_local_episode(anime, episode):
                     episode["number"],
                     anime["episode_count"]
                 )
+                console.print(f"[green]✓ {i18n.get('details.marked_watched', 'İzlendi olarak işaretlendi')}[/green]")
                 
                 from weeb_cli.services.tracker import anilist_tracker, mal_tracker
-                anilist_tracker.update_progress(
-                    anime["title"],
-                    episode["number"],
-                    anime["episode_count"]
-                )
-                mal_tracker.update_progress(
-                    anime["title"],
-                    episode["number"],
-                    anime["episode_count"]
-                )
-        except:
+                
+                trackers_connected = []
+                if anilist_tracker.is_authenticated():
+                    trackers_connected.append(("AniList", anilist_tracker))
+                if mal_tracker.is_authenticated():
+                    trackers_connected.append(("MAL", mal_tracker))
+                
+                if trackers_connected:
+                    tracker_names = ", ".join([t[0] for t in trackers_connected])
+                    sync_ans = questionary.confirm(
+                        i18n.get("details.sync_to_trackers", f"{tracker_names}'e de eklensin mi?")
+                    ).ask()
+                    
+                    if sync_ans:
+                        for name, tracker in trackers_connected:
+                            result = tracker.update_progress(
+                                anime["title"],
+                                episode["number"],
+                                anime["episode_count"]
+                            )
+                            if result:
+                                console.print(f"[green]✓ {name} güncellendi[/green]")
+                            else:
+                                console.print(f"[yellow]⏳ {name}: Bekleyenlere eklendi[/yellow]")
+                else:
+                    anilist_tracker.update_progress(
+                        anime["title"],
+                        episode["number"],
+                        anime["episode_count"]
+                    )
+                    mal_tracker.update_progress(
+                        anime["title"],
+                        episode["number"],
+                        anime["episode_count"]
+                    )
+                
+        except KeyboardInterrupt:
             pass
+        except Exception as e:
+            console.print(f"[dim]Tracker hatası: {e}[/dim]")
 
 def manage_queue():
     while True:

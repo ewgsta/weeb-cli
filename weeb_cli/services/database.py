@@ -53,6 +53,7 @@ class Database:
                     episode_number INTEGER,
                     episode_id TEXT,
                     slug TEXT,
+                    season INTEGER DEFAULT 1,
                     status TEXT DEFAULT 'pending',
                     progress INTEGER DEFAULT 0,
                     eta TEXT DEFAULT '?',

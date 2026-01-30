@@ -133,17 +133,14 @@ def show_anime_details(anime):
         with console.status(i18n.get("common.processing"), spinner="dots"):
             details = get_details(slug)
         
-        # Parse response structure: { data: { details: { ... } } }
         if isinstance(details, dict):
             if "data" in details and isinstance(details["data"], dict):
                 details = details["data"]
             
-            # Capture source
             source = details.get("source")
             
             if "details" in details and isinstance(details["details"], dict):
                 details = details["details"]
-                # Restore source if captured
                 if source:
                     details["source"] = source
 
@@ -198,6 +195,22 @@ def get_episodes_safe(details):
                 break
     return episodes
 
+def _group_episodes_by_season(episodes):
+    seasons = {}
+    for ep in episodes:
+        season = ep.get('season', 1)
+        if season not in seasons:
+            seasons[season] = []
+        seasons[season].append(ep)
+    
+    for season in seasons:
+        seasons[season] = sorted(seasons[season], key=lambda x: int(x.get('number') or x.get('ep_num') or 0))
+    
+    return seasons
+
+def _make_season_episode_id(season, ep_num):
+    return season * 1000 + ep_num
+
 def handle_watch_flow(slug, details):
     episodes = get_episodes_safe(details)
     if not episodes:
@@ -205,10 +218,73 @@ def handle_watch_flow(slug, details):
         time.sleep(1.5)
         return
 
+    seasons = _group_episodes_by_season(episodes)
+    season_numbers = sorted(seasons.keys())
+    
+    if len(season_numbers) <= 1:
+        _handle_single_season_watch(slug, details, episodes, season=1)
+        return
+    
     prog_data = progress_tracker.get_anime_progress(slug)
     completed_ids = set(prog_data.get("completed", []))
-    last_watched = prog_data.get("last_watched", 0)
-    next_ep_num = last_watched + 1
+    
+    while True:
+        console.clear()
+        show_header(details.get("title", "Anime"))
+        
+        season_choices = []
+        for s_num in season_numbers:
+            s_episodes = seasons[s_num]
+            total_in_season = len(s_episodes)
+            
+            watched_in_season = 0
+            for ep in s_episodes:
+                ep_num = int(ep.get('number') or ep.get('ep_num') or 0)
+                ep_id = _make_season_episode_id(s_num, ep_num)
+                if ep_id in completed_ids:
+                    watched_in_season += 1
+            
+            if watched_in_season >= total_in_season:
+                status = " [✓]"
+            elif watched_in_season > 0:
+                status = f" [{watched_in_season}/{total_in_season}]"
+            else:
+                status = f" [0/{total_in_season}]"
+            
+            label = f"{i18n.get('details.season', 'Sezon')} {s_num}{status}"
+            season_choices.append(questionary.Choice(label, value=s_num))
+        
+        try:
+            selected_season = questionary.select(
+                i18n.get("details.select_season", "Sezon Seçin") + ":",
+                choices=season_choices,
+                pointer=">",
+                use_shortcuts=False
+            ).ask()
+            
+            if selected_season is None:
+                return
+            
+            _handle_single_season_watch(slug, details, seasons[selected_season], season=selected_season)
+            
+        except KeyboardInterrupt:
+            return
+
+def _handle_single_season_watch(slug, details, episodes, season=1):
+    prog_data = progress_tracker.get_anime_progress(slug)
+    completed_ids = set(prog_data.get("completed", []))
+    
+    last_watched_in_season = 0
+    for ep_id in completed_ids:
+        if ep_id >= season * 1000 and ep_id < (season + 1) * 1000:
+            ep_num = ep_id % 1000
+            if ep_num > last_watched_in_season:
+                last_watched_in_season = ep_num
+    
+    if season == 1 and not any(cid >= 1000 for cid in completed_ids):
+        last_watched_in_season = prog_data.get("last_watched", 0)
+    
+    next_ep_num = last_watched_in_season + 1
 
     while True:
         ep_choices = []
@@ -219,8 +295,10 @@ def handle_watch_flow(slug, details):
             except:
                 num = -1
             
+            ep_progress_id = _make_season_episode_id(season, num)
+            
             prefix = "   "
-            if num in completed_ids:
+            if ep_progress_id in completed_ids or (season == 1 and num in completed_ids):
                 prefix = "✓  "
             elif num == next_ep_num:
                 prefix = "●  "
@@ -240,7 +318,7 @@ def handle_watch_flow(slug, details):
                 return
 
             ep_id = selected_ep.get("id")
-            ep_num = selected_ep.get("number")
+            ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
             
             if not ep_id:
                 console.print(f"[red]{i18n.get('details.invalid_ep_id')}[/red]")
@@ -306,7 +384,7 @@ def handle_watch_flow(slug, details):
                 continue
             
             console.print(f"[green]{i18n.get('details.player_starting')}[/green]")
-            title = f"{details.get('title', 'Anime')} - Ep {ep_num}"
+            title = f"{details.get('title', 'Anime')} - S{season}E{ep_num}"
             
             headers = {}
             if details.get("source") == "hianime":
@@ -331,26 +409,40 @@ def handle_watch_flow(slug, details):
                     if ans:
                         n = int(ep_num)
                         total_eps = details.get("total_episodes") or len(episodes)
+                        
+                        season_ep_id = _make_season_episode_id(season, n)
                         progress_tracker.mark_watched(
                             slug, 
-                            n, 
+                            season_ep_id, 
                             title=details.get("title"),
                             total_episodes=total_eps
                         )
+                        console.print(f"[green]✓ {i18n.get('details.marked_watched', 'İzlendi olarak işaretlendi')}[/green]")
                         
                         from weeb_cli.services.tracker import anilist_tracker, mal_tracker
-                        anilist_tracker.update_progress(
-                            details.get("title"),
-                            n,
-                            total_eps
-                        )
-                        mal_tracker.update_progress(
-                            details.get("title"),
-                            n,
-                            total_eps
-                        )
                         
-                        completed_ids.add(n)
+                        updated_prog = progress_tracker.get_anime_progress(slug)
+                        total_watched = len(updated_prog.get("completed", []))
+                        
+                        for name, tracker in [("AniList", anilist_tracker), ("MAL", mal_tracker)]:
+                            if tracker.is_authenticated():
+                                result = tracker.update_progress(
+                                    details.get("title"),
+                                    total_watched,
+                                    total_eps
+                                )
+                                if result:
+                                    console.print(f"[green]✓ {name} güncellendi[/green]")
+                                else:
+                                    console.print(f"[yellow]⏳ {name}: Bekleyenlere eklendi[/yellow]")
+                            else:
+                                tracker.update_progress(
+                                    details.get("title"),
+                                    total_watched,
+                                    total_eps
+                                )
+                        
+                        completed_ids.add(season_ep_id)
                         if n >= next_ep_num:
                             next_ep_num = n + 1
                 except:

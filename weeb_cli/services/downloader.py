@@ -99,6 +99,7 @@ class QueueManager:
                     "episode_number": ep.get("number") or ep.get("ep_num"),
                     "episode_id": ep_id,
                     "slug": slug,
+                    "season": ep.get("season", 1),
                     "status": "pending",
                     "added_at": time.time(),
                     "progress": 0,
@@ -189,23 +190,38 @@ class QueueManager:
 
     def _download_item(self, item):
         from weeb_cli.services.watch import get_streams
+        from weeb_cli.services.scraper import scraper
+        from weeb_cli.services.logger import debug, error as log_error
+        
         download_dir = Path(config.get("download_dir"))
         safe_title = self._sanitize_filename(item["anime_title"])
         anime_dir = download_dir / safe_title
         anime_dir.mkdir(parents=True, exist_ok=True)
 
         ep_num = item["episode_number"]
-        filename = f"{safe_title} - S1B{ep_num}.mp4" 
+        season = item.get("season", 1)
+        filename = f"{safe_title} - S{season}B{ep_num}.mp4" 
         output_path = anime_dir / filename
 
+        debug(f"Getting streams for {item['slug']} - {item['episode_id']}")
+        
         stream_data = get_streams(item["slug"], item["episode_id"])
-        if not stream_data: 
-            raise Exception("No stream data")
+        
+        if not stream_data:
+            err_msg = "Stream verisi alınamadı"
+            if scraper.last_error:
+                err_msg = f"{err_msg}: {scraper.last_error}"
+            log_error(f"Download failed - {err_msg}")
+            raise Exception(err_msg)
 
         stream_url = self._extract_url(stream_data)
+        
         if not stream_url:
-            raise Exception("No stream URL")
+            log_error(f"Download failed - Stream URL bulunamadı. Data: {stream_data}")
+            raise Exception("Stream URL bulunamadı")
 
+        debug(f"Stream URL found: {stream_url[:80]}...")
+        
         is_hls = ".m3u8" in stream_url
         
         if is_hls:
