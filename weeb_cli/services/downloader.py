@@ -206,8 +206,6 @@ class QueueManager:
         filename = f"{safe_title} - S{season}B{ep_num}.mp4" 
         output_path = anime_dir / filename
 
-        debug(f"Getting streams for {item['slug']} - {item['episode_id']}")
-        
         stream_data = get_streams(item["slug"], item["episode_id"])
         
         if not stream_data:
@@ -217,7 +215,40 @@ class QueueManager:
             log_error(f"Download failed - {err_msg}")
             raise DownloadError(err_msg, code="NO_STREAM_DATA")
 
+        if isinstance(stream_data, dict) and "data" in stream_data and "links" in stream_data["data"]:
+            links = stream_data["data"]["links"]
+            if not links:
+                raise DownloadError("Stream links boş", code="EMPTY_STREAM_LINKS")
+            
+            debug(f"Found {len(links)} stream sources, trying each one...")
+            
+            last_error = None
+            for idx, link in enumerate(links):
+                stream_url = link.get("url")
+                server_name = link.get("server", "unknown")
+                
+                if not stream_url:
+                    continue
+                
+                debug(f"Trying source {idx + 1}/{len(links)}: {server_name} - {stream_url[:80]}...")
+                
+                try:
+                    self._try_download(stream_url, output_path, item)
+                    debug(f"Download successful with source: {server_name}")
+                    return
+                    
+                except Exception as e:
+                    last_error = str(e)
+                    log_error(f"Source {server_name} failed: {e}")
+                    if idx < len(links) - 1:
+                        debug(f"Trying next source...")
+                        continue
+            
+            raise DownloadError(f"Tüm kaynaklar başarısız. Son hata: {last_error}", code="ALL_SOURCES_FAILED")
+
         stream_url = self._extract_url(stream_data)
+        
+        debug(f"Extracted stream URL: {stream_url}")
         
         if not stream_url:
             log_error(f"Download failed - Stream URL bulunamadı. Data: {stream_data}")
@@ -225,6 +256,46 @@ class QueueManager:
 
         debug(f"Stream URL found: {stream_url[:80]}...")
         
+        self._try_download(stream_url, output_path, item)
+
+    def _extract_all_urls(self, data):
+        """Extract all available stream URLs with their server names."""
+        PRIORITY = ["ALUCARD", "AMATERASU", "SIBNET", "MP4UPLOAD", "UQLOAD"]
+        
+        results = []
+        
+        if isinstance(data, dict):
+            node = data
+            for _ in range(3):
+                if "data" in node and isinstance(node["data"], (dict, list)):
+                    node = node["data"]
+                else:
+                    break
+             
+            sources = node if isinstance(node, list) else node.get("links") or node.get("sources")
+            if sources and isinstance(sources, list) and len(sources) > 0:
+                def get_priority(s):
+                    server = (s.get("server") or "").upper()
+                    for i, p in enumerate(PRIORITY):
+                        if p in server:
+                            return i
+                    return 999
+                
+                sorted_sources = sorted(sources, key=get_priority)
+                
+                for src in sorted_sources:
+                    url = src.get("url")
+                    server = src.get("server", "unknown")
+                    if url:
+                        results.append((url, server))
+                        
+            elif isinstance(node, dict) and "url" in node:
+                results.append((node["url"], node.get("server", "unknown")))
+        
+        return results
+    
+    def _try_download(self, stream_url, output_path, item):
+        """Try to download from a stream URL."""
         is_hls = ".m3u8" in stream_url
         
         if is_hls:

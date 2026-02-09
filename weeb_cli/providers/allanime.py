@@ -130,23 +130,54 @@ class AllAnimeProvider(BaseProvider):
             
             results.append(AnimeResult(
                 id=anime_id,
-                title=f"{name} ({ep_count} episodes)",
+                title=name,
                 type="series"
             ))
         
         return results
     
     def get_details(self, anime_id: str) -> Optional[AnimeDetails]:
-        episodes = self.get_episodes(anime_id)
+        gql = '''query ($showId: String!) {
+            show(_id: $showId) {
+                _id
+                name
+                description
+                thumbnail
+                availableEpisodesDetail
+            }
+        }'''
         
-        if not episodes:
+        variables = {"showId": anime_id}
+        data = _graphql_request(gql, variables)
+        
+        if not data or 'data' not in data:
             return None
         
-        title = anime_id.replace('-', ' ').title()
+        show = data.get('data', {}).get('show', {})
+        
+        if not show:
+            return None
+        
+        title = show.get('name', anime_id.replace('-', ' ').title())
+        description = show.get('description')
+        thumbnail = show.get('thumbnail')
+        
+        ep_detail = show.get('availableEpisodesDetail', {})
+        ep_list = ep_detail.get(self.mode, [])
+        
+        episodes = []
+        for i, ep_num in enumerate(sorted(ep_list, key=lambda x: float(x) if x.replace('.', '').isdigit() else 0)):
+            episodes.append(Episode(
+                id=f"{anime_id}::ep={ep_num}",
+                number=i + 1,
+                title=f"Episode {ep_num}"
+            ))
         
         return AnimeDetails(
             id=anime_id,
             title=title,
+            description=description,
+            cover=thumbnail,
             episodes=episodes,
             total_episodes=len(episodes)
         )
@@ -180,6 +211,10 @@ class AllAnimeProvider(BaseProvider):
         return episodes
     
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
+        from weeb_cli.services.logger import debug, error
+        
+        debug(f"[ALLANIME] get_streams: anime_id={anime_id}, episode_id={episode_id}")
+        
         if '::ep=' in episode_id:
             parts = episode_id.split('::ep=')
             show_id = parts[0]
@@ -187,6 +222,8 @@ class AllAnimeProvider(BaseProvider):
         else:
             show_id = anime_id
             ep_no = episode_id
+        
+        debug(f"[ALLANIME] Parsed: show_id={show_id}, ep_no={ep_no}, mode={self.mode}")
         
         gql = '''query ($showId: String!, $translationType: VaildTranslationTypeEnumType!, $episodeString: String!) {
             episode(showId: $showId translationType: $translationType episodeString: $episodeString) {
@@ -201,8 +238,14 @@ class AllAnimeProvider(BaseProvider):
             "episodeString": ep_no
         }
         
+        debug(f"[ALLANIME] GraphQL variables: {variables}")
+        
         data = _graphql_request(gql, variables)
+        
+        debug(f"[ALLANIME] GraphQL response: {data}")
+        
         if not data or 'data' not in data:
+            error(f"[ALLANIME] No data in response")
             return []
         
         episode = data.get('data', {}).get('episode', {})

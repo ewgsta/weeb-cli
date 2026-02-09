@@ -26,6 +26,8 @@ class Database:
     
     def _init_db(self):
         with self._conn() as conn:
+            conn.execute('PRAGMA journal_mode=WAL')
+            
             conn.executescript('''
                 CREATE TABLE IF NOT EXISTS config (
                     key TEXT PRIMARY KEY,
@@ -58,7 +60,9 @@ class Database:
                     progress INTEGER DEFAULT 0,
                     eta TEXT DEFAULT '?',
                     error TEXT,
-                    added_at REAL
+                    added_at REAL,
+                    retry_count INTEGER DEFAULT 0,
+                    speed TEXT
                 );
                 
                 CREATE TABLE IF NOT EXISTS external_drives (
@@ -83,6 +87,21 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_anime_title ON anime_index(title);
                 CREATE INDEX IF NOT EXISTS idx_anime_source ON anime_index(source_path);
             ''')
+            
+            self._migrate_columns()
+    
+    def _migrate_columns(self):
+        """Add missing columns to existing tables."""
+        with self._conn() as conn:
+            try:
+                conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
+            except:
+                conn.execute('ALTER TABLE download_queue ADD COLUMN retry_count INTEGER DEFAULT 0')
+            
+            try:
+                conn.execute('SELECT speed FROM download_queue LIMIT 1')
+            except:
+                conn.execute('ALTER TABLE download_queue ADD COLUMN speed TEXT')
     
     def _migrate_from_json(self):
         config_dir = Path.home() / ".weeb-cli"

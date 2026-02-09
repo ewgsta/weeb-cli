@@ -68,16 +68,28 @@ class Scraper:
             return []
     
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
+        from weeb_cli.services.logger import debug, error
+        
         self.last_error = None
+        debug(f"[SCRAPER] get_streams called: anime_id={anime_id}, episode_id={episode_id}")
+        debug(f"[SCRAPER] Current provider: {self._provider_name}")
+        
         if not self.provider:
+            error("[SCRAPER] No provider available!")
             return []
+        
         try:
-            return self.provider.get_streams(anime_id, episode_id)
+            debug(f"[SCRAPER] Calling provider.get_streams()")
+            result = self.provider.get_streams(anime_id, episode_id)
+            debug(f"[SCRAPER] Provider returned {len(result) if result else 0} streams")
+            return result
         except ProviderError as e:
             self.last_error = e.code
+            error(f"[SCRAPER] ProviderError: {e.code} - {e.message}")
             return []
         except Exception as e:
             self.last_error = str(e)
+            error(f"[SCRAPER] Exception: {str(e)}")
             return []
     
     def get_available_sources(self) -> List[dict]:
