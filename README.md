@@ -12,6 +12,7 @@
   <a href="https://github.com/ewgsta/weeb-cli/releases"><img src="https://img.shields.io/github/v/release/ewgsta/weeb-cli?style=flat-square" alt="Release"></a>
   <a href="https://github.com/ewgsta/weeb-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-CC%20BY--NC--ND%204.0-blue?style=flat-square" alt="License"></a>
   <a href="https://github.com/ewgsta/weeb-cli/stargazers"><img src="https://img.shields.io/github/stars/ewgsta/weeb-cli?style=flat-square" alt="Stars"></a>
+  <a href="https://github.com/ewgsta/weeb-cli/actions"><img src="https://img.shields.io/github/actions/workflow/status/ewgsta/weeb-cli/tests.yml?style=flat-square" alt="Tests"></a>
 </p>
 
 <p align="center">
@@ -146,14 +147,27 @@ Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 - [x] Veritabanı yedekleme/geri yükleme
 - [x] Klavye kısayolları
 
-### Planlanan
+## Gelecek Planlar
+
+### v2.6.0 (Planlanan)
+- [ ] Async/await refactoring
+- [ ] Download strategy pattern
+- [ ] Token şifreleme
+- [ ] Progress bar iyileştirmesi
+- [ ] Plugin sistemi
+
+### v2.7.0 (Planlanan)
 - [ ] Anime önerileri
 - [ ] Toplu işlemler
 - [ ] İzleme istatistikleri (grafik)
 - [ ] Tema desteği
 - [ ] Altyazı indirme
-- [ ] Torrent desteği (nyaa.si)
+
+### v3.0.0 (Uzun Vadeli)
+- [ ] Web UI (opsiyonel)
+- [ ] Torrent desteği
 - [ ] Watch party
+- [ ] Mobile app entegrasyonu
 
 ---
 

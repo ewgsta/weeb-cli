@@ -7,6 +7,8 @@ from pathlib import Path
 from rich.console import Console
 from weeb_cli.config import config
 from weeb_cli.services.dependency_manager import dependency_manager
+from weeb_cli.utils.sanitizer import sanitize_filename
+from weeb_cli.exceptions import DownloadError
 
 console = Console()
 
@@ -110,7 +112,8 @@ class QueueManager:
         return added
 
     def _sanitize_filename(self, name):
-        return re.sub(r'[<>:"/\\|?*]', '', name).strip()
+        """Sanitize filename for safe file system operations."""
+        return sanitize_filename(name)
 
     def _manage_queue(self):
         while self.running:
@@ -212,13 +215,13 @@ class QueueManager:
             if scraper.last_error:
                 err_msg = f"{err_msg}: {scraper.last_error}"
             log_error(f"Download failed - {err_msg}")
-            raise Exception(err_msg)
+            raise DownloadError(err_msg, code="NO_STREAM_DATA")
 
         stream_url = self._extract_url(stream_data)
         
         if not stream_url:
             log_error(f"Download failed - Stream URL bulunamadı. Data: {stream_data}")
-            raise Exception("Stream URL bulunamadı")
+            raise DownloadError("Stream URL bulunamadı", code="NO_STREAM_URL")
 
         debug(f"Stream URL found: {stream_url[:80]}...")
         
@@ -308,7 +311,6 @@ class QueueManager:
                         match = re.search(r'\((\d+)%\)', line)
                         progress = int(match.group(1)) if match else None
                         
-                        # Parse speed (e.g., "DL:1.2MiB")
                         speed = None
                         speed_match = re.search(r'DL:([\d.]+[KMG]?i?B)', line)
                         if speed_match:
@@ -319,7 +321,7 @@ class QueueManager:
                         pass
         
         if process.returncode != 0:
-            raise Exception("Aria2 failed")
+            raise DownloadError("Aria2 download failed", code="ARIA2_FAILED")
 
     def _download_ytdlp(self, url, path, item):
         ytdlp = dependency_manager.check_dependency("yt-dlp")
@@ -344,7 +346,6 @@ class QueueManager:
                         progress = float(p_str)
                         eta = line.split("ETA")[-1].strip() if "ETA" in line else None
                         
-                        # Parse speed (e.g., "at 1.5MiB/s")
                         speed = None
                         speed_match = re.search(r'at\s+([\d.]+[KMG]?i?B/s)', line)
                         if speed_match:
@@ -354,7 +355,7 @@ class QueueManager:
                     except:
                         pass
         if process.returncode != 0:
-            raise Exception("yt-dlp failed")
+            raise DownloadError("yt-dlp download failed", code="YTDLP_FAILED")
 
     def _download_ffmpeg(self, url, path, item):
         self._update_progress(item, eta="")
@@ -390,7 +391,6 @@ class QueueManager:
                             remaining = total - downloaded
                             eta_s = remaining / speed_bytes if speed_bytes > 0 else 0
                             
-                            # Format speed
                             if speed_bytes >= 1024 * 1024:
                                 speed_str = f"{speed_bytes / (1024*1024):.1f}MB/s"
                             elif speed_bytes >= 1024:

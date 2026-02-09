@@ -9,6 +9,7 @@ from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.downloader import queue_manager
 from weeb_cli.services.scraper import scraper
+from weeb_cli.services.cache import get_cache
 import time
 
 console = Console()
@@ -57,8 +58,15 @@ def search_anime():
 
             progress_tracker.add_search_history(query.strip())
 
-            with console.status(i18n.get("search.searching"), spinner="dots"):
-                data = search(query)
+            cache = get_cache()
+            cache_key = f"search:{query.strip()}"
+            data = cache.get(cache_key, max_age=1800)  # 30 min cache
+            
+            if data is None:
+                with console.status(i18n.get("search.searching"), spinner="dots"):
+                    data = search(query)
+                    if data:
+                        cache.set(cache_key, data)
             
             if data is None:
                 time.sleep(1)
@@ -160,6 +168,8 @@ def show_anime_details(anime):
         show_header(details.get("title", ""))
         
         if show_desc and desc:
+            if len(desc) > 500:
+                desc = desc[:497] + "..."
             console.print(f"\n[dim]{desc}[/dim]\n", justify="left")
         
         try:

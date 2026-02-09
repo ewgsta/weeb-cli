@@ -174,7 +174,6 @@ def change_language():
             lang_code = langs[selected]
             i18n.set_language(lang_code)
             
-            # Dil için varsayılan kaynağı ayarla
             sources = scraper.get_sources_for_lang(lang_code)
             if sources:
                 config.set("scraping_source", sources[0])
@@ -756,8 +755,6 @@ def restore_backup():
         
     except KeyboardInterrupt:
         pass
-
-# dursun zaman dokunduğunda sana yine yakınlaştığımda bana öyle baktığındaaaaaaa sessizzceeee  uyandığında sana yine dokunduğumda dursun zaman
 
 
 def shortcuts_menu():

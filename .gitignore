@@ -1,21 +1,55 @@
-.env
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-dist/
+*.so
+.Python
 build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
 *.egg-info/
-.weeb-cli/
-weeb_downloads/
-*.log
-aur_temp/
-homebrew_temp/
-scoop_temp/
-chocolatey_temp/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
 .vscode/
-api.yaml
 .idea/
-publish.py
-test/
-test-1/
-weeb_malproxy/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+.tox/
+
+# Weeb CLI specific
+weeb-downloads/
+*.log
+*.db
+*.cache
+.weeb-cli/
+
+# Distribution
+distribution/
+*.spec
