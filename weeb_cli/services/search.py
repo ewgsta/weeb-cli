@@ -1,6 +1,8 @@
+from typing import List, Dict
 from weeb_cli.services.scraper import scraper
 
-def search(query):
+
+def search(query: str) -> List[Dict]:
     results = scraper.search(query)
     return [
         {
@@ -14,3 +16,4 @@ def search(query):
         }
         for r in results
     ]
+

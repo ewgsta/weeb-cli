@@ -1,7 +1,9 @@
+from typing import Optional, Dict, List
 from weeb_cli.services.scraper import scraper
 from weeb_cli.services.logger import debug
 
-def get_streams(anime_id, episode_id):
+
+def get_streams(anime_id: str, episode_id: str) -> Optional[Dict]:
     debug(f"[WATCH] Getting streams for {anime_id} - {episode_id}")
     streams = scraper.get_streams(anime_id, episode_id)
     debug(f"[WATCH] Scraper returned {len(streams) if streams else 0} streams")

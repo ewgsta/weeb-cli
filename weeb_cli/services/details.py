@@ -1,6 +1,8 @@
+from typing import Optional, Dict
 from weeb_cli.services.scraper import scraper
 
-def get_details(anime_id):
+
+def get_details(anime_id: str) -> Optional[Dict]:
     details = scraper.get_details(anime_id)
     if not details:
         return None
