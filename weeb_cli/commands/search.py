@@ -427,7 +427,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                             title=details.get("title"),
                             total_episodes=total_eps
                         )
-                        console.print(f"[green]✓ {i18n.get('details.marked_watched', 'İzlendi olarak işaretlendi')}[/green]")
+                        console.print(f"[green]✓ {i18n.get('details.marked_watched')}[/green]")
                         
                         from weeb_cli.services.tracker import anilist_tracker, mal_tracker
                         
@@ -442,9 +442,9 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                                     total_eps
                                 )
                                 if result:
-                                    console.print(f"[green]✓ {name} güncellendi[/green]")
+                                    console.print(f"[green]✓ {name} {i18n.get('watchlist.tracker_updated')}[/green]")
                                 else:
-                                    console.print(f"[yellow]⏳ {name}: Bekleyenlere eklendi[/yellow]")
+                                    console.print(f"[yellow]⏳ {name}: {i18n.get('watchlist.tracker_pending')}[/yellow]")
                             else:
                                 tracker.update_progress(
                                     details.get("title"),

@@ -17,13 +17,14 @@ class LocalLibrary:
         return self._db
     
     def get_all_sources(self) -> List[Dict]:
+        from weeb_cli.i18n import i18n
         sources = []
         
         download_dir = Path(config.get("download_dir"))
         if download_dir.exists():
             sources.append({
                 "path": str(download_dir),
-                "name": "İndirilenler",
+                "name": i18n.get("downloads.downloads_folder"),
                 "type": "local",
                 "available": True
             })

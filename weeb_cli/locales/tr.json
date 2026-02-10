@@ -11,7 +11,15 @@
         "detected": "Kurulum yöntemi tespit edildi",
         "running": "Çalıştırılıyor",
         "timeout": "İşlem zaman aşımına uğradı.",
-        "fallback": "Güncelleme başarısız, indirme sayfası açılıyor..."
+        "fallback": "Güncelleme başarısız, indirme sayfası açılıyor...",
+        "downloading_progress": "İndiriliyor: {percent}%",
+        "downloaded": "İndirildi",
+        "location": "Konum",
+        "restarting": "Yeniden başlatılıyor",
+        "updating_pip": "pip ile güncelleniyor",
+        "no_asset": "İndirme dosyası bulunamadı",
+        "download_url": "İndirme URL'si",
+        "manual_update": "Manuel güncelleme gerekli"
     },
     "menu": {
         "title": "Ana Menü",
@@ -45,6 +53,8 @@
         "download_settings": "İndirme Ayarları",
         "change_folder_name": "Klasör Adını Değiştir",
         "change_full_path": "Tam Yolu Değiştir",
+        "folder_name_prompt": "Klasör Adı:",
+        "full_path_prompt": "Tam Yol:",
         "concurrent_downloads": "Eşzamanlı İndirme Sayısı",
         "enter_concurrent": "Eşzamanlı indirme sayısını girin (1-5)",
         "max_retries": "Yeniden Deneme Sayısı",
@@ -198,7 +208,8 @@
     },
     "player": {
         "installing_mpv": "MPV bulunamadı. Kuruluyor...",
-        "install_failed": "MPV kurulamadı. Lütfen manuel kurun."
+        "install_failed": "MPV kurulamadı. Lütfen manuel kurun.",
+        "error": "Oynatıcı hatası"
     },
     "watchlist": {
         "total_anime": "Toplam Anime",
@@ -213,7 +224,10 @@
         "no_in_progress": "Devam eden anime yok.",
         "anime_title": "Anime",
         "episodes_watched": "İzlenen",
-        "next": "Sonraki"
+        "next": "Sonraki",
+        "tracker_updated": "güncellendi",
+        "tracker_pending": "Bekleyenlere eklendi",
+        "tracker_error": "Tracker hatası"
     },
     "errors": {
         "provider_error": "Kaynak hatası: {error}",
@@ -230,6 +244,10 @@
         "status_completed": "Tamamlandı",
         "status_failed": "Başarısız",
         "status_pending": "Bekliyor",
+        "failed_downloads": "başarısız indirme",
+        "retrying_downloads": "indirme yeniden deneniyor...",
+        "default_folder_name": "İndirilenler",
+        "downloads_folder": "İndirilenler",
         "resume_prompt": "{count} tamamlanmamış indirme var. Devam edilsin mi?",
         "resumed": "İndirmeler devam ediyor...",
         "already_downloading": "Bu anime zaten indiriliyor.",

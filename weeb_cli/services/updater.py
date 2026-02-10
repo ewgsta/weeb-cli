@@ -105,10 +105,10 @@ def download_exe(url, filename):
                     downloaded += len(chunk)
                     if total_size > 0:
                         percent = int((downloaded / total_size) * 100)
-                        console.print(f"\r[cyan]İndiriliyor: {percent}%[/cyan]", end="")
+                        console.print(f"\r[cyan]{i18n.get('update.downloading_progress', percent=percent)}[/cyan]", end="")
         
         console.print(f"\n[green]{i18n.get('update.downloaded')}[/green]")
-        console.print(f"[dim]Konum: {new_exe_path}[/dim]")
+        console.print(f"[dim]{i18n.get('update.location')}: {new_exe_path}[/dim]")
         
         if getattr(sys, 'frozen', False):
             batch_content = f'''@echo off

@@ -11,7 +11,15 @@
         "detected": "Install method detected",
         "running": "Running",
         "timeout": "Operation timed out.",
-        "fallback": "Update failed, opening download page..."
+        "fallback": "Update failed, opening download page...",
+        "downloading_progress": "Downloading: {percent}%",
+        "downloaded": "Downloaded",
+        "location": "Location",
+        "restarting": "Restarting",
+        "updating_pip": "Updating via pip",
+        "no_asset": "Download file not found",
+        "download_url": "Download URL",
+        "manual_update": "Manual update required"
     },
     "menu": {
         "title": "Main Menu",
@@ -45,6 +53,8 @@
         "download_settings": "Download Settings",
         "change_folder_name": "Change Folder Name",
         "change_full_path": "Change Full Path",
+        "folder_name_prompt": "Folder Name:",
+        "full_path_prompt": "Full Path:",
         "concurrent_downloads": "Simultaneous Downloads",
         "enter_concurrent": "Enter number of simultaneous downloads (1-5)",
         "max_retries": "Retry Count",
@@ -198,7 +208,8 @@
     },
     "player": {
         "installing_mpv": "MPV not found. Installing...",
-        "install_failed": "Failed to install MPV. Please install manually."
+        "install_failed": "Failed to install MPV. Please install manually.",
+        "error": "Player error"
     },
     "watchlist": {
         "total_anime": "Total Anime",
@@ -213,7 +224,10 @@
         "no_in_progress": "No anime in progress.",
         "anime_title": "Anime",
         "episodes_watched": "Watched",
-        "next": "Next"
+        "next": "Next",
+        "tracker_updated": "updated",
+        "tracker_pending": "Added to pending",
+        "tracker_error": "Tracker error"
     },
     "errors": {
         "provider_error": "Provider error: {error}",
@@ -230,6 +244,10 @@
         "status_completed": "Completed",
         "status_failed": "Failed",
         "status_pending": "Pending",
+        "failed_downloads": "failed download(s)",
+        "retrying_downloads": "download(s) retrying...",
+        "default_folder_name": "Downloads",
+        "downloads_folder": "Downloads",
         "resume_prompt": "{count} incomplete download(s) found. Resume?",
         "resumed": "Downloads resuming...",
         "already_downloading": "This anime is already downloading.",

@@ -264,12 +264,14 @@ def download_settings_menu():
             ).ask()
             
             if sel == opt_name:
-                val = questionary.text("Folder Name:", default="weeb-downloads").ask()
+                from weeb_cli.i18n import i18n
+                default_name = i18n.get("downloads.default_folder_name", "weeb-downloads")
+                val = questionary.text(i18n.get("settings.folder_name_prompt"), default=default_name).ask()
                 if val:
                     new_path = os.path.join(os.getcwd(), val)
                     config.set("download_dir", new_path)
             elif sel == opt_path:
-                val = questionary.text("Full Path:", default=curr_dir).ask()
+                val = questionary.text(i18n.get("settings.full_path_prompt"), default=curr_dir).ask()
                 if val:
                     config.set("download_dir", val)
             elif sel == opt_concurrent:

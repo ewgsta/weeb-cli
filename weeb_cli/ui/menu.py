@@ -128,7 +128,7 @@ def show_active_downloads_menu():
             console.print(f"[cyan]{i18n.t('downloads.pending_count', count=pending)}[/cyan] - {status}\n")
         
         if failed > 0:
-            console.print(f"[red]{failed} başarısız indirme[/red]\n")
+            console.print(f"[red]{failed} {i18n.get('downloads.failed_downloads')}[/red]\n")
         
         opt_view = i18n.get("downloads.view_queue")
         opt_start = i18n.get("downloads.start_queue")
@@ -170,7 +170,7 @@ def show_active_downloads_menu():
                 time.sleep(0.5)
             elif action == opt_retry:
                 count = queue_manager.retry_failed()
-                console.print(f"[green]{count} indirme yeniden deneniyor...[/green]")
+                console.print(f"[green]{count} {i18n.get('downloads.retrying_downloads')}[/green]")
                 time.sleep(0.5)
             elif action == opt_clear:
                 queue_manager.clear_completed()

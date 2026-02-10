@@ -46,7 +46,7 @@ class Player:
             subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return True
         except Exception as e:
-            console.print(f"[red]Error running player: {e}[/red]")
+            console.print(f"[red]{i18n.get('player.error')}: {e}[/red]")
             return False
         finally:
             discord_rpc.clear_presence()

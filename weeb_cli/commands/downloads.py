@@ -397,7 +397,7 @@ def play_local_episode(anime, episode):
                     episode["number"],
                     anime["episode_count"]
                 )
-                console.print(f"[green]✓ {i18n.get('details.marked_watched', 'İzlendi olarak işaretlendi')}[/green]")
+                console.print(f"[green]✓ {i18n.get('details.marked_watched')}[/green]")
                 
                 from weeb_cli.services.tracker import anilist_tracker, mal_tracker
                 
@@ -421,9 +421,9 @@ def play_local_episode(anime, episode):
                                 anime["episode_count"]
                             )
                             if result:
-                                console.print(f"[green]✓ {name} güncellendi[/green]")
+                                console.print(f"[green]✓ {name} {i18n.get('watchlist.tracker_updated')}[/green]")
                             else:
-                                console.print(f"[yellow]⏳ {name}: Bekleyenlere eklendi[/yellow]")
+                                console.print(f"[yellow]⏳ {name}: {i18n.get('watchlist.tracker_pending')}[/yellow]")
                 else:
                     anilist_tracker.update_progress(
                         anime["title"],
@@ -439,7 +439,7 @@ def play_local_episode(anime, episode):
         except KeyboardInterrupt:
             pass
         except Exception as e:
-            console.print(f"[dim]Tracker hatası: {e}[/dim]")
+            console.print(f"[dim]{i18n.get('watchlist.tracker_error')}: {e}[/dim]")
 
 def manage_queue():
     while True:
