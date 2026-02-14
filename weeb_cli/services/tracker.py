@@ -3,6 +3,8 @@ import webbrowser
 import time
 import json
 import socket
+import sys
+from pathlib import Path
 from urllib.parse import parse_qs
 from weeb_cli.services import logger
 
@@ -10,94 +12,25 @@ ANILIST_CLIENT_ID = "34596"
 ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
 ANILIST_PORT = 8765
 
-CALLBACK_HTML_SUCCESS = '''HTTP/1.1 200 OK\r
-Content-Type: text/html; charset=utf-8\r
-Connection: close\r
-\r
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - AniList</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
-        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
-        .container{position:relative;z-index:2;text-align:center;padding:3rem}
-        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
-        .subtitle{font-size:0.85rem;color:#02a9ff;margin-bottom:2rem;font-weight:500}
-        .checkmark{width:48px;height:48px;margin:0 auto 1.5rem;stroke:#4ade80;stroke-width:2;fill:none}
-        .checkmark path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 0.5s ease forwards}
-        @keyframes draw{to{stroke-dashoffset:0}}
-        .status{font-size:1.1rem;color:#4ade80;margin-bottom:1.5rem}
-        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
-        .spinner{width:24px;height:24px;border:2px solid #333;border-top-color:#e6e6e6;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1.5rem}
-        @keyframes spin{to{transform:rotate(360deg)}}
-    </style>
-</head>
-<body>
-    <div class="noise"></div>
-    <div class="container">
-        <div class="logo">Weeb CLI</div>
-        <div class="subtitle">AniList</div>
-        <div id="content">
-            <div class="spinner"></div>
-        </div>
-    </div>
-    <script>
-        const hash = window.location.hash.substring(1);
-        const params = new URLSearchParams(hash);
-        const token = params.get('access_token');
-        if (token) {
-            fetch('/token?t=' + encodeURIComponent(token))
-                .then(() => {
-                    document.getElementById('content').innerHTML = '<svg class="checkmark" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>';
-                });
-        } else {
-            document.getElementById('content').innerHTML = '<svg class="checkmark" viewBox="0 0 24 24" style="stroke:#f87171"><path d="M6 6l12 12M6 18L18 6"/></svg>';
-        }
-    </script>
-</body>
-</html>'''
+def get_templates_dir():
+    """Get templates directory path."""
+    if getattr(sys, 'frozen', False):
+        base_path = Path(sys._MEIPASS)
+        possible_path = base_path / "weeb_cli" / "templates"
+        if possible_path.exists():
+            return possible_path
+        return base_path / "templates"
+    return Path(__file__).parent.parent / "templates"
 
-CALLBACK_HTML_ERROR = '''HTTP/1.1 200 OK\r
-Content-Type: text/html; charset=utf-8\r
-Connection: close\r
-\r
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - AniList</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
-        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
-        .container{position:relative;z-index:2;text-align:center;padding:3rem}
-        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
-        .subtitle{font-size:0.85rem;color:#02a9ff;margin-bottom:2rem;font-weight:500}
-        .status{font-size:1.1rem;color:#f87171;margin-bottom:1.5rem}
-        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
-    </style>
-</head>
-<body>
-    <div class="noise"></div>
-    <div class="container">
-        <div class="logo">Weeb CLI</div>
-        <div class="subtitle">AniList</div>
-        <div class="status">Yetkilendirme basarisiz</div>
-    </div>
-</body>
-</html>'''
-
+def load_template(filename):
+    """Load HTML template from file."""
+    template_path = get_templates_dir() / filename
+    try:
+        with open(template_path, "r", encoding="utf-8") as f:
+            return f.read()
+    except Exception as e:
+        logger.error(f"Failed to load template {filename}: {e}")
+        return ""
 
 def wait_for_anilist_callback(timeout=120):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -110,6 +43,8 @@ def wait_for_anilist_callback(timeout=120):
         
         token = None
         start_time = time.time()
+        
+        callback_html_success = load_template("anilist_success.html")
         
         while time.time() - start_time < timeout:
             try:
@@ -133,7 +68,7 @@ def wait_for_anilist_callback(timeout=120):
                         sock.close()
                         return token
                 else:
-                    conn.sendall(CALLBACK_HTML_SUCCESS.encode("utf-8"))
+                    conn.sendall(callback_html_success.encode("utf-8"))
                     conn.close()
                     
             except socket.timeout:
@@ -370,79 +305,6 @@ anilist_tracker = AniListTracker()
 MAL_PROXY_URL = "https://weeb-malproxy.vercel.app"
 MAL_LOCAL_PORT = 8766
 
-MAL_CALLBACK_SUCCESS = '''HTTP/1.1 200 OK\r
-Content-Type: text/html; charset=utf-8\r
-Connection: close\r
-\r
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI - MAL</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
-        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
-        .container{position:relative;z-index:2;text-align:center;padding:3rem}
-        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
-        .subtitle{font-size:0.85rem;color:#2e51a2;margin-bottom:2rem;font-weight:500}
-        .checkmark{width:48px;height:48px;margin:0 auto 1.5rem;stroke:#4ade80;stroke-width:2;fill:none}
-        .checkmark path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 0.5s ease forwards}
-        @keyframes draw{to{stroke-dashoffset:0}}
-        .status{font-size:1.1rem;color:#4ade80;margin-bottom:1.5rem}
-        .hint{font-size:0.75rem;color:#555;margin-top:2rem}
-    </style>
-</head>
-<body>
-    <div class="noise"></div>
-    <div class="container">
-        <div class="logo">Weeb CLI</div>
-        <div class="subtitle">MyAnimeList</div>
-        <svg class="checkmark" viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg>
-    </div>
-</body>
-</html>'''
-
-MAL_CALLBACK_ERROR = '''HTTP/1.1 200 OK\r
-Content-Type: text/html; charset=utf-8\r
-Connection: close\r
-\r
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500&family=Zen+Kaku+Gothic+New:wght@300;400&display=swap" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{background:#050505;color:#e6e6e6;font-family:'Zen Kaku Gothic New',sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
-        .noise{position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1}
-        .container{position:relative;z-index:2;text-align:center;padding:3rem}
-        .logo{font-family:'Shippori Mincho',serif;font-size:2.5rem;font-weight:500;margin-bottom:0.5rem}
-        .subtitle{font-size:0.85rem;color:#2e51a2;margin-bottom:2rem;font-weight:500}
-        .checkmark{width:48px;height:48px;margin:0 auto;stroke:#f87171;stroke-width:2;fill:none}
-        .checkmark path{stroke-dasharray:100;stroke-dashoffset:100;animation:draw 0.5s ease forwards}
-        @keyframes draw{to{stroke-dashoffset:0}}
-    </style>
-</head>
-<body>
-    <div class="noise"></div>
-    <div class="container">
-        <div class="logo">Weeb CLI</div>
-        <div class="subtitle">MyAnimeList</div>
-        <svg class="checkmark" viewBox="0 0 24 24"><path d="M6 6l12 12M6 18L18 6"/></svg>
-    </div>
-</body>
-</html>'''
-
-
 def wait_for_mal_callback(timeout=120):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -451,6 +313,9 @@ def wait_for_mal_callback(timeout=120):
         sock.bind(("127.0.0.1", MAL_LOCAL_PORT))
         sock.listen(1)
         sock.settimeout(timeout)
+        
+        mal_callback_success = load_template("mal_success.html")
+        mal_callback_error = load_template("mal_error.html")
         
         while True:
             try:
@@ -468,9 +333,9 @@ def wait_for_mal_callback(timeout=120):
                         code = params.get("code", [None])[0]
                 
                 if code:
-                    conn.sendall(MAL_CALLBACK_SUCCESS.encode("utf-8"))
+                    conn.sendall(mal_callback_success.encode("utf-8"))
                 else:
-                    conn.sendall(MAL_CALLBACK_ERROR.encode("utf-8"))
+                    conn.sendall(mal_callback_error.encode("utf-8"))
                 
                 conn.close()
                 
