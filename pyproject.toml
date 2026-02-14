@@ -41,7 +41,7 @@ where = ["."]
 include = ["weeb_cli*"]
 
 [tool.setuptools.package-data]
-weeb_cli = ["locales/*.json"]
+weeb_cli = ["locales/*.json", "templates/*.html"]
 
 [project.urls]
 Homepage = "https://weeb-cli.ewgsta.me"
