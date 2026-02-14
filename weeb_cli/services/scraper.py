@@ -1,7 +1,8 @@
 from typing import List, Optional, Tuple
 from weeb_cli.config import config
 from weeb_cli.providers import get_provider, get_default_provider, list_providers
-from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink, ProviderError
+from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink
+from weeb_cli.exceptions import ProviderError
 
 
 class Scraper:
