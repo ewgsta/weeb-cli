@@ -6,8 +6,6 @@ import socket
 from urllib.parse import parse_qs
 from weeb_cli.services import logger
 
-import socket
-
 ANILIST_CLIENT_ID = "34596"
 ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
 ANILIST_PORT = 8765

@@ -1,3 +1,4 @@
+import time
 import questionary
 from rich.console import Console
 from weeb_cli.i18n import i18n
@@ -10,7 +11,6 @@ from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.downloader import queue_manager
 from weeb_cli.services.scraper import scraper
 from weeb_cli.services.cache import get_cache
-import time
 
 console = Console()
 
@@ -124,8 +124,6 @@ def search_anime():
             
         except KeyboardInterrupt:
             return
-
-from weeb_cli.services.details import get_details
 
 def show_anime_details(anime):
     slug = anime.get("slug") or anime.get("id")
