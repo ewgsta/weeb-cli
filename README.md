@@ -25,6 +25,21 @@
 
 ---
 
+## Demo
+
+### 🎬 Anime Arama ve İzleme
+![Anime Search Demo](./demo-search.gif)
+
+### 📋 Ana Menü ve Navigasyon
+![Main Menu Demo](./demo-menu.gif)
+
+### ⚡ Tam Özellik Gösterimi
+![Full Feature Demo](./demo-full.gif)
+
+> Demo kayıtları [VHS](https://github.com/charmbracelet/vhs) ile oluşturulmuştur. Kendi demo'nuzu oluşturmak için [README-DEMO.md](./README-DEMO.md) dosyasına bakın.
+
+---
+
 ## Özellikler
 
 ### Çoklu Kaynak Desteği
