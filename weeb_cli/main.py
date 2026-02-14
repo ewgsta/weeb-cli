@@ -75,7 +75,7 @@ def check_incomplete_downloads():
             
             if ans:
                 queue_manager.resume_incomplete()
-                console.print(f"[green]{i18n.get('downloads.resumed')}[/green]")
+                console.print(f"[green]{i18n.t('downloads.resumed')}[/green]")
             else:
                 queue_manager.cancel_incomplete()
         except KeyboardInterrupt:
@@ -89,14 +89,14 @@ def sync_anilist_pending():
         if pending > 0:
             synced = anilist_tracker.sync_pending()
             if synced > 0:
-                console.print(f"[dim]AniList: {synced} {i18n.get('settings.anilist_synced').split()[1]}[/dim]")
+                console.print(f"[dim]AniList: {synced} {i18n.t('settings.anilist_synced').split()[1]}[/dim]")
     
     if mal_tracker.is_authenticated():
         pending = mal_tracker.get_pending_count()
         if pending > 0:
             synced = mal_tracker.sync_pending()
             if synced > 0:
-                console.print(f"[dim]MAL: {synced} {i18n.get('settings.mal_synced').split()[1]}[/dim]")
+                console.print(f"[dim]MAL: {synced} {i18n.t('settings.mal_synced').split()[1]}[/dim]")
 
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):

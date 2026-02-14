@@ -152,9 +152,9 @@ class QueueManager:
             total, used, free = shutil.disk_usage(download_dir)
             
             if free < 500 * 1024 * 1024:
-                error_msg = i18n.get("downloads.disk_full", "Yetersiz disk alanı!")
+                error_msg = i18n.t("downloads.disk_full", "Yetersiz disk alanı!")
                 self.db.update_queue_item(item["episode_id"], status="failed", error=error_msg, eta="")
-                send_notification(i18n.get("common.error"), f"{item['anime_title']}: {error_msg}")
+                send_notification(i18n.t("common.error"), f"{item['anime_title']}: {error_msg}")
                 return
         except Exception as e:
             error(f"Disk check failed: {e}")
@@ -171,7 +171,7 @@ class QueueManager:
                 
                 debug(f"Download completed: {item['anime_title']} - Ep {item['episode_number']}")
                 
-                title = i18n.get("downloads.notification_title", "Weeb CLI")
+                title = i18n.t("downloads.notification_title", "Weeb CLI")
                 msg = i18n.t("downloads.notification_complete", anime=item['anime_title'], episode=item['episode_number'])
                 send_notification(title, msg)
                 return

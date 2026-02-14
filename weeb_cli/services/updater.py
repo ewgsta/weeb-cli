@@ -82,7 +82,7 @@ def find_asset_for_platform(assets):
 
 def download_exe(url, filename):
     try:
-        console.print(f"[cyan]{i18n.get('update.downloading')}...[/cyan]")
+        console.print(f"[cyan]{i18n.t('update.downloading')}...[/cyan]")
         
         response = requests.get(url, stream=True, timeout=60)
         response.raise_for_status()
@@ -105,10 +105,10 @@ def download_exe(url, filename):
                     downloaded += len(chunk)
                     if total_size > 0:
                         percent = int((downloaded / total_size) * 100)
-                        console.print(f"\r[cyan]{i18n.get('update.downloading_progress', percent=percent)}[/cyan]", end="")
+                        console.print(f"\r[cyan]{i18n.t('update.downloading_progress', percent=percent)}[/cyan]", end="")
         
-        console.print(f"\n[green]{i18n.get('update.downloaded')}[/green]")
-        console.print(f"[dim]{i18n.get('update.location')}: {new_exe_path}[/dim]")
+        console.print(f"\n[green]{i18n.t('update.downloaded')}[/green]")
+        console.print(f"[dim]{i18n.t('update.location')}: {new_exe_path}[/dim]")
         
         if getattr(sys, 'frozen', False):
             batch_content = f'''@echo off
@@ -122,7 +122,7 @@ del "%~f0"
             with open(batch_path, 'w') as f:
                 f.write(batch_content)
             
-            console.print(f"[green]{i18n.get('update.restarting')}...[/green]")
+            console.print(f"[green]{i18n.t('update.restarting')}...[/green]")
             subprocess.Popen(['cmd', '/c', batch_path], 
                            creationflags=subprocess.CREATE_NO_WINDOW if hasattr(subprocess, 'CREATE_NO_WINDOW') else 0)
             sys.exit(0)
@@ -130,12 +130,12 @@ del "%~f0"
         return True
         
     except Exception as e:
-        console.print(f"[red]{i18n.get('update.error')}: {e}[/red]")
+        console.print(f"[red]{i18n.t('update.error')}: {e}[/red]")
         return False
 
 def update_via_pip():
     try:
-        console.print(f"[cyan]{i18n.get('update.updating_pip')}...[/cyan]")
+        console.print(f"[cyan]{i18n.t('update.updating_pip')}...[/cyan]")
         
         result = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--upgrade", "weeb-cli"],
@@ -143,16 +143,16 @@ def update_via_pip():
         )
         
         if result.returncode == 0:
-            console.print(f"[green]{i18n.get('update.success')}[/green]")
-            console.print(f"[dim]{i18n.get('update.restart_required')}[/dim]")
+            console.print(f"[green]{i18n.t('update.success')}[/green]")
+            console.print(f"[dim]{i18n.t('update.restart_required')}[/dim]")
             return True
         else:
-            console.print(f"[red]{i18n.get('update.error')}[/red]")
+            console.print(f"[red]{i18n.t('update.error')}[/red]")
             console.print(f"[dim]{result.stderr}[/dim]")
             return False
             
     except Exception as e:
-        console.print(f"[red]{i18n.get('update.error')}: {e}[/red]")
+        console.print(f"[red]{i18n.t('update.error')}: {e}[/red]")
         return False
 
 from weeb_cli.config import config
@@ -170,11 +170,11 @@ def update_prompt():
         return
     
     console.clear()
-    console.print(f"\n[green bold]{i18n.get('update.available')} (v{latest_ver})[/green bold]")
-    console.print(f"[dim]{i18n.get('update.current')}: v{__version__}[/dim]\n")
+    console.print(f"\n[green bold]{i18n.t('update.available')} (v{latest_ver})[/green bold]")
+    console.print(f"[dim]{i18n.t('update.current')}: v{__version__}[/dim]\n")
     
     should_update = questionary.confirm(
-        i18n.get("update.prompt"),
+        i18n.t("update.prompt"),
         default=True
     ).ask()
     
@@ -188,7 +188,7 @@ def update_prompt():
         if asset_url:
             download_exe(asset_url, asset_name)
         else:
-            console.print(f"[red]{i18n.get('update.no_asset')}[/red]")
+            console.print(f"[red]{i18n.t('update.no_asset')}[/red]")
             
     elif install_method == "pip":
         update_via_pip()
@@ -200,8 +200,8 @@ def update_prompt():
             if system == "windows":
                 download_exe(asset_url, asset_name)
             else:
-                console.print(f"[cyan]{i18n.get('update.download_url')}:[/cyan]")
+                console.print(f"[cyan]{i18n.t('update.download_url')}:[/cyan]")
                 console.print(f"[blue]{asset_url}[/blue]")
         else:
-            console.print(f"[yellow]{i18n.get('update.manual_update')}[/yellow]")
+            console.print(f"[yellow]{i18n.t('update.manual_update')}[/yellow]")
             console.print("[blue]pip install --upgrade weeb-cli[/blue]")

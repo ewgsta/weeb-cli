@@ -24,7 +24,7 @@ class LocalLibrary:
         if download_dir.exists():
             sources.append({
                 "path": str(download_dir),
-                "name": i18n.get("downloads.downloads_folder"),
+                "name": i18n.t("downloads.downloads_folder"),
                 "type": "local",
                 "available": True
             })

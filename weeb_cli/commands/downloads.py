@@ -27,7 +27,7 @@ def show_downloads():
     
     while True:
         console.clear()
-        show_header(i18n.get("downloads.title"))
+        show_header(i18n.t("downloads.title"))
         
         sources = local_library.get_all_sources()
         active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
@@ -37,7 +37,7 @@ def show_downloads():
         indexed_count = len(local_library.get_indexed_anime())
         if indexed_count > 0:
             choices.append(questionary.Choice(
-                f"⌕ {i18n.get('downloads.search_all')} ({indexed_count} anime)",
+                f"⌕ {i18n.t('downloads.search_all')} ({indexed_count} anime)",
                 value={"type": "search_all"}
             ))
         
@@ -55,35 +55,35 @@ def show_downloads():
                 count = len(indexed)
                 if count > 0:
                     choices.append(questionary.Choice(
-                        f"○ {source['name']} ({count} anime) - {i18n.get('downloads.offline')}",
+                        f"○ {source['name']} ({count} anime) - {i18n.t('downloads.offline')}",
                         value={"type": "offline", "data": source}
                     ))
         
         if active_queue:
             is_running = queue_manager.is_running()
-            status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
+            status = i18n.t("downloads.queue_running") if is_running else i18n.t("downloads.queue_stopped")
             choices.append(questionary.Choice(
-                f"{i18n.get('downloads.active_downloads')} ({len(active_queue)}) - {status}",
+                f"{i18n.t('downloads.active_downloads')} ({len(active_queue)}) - {status}",
                 value={"type": "active"}
             ))
         
         if queue_manager.queue:
             choices.append(questionary.Choice(
-                i18n.get("downloads.manage_queue"),
+                i18n.t("downloads.manage_queue"),
                 value={"type": "manage"}
             ))
         
         if not choices:
-            console.print(f"[dim]{i18n.get('downloads.empty')}[/dim]")
+            console.print(f"[dim]{i18n.t('downloads.empty')}[/dim]")
             try:
-                input(i18n.get("common.continue_key"))
+                input(i18n.t("common.continue_key"))
             except KeyboardInterrupt:
                 pass
             return
         
         try:
             action = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False
@@ -122,7 +122,7 @@ def fuzzy_match(query: str, text: str) -> float:
 def search_all_sources():
     while True:
         console.clear()
-        show_header(i18n.get("downloads.search_all"))
+        show_header(i18n.t("downloads.search_all"))
         
         all_indexed = local_library.get_indexed_anime()
         
@@ -148,13 +148,13 @@ def search_all_sources():
         all_choices = list(anime_map.keys())
         
         if not all_choices:
-            console.print(f"[dim]{i18n.get('downloads.no_indexed')}[/dim]")
+            console.print(f"[dim]{i18n.t('downloads.no_indexed')}[/dim]")
             time.sleep(1.5)
             return
         
         try:
             selected_label = questionary.autocomplete(
-                i18n.get("downloads.search_anime"),
+                i18n.t("downloads.search_anime"),
                 choices=all_choices,
                 match_middle=True,
                 style=AUTOCOMPLETE_STYLE,
@@ -185,16 +185,16 @@ def search_all_sources():
 def show_offline_library(source):
     while True:
         console.clear()
-        show_header(f"{source['name']} ({i18n.get('downloads.offline')})")
+        show_header(f"{source['name']} ({i18n.t('downloads.offline')})")
         
         indexed = [a for a in local_library.get_indexed_anime() if a["source_path"] == source["path"]]
         
         if not indexed:
-            console.print(f"[dim]{i18n.get('downloads.no_indexed')}[/dim]")
+            console.print(f"[dim]{i18n.t('downloads.no_indexed')}[/dim]")
             time.sleep(1.5)
             return
         
-        ep_short = i18n.get("downloads.episode_short")
+        ep_short = i18n.t("downloads.episode_short")
         anime_map = {}
         for anime in indexed:
             progress = local_library.get_anime_progress(anime["title"])
@@ -214,14 +214,14 @@ def show_offline_library(source):
         all_choices = list(anime_map.keys())
         
         choices = [
-            questionary.Choice(f"⌕ {i18n.get('downloads.search_anime')}", value="search"),
+            questionary.Choice(f"⌕ {i18n.t('downloads.search_anime')}", value="search"),
         ]
         for label in all_choices:
             choices.append(questionary.Choice(label, value=label))
         
         try:
             selected = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False,
@@ -232,7 +232,7 @@ def show_offline_library(source):
             
             if selected == "search":
                 search_result = questionary.autocomplete(
-                    i18n.get("downloads.search_anime"),
+                    i18n.t("downloads.search_anime"),
                     choices=all_choices,
                     match_middle=True,
                     style=AUTOCOMPLETE_STYLE,
@@ -242,7 +242,7 @@ def show_offline_library(source):
                     anime_info = anime_map[search_result]
                     if not local_library.is_source_available(anime_info["source_path"]):
                         console.print(f"[yellow]{i18n.t('downloads.connect_drive', name=source['name'])}[/yellow]")
-                        console.print(f"[dim]{i18n.get('downloads.drive_not_connected')}[/dim]")
+                        console.print(f"[dim]{i18n.t('downloads.drive_not_connected')}[/dim]")
                         time.sleep(2)
                     else:
                         anime_data = {
@@ -256,7 +256,7 @@ def show_offline_library(source):
                 anime_info = anime_map[selected]
                 if not local_library.is_source_available(anime_info["source_path"]):
                     console.print(f"[yellow]{i18n.t('downloads.connect_drive', name=source['name'])}[/yellow]")
-                    console.print(f"[dim]{i18n.get('downloads.drive_not_connected')}[/dim]")
+                    console.print(f"[dim]{i18n.t('downloads.drive_not_connected')}[/dim]")
                     time.sleep(2)
                 else:
                     anime_data = {
@@ -273,10 +273,10 @@ def show_offline_library(source):
 def show_completed_library(library, source_name=None):
     while True:
         console.clear()
-        title = source_name or i18n.get("downloads.completed_downloads")
+        title = source_name or i18n.t("downloads.completed_downloads")
         show_header(title)
         
-        ep_short = i18n.get("downloads.episode_short")
+        ep_short = i18n.t("downloads.episode_short")
         anime_map = {}
         for anime in library:
             progress = local_library.get_anime_progress(anime["title"])
@@ -296,14 +296,14 @@ def show_completed_library(library, source_name=None):
         all_choices = list(anime_map.keys())
         
         choices = [
-            questionary.Choice(f"⌕ {i18n.get('downloads.search_anime')}", value="search"),
+            questionary.Choice(f"⌕ {i18n.t('downloads.search_anime')}", value="search"),
         ]
         for label in all_choices:
             choices.append(questionary.Choice(label, value=label))
         
         try:
             selected = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False,
@@ -314,7 +314,7 @@ def show_completed_library(library, source_name=None):
             
             if selected == "search":
                 search_result = questionary.autocomplete(
-                    i18n.get("downloads.search_anime"),
+                    i18n.t("downloads.search_anime"),
                     choices=all_choices,
                     match_middle=True,
                     style=AUTOCOMPLETE_STYLE,
@@ -352,13 +352,13 @@ def show_anime_episodes(anime):
                 prefix = "●  "
             
             choices.append(questionary.Choice(
-                f"{prefix}{i18n.get('details.episode')} {num} ({size})",
+                f"{prefix}{i18n.t('details.episode')} {num} ({size})",
                 value=ep
             ))
         
         try:
             selected = questionary.select(
-                i18n.get("details.select_episode"),
+                i18n.t("details.select_episode"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False
@@ -373,9 +373,9 @@ def show_anime_episodes(anime):
             return
 
 def play_local_episode(anime, episode):
-    console.print(f"[green]{i18n.get('details.player_starting')}[/green]")
+    console.print(f"[green]{i18n.t('details.player_starting')}[/green]")
     
-    title = f"{anime['title']} - {i18n.get('details.episode')} {episode['number']}"
+    title = f"{anime['title']} - {i18n.t('details.episode')} {episode['number']}"
     anime_title = anime['title']
     episode_number = episode['number']
     total_episodes = anime.get('episode_count')
@@ -390,14 +390,14 @@ def play_local_episode(anime, episode):
     
     if success:
         try:
-            ans = questionary.confirm(i18n.get("details.mark_watched")).ask()
+            ans = questionary.confirm(i18n.t("details.mark_watched")).ask()
             if ans:
                 local_library.mark_episode_watched(
                     anime["title"],
                     episode["number"],
                     anime["episode_count"]
                 )
-                console.print(f"[green]✓ {i18n.get('details.marked_watched')}[/green]")
+                console.print(f"[green]✓ {i18n.t('details.marked_watched')}[/green]")
                 
                 from weeb_cli.services.tracker import anilist_tracker, mal_tracker
                 
@@ -410,7 +410,7 @@ def play_local_episode(anime, episode):
                 if trackers_connected:
                     tracker_names = ", ".join([t[0] for t in trackers_connected])
                     sync_ans = questionary.confirm(
-                        i18n.get("details.sync_to_trackers", f"{tracker_names}'e de eklensin mi?")
+                        i18n.t("details.sync_to_trackers", f"{tracker_names}'e de eklensin mi?")
                     ).ask()
                     
                     if sync_ans:
@@ -421,9 +421,9 @@ def play_local_episode(anime, episode):
                                 anime["episode_count"]
                             )
                             if result:
-                                console.print(f"[green]✓ {name} {i18n.get('watchlist.tracker_updated')}[/green]")
+                                console.print(f"[green]✓ {name} {i18n.t('watchlist.tracker_updated')}[/green]")
                             else:
-                                console.print(f"[yellow]⏳ {name}: {i18n.get('watchlist.tracker_pending')}[/yellow]")
+                                console.print(f"[yellow]⏳ {name}: {i18n.t('watchlist.tracker_pending')}[/yellow]")
                 else:
                     anilist_tracker.update_progress(
                         anime["title"],
@@ -439,24 +439,24 @@ def play_local_episode(anime, episode):
         except KeyboardInterrupt:
             pass
         except Exception as e:
-            console.print(f"[dim]{i18n.get('watchlist.tracker_error')}: {e}[/dim]")
+            console.print(f"[dim]{i18n.t('watchlist.tracker_error')}: {e}[/dim]")
 
 def manage_queue():
     while True:
         console.clear()
-        show_header(i18n.get("downloads.manage_queue"))
+        show_header(i18n.t("downloads.manage_queue"))
         
         pending = queue_manager.get_pending_count()
         is_running = queue_manager.is_running()
         
         if pending > 0:
-            status = i18n.get("downloads.queue_running") if is_running else i18n.get("downloads.queue_stopped")
+            status = i18n.t("downloads.queue_running") if is_running else i18n.t("downloads.queue_stopped")
             console.print(f"[cyan]{i18n.t('downloads.pending_count', count=pending)}[/cyan] - {status}\n")
         
-        opt_view = i18n.get("downloads.view_queue")
-        opt_start = i18n.get("downloads.start_queue")
-        opt_stop = i18n.get("downloads.stop_queue")
-        opt_clear = i18n.get("downloads.clear_completed")
+        opt_view = i18n.t("downloads.view_queue")
+        opt_start = i18n.t("downloads.start_queue")
+        opt_stop = i18n.t("downloads.stop_queue")
+        opt_clear = i18n.t("downloads.clear_completed")
         
         choices = [opt_view]
         if pending > 0:
@@ -468,7 +468,7 @@ def manage_queue():
         
         try:
             action = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False
@@ -481,15 +481,15 @@ def manage_queue():
                 show_queue_live()
             elif action == opt_start:
                 queue_manager.start_queue()
-                console.print(f"[green]{i18n.get('downloads.queue_started')}[/green]")
+                console.print(f"[green]{i18n.t('downloads.queue_started')}[/green]")
                 time.sleep(0.5)
             elif action == opt_stop:
                 queue_manager.stop_queue()
-                console.print(f"[yellow]{i18n.get('downloads.queue_stopped')}[/yellow]")
+                console.print(f"[yellow]{i18n.t('downloads.queue_stopped')}[/yellow]")
                 time.sleep(0.5)
             elif action == opt_clear:
                 queue_manager.clear_completed()
-                console.print(f"[green]{i18n.get('downloads.cleared')}[/green]")
+                console.print(f"[green]{i18n.t('downloads.cleared')}[/green]")
                 time.sleep(0.5)
                 
         except KeyboardInterrupt:
@@ -498,10 +498,10 @@ def manage_queue():
 def show_queue_live():
     def generate_table():
         table = Table(show_header=True, header_style="bold cyan")
-        table.add_column(i18n.get("watchlist.anime_title"), width=28)
-        table.add_column(i18n.get("details.episode"), justify="right", width=4)
-        table.add_column(i18n.get("downloads.status"), width=12)
-        table.add_column(i18n.get("downloads.progress"), width=24)
+        table.add_column(i18n.t("watchlist.anime_title"), width=28)
+        table.add_column(i18n.t("details.episode"), justify="right", width=4)
+        table.add_column(i18n.t("downloads.status"), width=12)
+        table.add_column(i18n.t("downloads.progress"), width=24)
         table.add_column("Hız", width=10)
         table.add_column("ETA", width=8)
         
@@ -528,7 +528,7 @@ def show_queue_live():
             bars = int(progress / 5)
             bar_str = "█" * bars + "░" * (20 - bars)
             
-            status_text = i18n.get(f"downloads.status_{status}", status.upper())
+            status_text = i18n.t(f"downloads.status_{status}", status.upper())
             p_text = f"{progress}%" if status == "processing" else ""
             speed = item.get("speed", "") if status == "processing" else ""
             eta = item.get("eta", "") if status == "processing" else ""

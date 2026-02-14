@@ -11,26 +11,26 @@ console = Console()
 def show_watchlist():
     while True:
         console.clear()
-        show_header(i18n.get("menu.options.watchlist"))
+        show_header(i18n.t("menu.options.watchlist"))
         
         stats = progress_tracker.get_stats()
         
-        console.print(f"[cyan]{i18n.get('watchlist.total_anime')}:[/cyan] {stats['total_anime']}", justify="left")
-        console.print(f"[cyan]{i18n.get('watchlist.total_episodes')}:[/cyan] {stats['total_episodes']}", justify="left")
-        console.print(f"[cyan]{i18n.get('watchlist.total_hours')}:[/cyan] {stats['total_hours']}h", justify="left")
+        console.print(f"[cyan]{i18n.t('watchlist.total_anime')}:[/cyan] {stats['total_anime']}", justify="left")
+        console.print(f"[cyan]{i18n.t('watchlist.total_episodes')}:[/cyan] {stats['total_episodes']}", justify="left")
+        console.print(f"[cyan]{i18n.t('watchlist.total_hours')}:[/cyan] {stats['total_hours']}h", justify="left")
         
         if stats['last_watched']:
             last = stats['last_watched']
-            console.print(f"\n[dim]{i18n.get('watchlist.last_watched')}:[/dim] {last['title']} - {i18n.get('details.episode')} {last['last_watched']}", justify="left")
+            console.print(f"\n[dim]{i18n.t('watchlist.last_watched')}:[/dim] {last['title']} - {i18n.t('details.episode')} {last['last_watched']}", justify="left")
         
         console.print("")
         
-        opt_completed = i18n.get("watchlist.completed")
-        opt_in_progress = i18n.get("watchlist.in_progress")
+        opt_completed = i18n.t("watchlist.completed")
+        opt_in_progress = i18n.t("watchlist.in_progress")
         
         try:
             choice = questionary.select(
-                i18n.get("watchlist.select_category"),
+                i18n.t("watchlist.select_category"),
                 choices=[opt_in_progress, opt_completed],
                 pointer=">",
                 use_shortcuts=False
@@ -49,22 +49,22 @@ def show_watchlist():
 
 def show_completed_list():
     console.clear()
-    show_header(i18n.get("watchlist.completed"))
+    show_header(i18n.t("watchlist.completed"))
     
     completed = progress_tracker.get_completed_anime()
     
     if not completed:
-        console.print(f"[dim]{i18n.get('watchlist.no_completed')}[/dim]")
+        console.print(f"[dim]{i18n.t('watchlist.no_completed')}[/dim]")
         try:
-            input(i18n.get("common.continue_key"))
+            input(i18n.t("common.continue_key"))
         except KeyboardInterrupt:
             pass
         return
     
     table = Table(show_header=True, header_style="bold cyan")
     table.add_column("#", width=4)
-    table.add_column(i18n.get("watchlist.anime_title"), width=40)
-    table.add_column(i18n.get("watchlist.episodes_watched"), width=15, justify="center")
+    table.add_column(i18n.t("watchlist.anime_title"), width=40)
+    table.add_column(i18n.t("watchlist.episodes_watched"), width=15, justify="center")
     
     for i, anime in enumerate(completed, 1):
         watched = len(anime.get("completed", []))
@@ -78,7 +78,7 @@ def show_completed_list():
     console.print(table)
     
     try:
-        input(i18n.get("common.continue_key"))
+        input(i18n.t("common.continue_key"))
     except KeyboardInterrupt:
         pass
 
@@ -88,14 +88,14 @@ def show_in_progress_list():
     from weeb_cli.services.local_library import local_library
     
     console.clear()
-    show_header(i18n.get("watchlist.in_progress"))
+    show_header(i18n.t("watchlist.in_progress"))
     
     in_progress = progress_tracker.get_in_progress_anime()
     
     if not in_progress:
-        console.print(f"[dim]{i18n.get('watchlist.no_in_progress')}[/dim]")
+        console.print(f"[dim]{i18n.t('watchlist.no_in_progress')}[/dim]")
         try:
-            input(i18n.get("common.continue_key"))
+            input(i18n.t("common.continue_key"))
         except KeyboardInterrupt:
             pass
         return
@@ -114,13 +114,13 @@ def show_in_progress_list():
         prefix = "[dim]●[/dim] " if is_local else ""
         
         choices.append(questionary.Choice(
-            title=f"{title} [{watched}/{total_str}] - {i18n.get('watchlist.next')}: {next_ep}",
+            title=f"{title} [{watched}/{total_str}] - {i18n.t('watchlist.next')}: {next_ep}",
             value={"anime": anime, "is_local": is_local, "local_data": indexed_anime.get(title.lower())}
         ))
     
     try:
         selected = questionary.select(
-            i18n.get("watchlist.select_anime"),
+            i18n.t("watchlist.select_anime"),
             choices=choices,
             pointer=">",
             use_shortcuts=False

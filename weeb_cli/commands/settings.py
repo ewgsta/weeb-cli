@@ -36,32 +36,32 @@ def toggle_config(key, name):
 def open_settings():
     while True:
         console.clear()
-        show_header(i18n.get("settings.title"))
+        show_header(i18n.t("settings.title"))
         
         lang = config.get("language")
         source = config.get("scraping_source", "local")
         display_source = "weeb" if source == "local" else source
 
-        aria2_state = i18n.get("common.enabled") if config.get("aria2_enabled") else i18n.get("common.disabled")
-        ytdlp_state = i18n.get("common.enabled") if config.get("ytdlp_enabled") else i18n.get("common.disabled")
-        desc_state = i18n.get("common.enabled") if config.get("show_description", True) else i18n.get("common.disabled")
-        discord_rpc_state = i18n.get("common.enabled") if config.get("discord_rpc_enabled", False) else i18n.get("common.disabled")
-        shortcuts_state = i18n.get("common.enabled") if config.get("shortcuts_enabled", True) else i18n.get("common.disabled")
+        aria2_state = i18n.t("common.enabled") if config.get("aria2_enabled") else i18n.t("common.disabled")
+        ytdlp_state = i18n.t("common.enabled") if config.get("ytdlp_enabled") else i18n.t("common.disabled")
+        desc_state = i18n.t("common.enabled") if config.get("show_description", True) else i18n.t("common.disabled")
+        discord_rpc_state = i18n.t("common.enabled") if config.get("discord_rpc_enabled", False) else i18n.t("common.disabled")
+        shortcuts_state = i18n.t("common.enabled") if config.get("shortcuts_enabled", True) else i18n.t("common.disabled")
         
-        opt_lang = i18n.get("settings.language")
-        opt_source = f"{i18n.get('settings.source')} [{display_source}]"
-        opt_download = i18n.get("settings.download_settings")
-        opt_drives = i18n.get("settings.external_drives")
-        opt_desc = f"{i18n.get('settings.show_description')} [{desc_state}]"
-        opt_discord_rpc = f"{i18n.get('settings.discord_rpc')} [{discord_rpc_state}]"
-        opt_shortcuts_toggle = f"{i18n.get('settings.shortcuts')} [{shortcuts_state}]"
-        opt_aria2 = f"{i18n.get('settings.aria2')} [{aria2_state}]"
-        opt_ytdlp = f"{i18n.get('settings.ytdlp')} [{ytdlp_state}]"
+        opt_lang = i18n.t("settings.language")
+        opt_source = f"{i18n.t('settings.source')} [{display_source}]"
+        opt_download = i18n.t("settings.download_settings")
+        opt_drives = i18n.t("settings.external_drives")
+        opt_desc = f"{i18n.t('settings.show_description')} [{desc_state}]"
+        opt_discord_rpc = f"{i18n.t('settings.discord_rpc')} [{discord_rpc_state}]"
+        opt_shortcuts_toggle = f"{i18n.t('settings.shortcuts')} [{shortcuts_state}]"
+        opt_aria2 = f"{i18n.t('settings.aria2')} [{aria2_state}]"
+        opt_ytdlp = f"{i18n.t('settings.ytdlp')} [{ytdlp_state}]"
         
-        opt_aria2_conf = f"  ↳ {i18n.get('settings.aria2_config')}"
-        opt_ytdlp_conf = f"  ↳ {i18n.get('settings.ytdlp_config')}"
-        opt_shortcuts_conf = f"  ↳ {i18n.get('settings.shortcuts_config')}"
-        opt_backup = i18n.get("settings.backup_restore")
+        opt_aria2_conf = f"  ↳ {i18n.t('settings.aria2_config')}"
+        opt_ytdlp_conf = f"  ↳ {i18n.t('settings.ytdlp_config')}"
+        opt_shortcuts_conf = f"  ↳ {i18n.t('settings.shortcuts_config')}"
+        opt_backup = i18n.t("settings.backup_restore")
         
         choices = [opt_lang, opt_source, opt_download, opt_drives, opt_desc, opt_discord_rpc, opt_shortcuts_toggle]
         
@@ -76,13 +76,13 @@ def open_settings():
         if config.get("ytdlp_enabled"):
             choices.append(opt_ytdlp_conf)
         
-        opt_trackers = i18n.get("settings.trackers")
+        opt_trackers = i18n.t("settings.trackers")
         choices.append(opt_trackers)
         choices.append(opt_backup)
         
         try:
             answer = questionary.select(
-                i18n.get("settings.title"),
+                i18n.t("settings.title"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False,
@@ -130,7 +130,7 @@ def toggle_description():
     current = config.get("show_description", True)
     config.set("show_description", not current)
     msg_key = "settings.toggle_on" if not current else "settings.toggle_off"
-    console.print(f"[green]{i18n.t(msg_key, tool=i18n.get('settings.show_description'))}[/green]")
+    console.print(f"[green]{i18n.t(msg_key, tool=i18n.t('settings.show_description'))}[/green]")
     time.sleep(0.5)
 
 def toggle_discord_rpc():
@@ -155,7 +155,7 @@ def toggle_shortcuts():
     config.set("shortcuts_enabled", new_val)
     
     msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
-    console.print(f"[green]{i18n.t(msg_key, tool=i18n.get('settings.shortcuts'))}[/green]")
+    console.print(f"[green]{i18n.t(msg_key, tool=i18n.t('settings.shortcuts'))}[/green]")
     time.sleep(0.5)
 
 def change_language():
@@ -178,7 +178,7 @@ def change_language():
             if sources:
                 config.set("scraping_source", sources[0])
             
-            console.print(f"[green]{i18n.get('settings.language_changed')}[/green]")
+            console.print(f"[green]{i18n.t('settings.language_changed')}[/green]")
             time.sleep(1)
     except KeyboardInterrupt:
         pass
@@ -190,13 +190,13 @@ def change_source():
     sources = scraper.get_sources_for_lang(current_lang)
     
     if not sources:
-        console.print(f"[yellow]{i18n.get('settings.no_sources')}[/yellow]")
+        console.print(f"[yellow]{i18n.t('settings.no_sources')}[/yellow]")
         time.sleep(1)
         return
         
     try:
         selected = questionary.select(
-            i18n.get("settings.source"),
+            i18n.t("settings.source"),
             choices=sources,
             pointer=">",
             use_shortcuts=False
@@ -214,22 +214,22 @@ def change_source():
 def aria2_settings_menu():
     while True:
         console.clear()
-        show_header(i18n.get("settings.aria2_config"))
+        show_header(i18n.t("settings.aria2_config"))
         
         curr_conn = config.get("aria2_max_connections", 16)
         
-        opt_conn = f"{i18n.get('settings.max_conn')} [{curr_conn}]"
+        opt_conn = f"{i18n.t('settings.max_conn')} [{curr_conn}]"
         
         try:
             sel = questionary.select(
-                i18n.get("settings.aria2_config"),
+                i18n.t("settings.aria2_config"),
                 choices=[opt_conn],
                 pointer=">",
                 use_shortcuts=False
             ).ask()
             
             if sel == opt_conn:
-                val = questionary.text(f"{i18n.get('settings.enter_conn')}:", default=str(curr_conn)).ask()
+                val = questionary.text(f"{i18n.t('settings.enter_conn')}:", default=str(curr_conn)).ask()
                 if val and val.isdigit():
                     config.set("aria2_max_connections", int(val))
             elif sel is None:
@@ -240,7 +240,7 @@ def aria2_settings_menu():
 def download_settings_menu():
     while True:
         console.clear()
-        show_header(i18n.get("settings.download_settings"))
+        show_header(i18n.t("settings.download_settings"))
         
         curr_dir = config.get("download_dir")
         console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="left")
@@ -249,15 +249,15 @@ def download_settings_menu():
         curr_retries = config.get("download_max_retries", 3)
         curr_delay = config.get("download_retry_delay", 10)
         
-        opt_name = i18n.get("settings.change_folder_name")
-        opt_path = i18n.get("settings.change_full_path")
-        opt_concurrent = f"{i18n.get('settings.concurrent_downloads')} [{curr_concurrent}]"
-        opt_retries = f"{i18n.get('settings.max_retries')} [{curr_retries}]"
-        opt_delay = f"{i18n.get('settings.retry_delay')} [{curr_delay}s]"
+        opt_name = i18n.t("settings.change_folder_name")
+        opt_path = i18n.t("settings.change_full_path")
+        opt_concurrent = f"{i18n.t('settings.concurrent_downloads')} [{curr_concurrent}]"
+        opt_retries = f"{i18n.t('settings.max_retries')} [{curr_retries}]"
+        opt_delay = f"{i18n.t('settings.retry_delay')} [{curr_delay}s]"
         
         try:
             sel = questionary.select(
-                i18n.get("settings.download_settings"),
+                i18n.t("settings.download_settings"),
                 choices=[opt_name, opt_path, opt_concurrent, opt_retries, opt_delay],
                 pointer=">",
                 use_shortcuts=False
@@ -265,29 +265,29 @@ def download_settings_menu():
             
             if sel == opt_name:
                 from weeb_cli.i18n import i18n
-                default_name = i18n.get("downloads.default_folder_name", "weeb-downloads")
-                val = questionary.text(i18n.get("settings.folder_name_prompt"), default=default_name).ask()
+                default_name = i18n.t("downloads.default_folder_name", "weeb-downloads")
+                val = questionary.text(i18n.t("settings.folder_name_prompt"), default=default_name).ask()
                 if val:
                     new_path = os.path.join(os.getcwd(), val)
                     config.set("download_dir", new_path)
             elif sel == opt_path:
-                val = questionary.text(i18n.get("settings.full_path_prompt"), default=curr_dir).ask()
+                val = questionary.text(i18n.t("settings.full_path_prompt"), default=curr_dir).ask()
                 if val:
                     config.set("download_dir", val)
             elif sel == opt_concurrent:
-                val = questionary.text(i18n.get("settings.enter_concurrent"), default=str(curr_concurrent)).ask()
+                val = questionary.text(i18n.t("settings.enter_concurrent"), default=str(curr_concurrent)).ask()
                 if val and val.isdigit():
                     n = int(val)
                     if 1 <= n <= 5:
                         config.set("max_concurrent_downloads", n)
             elif sel == opt_retries:
-                val = questionary.text(i18n.get("settings.enter_max_retries"), default=str(curr_retries)).ask()
+                val = questionary.text(i18n.t("settings.enter_max_retries"), default=str(curr_retries)).ask()
                 if val and val.isdigit():
                     n = int(val)
                     if 0 <= n <= 10:
                         config.set("download_max_retries", n)
             elif sel == opt_delay:
-                val = questionary.text(i18n.get("settings.enter_retry_delay"), default=str(curr_delay)).ask()
+                val = questionary.text(i18n.t("settings.enter_retry_delay"), default=str(curr_delay)).ask()
                 if val and val.isdigit():
                     config.set("download_retry_delay", int(val))
             elif sel is None:
@@ -299,21 +299,21 @@ def download_settings_menu():
 def ytdlp_settings_menu():
     while True:
         console.clear()
-        show_header(i18n.get("settings.ytdlp_config"))
+        show_header(i18n.t("settings.ytdlp_config"))
         
         curr_fmt = config.get("ytdlp_format", "best")
-        opt_fmt = f"{i18n.get('settings.format')} [{curr_fmt}]"
+        opt_fmt = f"{i18n.t('settings.format')} [{curr_fmt}]"
         
         try:
             sel = questionary.select(
-                i18n.get("settings.ytdlp_config"), 
+                i18n.t("settings.ytdlp_config"), 
                 choices=[opt_fmt], 
                 pointer=">",
                 use_shortcuts=False
             ).ask()
             
             if sel == opt_fmt:
-                val = questionary.text(f"{i18n.get('settings.enter_format')}:", default=curr_fmt).ask()
+                val = questionary.text(f"{i18n.t('settings.enter_format')}:", default=curr_fmt).ask()
                 if val:
                     config.set("ytdlp_format", val)
             elif sel is None:
@@ -328,11 +328,11 @@ def external_drives_menu():
     
     while True:
         console.clear()
-        show_header(i18n.get("settings.external_drives"))
+        show_header(i18n.t("settings.external_drives"))
         
         drives = local_library.get_external_drives()
         
-        opt_add = i18n.get("settings.add_drive")
+        opt_add = i18n.t("settings.add_drive")
         
         choices = [questionary.Choice(opt_add, value="add")]
         
@@ -346,7 +346,7 @@ def external_drives_menu():
         
         try:
             sel = questionary.select(
-                i18n.get("settings.external_drives"),
+                i18n.t("settings.external_drives"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False
@@ -368,7 +368,7 @@ def add_external_drive():
     
     try:
         path = questionary.text(
-            i18n.get("settings.enter_drive_path"),
+            i18n.t("settings.enter_drive_path"),
             qmark=">"
         ).ask()
         
@@ -377,19 +377,19 @@ def add_external_drive():
         
         from pathlib import Path
         if not Path(path).exists():
-            console.print(f"[yellow]{i18n.get('settings.drive_not_found')}[/yellow]")
+            console.print(f"[yellow]{i18n.t('settings.drive_not_found')}[/yellow]")
             time.sleep(1)
             return
         
         name = questionary.text(
-            i18n.get("settings.enter_drive_name"),
+            i18n.t("settings.enter_drive_name"),
             default=os.path.basename(path) or path,
             qmark=">"
         ).ask()
         
         if name:
             local_library.add_external_drive(path, name)
-            console.print(f"[green]{i18n.get('settings.drive_added')}[/green]")
+            console.print(f"[green]{i18n.t('settings.drive_added')}[/green]")
             time.sleep(0.5)
             
     except KeyboardInterrupt:
@@ -404,12 +404,12 @@ def manage_drive(drive):
         
         console.print(f"[dim]{drive['path']}[/dim]\n")
         
-        opt_rename = i18n.get("settings.rename_drive")
-        opt_remove = i18n.get("settings.remove_drive")
+        opt_rename = i18n.t("settings.rename_drive")
+        opt_remove = i18n.t("settings.remove_drive")
         
         try:
             sel = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=[opt_rename, opt_remove],
                 pointer=">",
                 use_shortcuts=False
@@ -420,24 +420,24 @@ def manage_drive(drive):
             
             if sel == opt_rename:
                 new_name = questionary.text(
-                    i18n.get("settings.enter_drive_name"),
+                    i18n.t("settings.enter_drive_name"),
                     default=drive["name"],
                     qmark=">"
                 ).ask()
                 if new_name:
                     local_library.rename_external_drive(drive["path"], new_name)
                     drive["name"] = new_name
-                    console.print(f"[green]{i18n.get('settings.drive_renamed')}[/green]")
+                    console.print(f"[green]{i18n.t('settings.drive_renamed')}[/green]")
                     time.sleep(0.5)
                     
             elif sel == opt_remove:
                 confirm = questionary.confirm(
-                    i18n.get("settings.confirm_remove"),
+                    i18n.t("settings.confirm_remove"),
                     default=False
                 ).ask()
                 if confirm:
                     local_library.remove_external_drive(drive["path"])
-                    console.print(f"[green]{i18n.get('settings.drive_removed')}[/green]")
+                    console.print(f"[green]{i18n.t('settings.drive_removed')}[/green]")
                     time.sleep(0.5)
                     return
                     
@@ -448,14 +448,14 @@ def manage_drive(drive):
 def trackers_menu():
     while True:
         console.clear()
-        show_header(i18n.get("settings.trackers"))
+        show_header(i18n.t("settings.trackers"))
         
         opt_anilist = "AniList"
         opt_mal = "MyAnimeList"
         
         try:
             sel = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=[opt_anilist, opt_mal],
                 pointer=">",
                 use_shortcuts=False
@@ -488,8 +488,8 @@ def anilist_settings_menu():
             if pending > 0:
                 console.print(f"[yellow]{i18n.t('settings.anilist_pending', count=pending)}[/yellow]\n")
             
-            opt_sync = i18n.get("settings.anilist_sync")
-            opt_logout = i18n.get("settings.anilist_logout")
+            opt_sync = i18n.t("settings.anilist_sync")
+            opt_logout = i18n.t("settings.anilist_logout")
             
             choices = []
             if pending > 0:
@@ -498,7 +498,7 @@ def anilist_settings_menu():
             
             try:
                 sel = questionary.select(
-                    i18n.get("downloads.action_prompt"),
+                    i18n.t("downloads.action_prompt"),
                     choices=choices,
                     pointer=">",
                     use_shortcuts=False
@@ -508,31 +508,31 @@ def anilist_settings_menu():
                     return
                 
                 if sel == opt_sync:
-                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                    with console.status(i18n.t("common.processing"), spinner="dots"):
                         synced = anilist_tracker.sync_pending()
                     console.print(f"[green]{i18n.t('settings.anilist_synced', count=synced)}[/green]")
                     time.sleep(1)
                 elif sel == opt_logout:
                     confirm = questionary.confirm(
-                        i18n.get("settings.confirm_logout"),
+                        i18n.t("settings.confirm_logout"),
                         default=False
                     ).ask()
                     if confirm:
                         anilist_tracker.logout()
-                        console.print(f"[green]{i18n.get('settings.anilist_logged_out')}[/green]")
+                        console.print(f"[green]{i18n.t('settings.anilist_logged_out')}[/green]")
                         time.sleep(1)
                         return
                         
             except KeyboardInterrupt:
                 return
         else:
-            console.print(f"[dim]{i18n.get('settings.anilist_not_connected')}[/dim]\n")
+            console.print(f"[dim]{i18n.t('settings.anilist_not_connected')}[/dim]\n")
             
-            opt_login = i18n.get("settings.anilist_login")
+            opt_login = i18n.t("settings.anilist_login")
             
             try:
                 sel = questionary.select(
-                    i18n.get("downloads.action_prompt"),
+                    i18n.t("downloads.action_prompt"),
                     choices=[opt_login],
                     pointer=">",
                     use_shortcuts=False
@@ -542,20 +542,20 @@ def anilist_settings_menu():
                     return
                 
                 if sel == opt_login:
-                    console.print(f"\n[cyan]{i18n.get('settings.anilist_opening_browser')}[/cyan]")
-                    console.print(f"[dim]{i18n.get('settings.anilist_waiting')}[/dim]\n")
+                    console.print(f"\n[cyan]{i18n.t('settings.anilist_opening_browser')}[/cyan]")
+                    console.print(f"[dim]{i18n.t('settings.anilist_waiting')}[/dim]\n")
                     
-                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                    with console.status(i18n.t("common.processing"), spinner="dots"):
                         token = anilist_tracker.start_auth_server(timeout=120)
                     
                     if token:
                         success = anilist_tracker.authenticate(token)
                         if success:
-                            console.print(f"[green]{i18n.get('settings.anilist_login_success')}[/green]")
+                            console.print(f"[green]{i18n.t('settings.anilist_login_success')}[/green]")
                         else:
-                            console.print(f"[red]{i18n.get('settings.anilist_login_failed')}[/red]")
+                            console.print(f"[red]{i18n.t('settings.anilist_login_failed')}[/red]")
                     else:
-                        console.print(f"[yellow]{i18n.get('settings.anilist_timeout')}[/yellow]")
+                        console.print(f"[yellow]{i18n.t('settings.anilist_timeout')}[/yellow]")
                     time.sleep(1)
                         
             except KeyboardInterrupt:
@@ -577,8 +577,8 @@ def mal_settings_menu():
             if pending > 0:
                 console.print(f"[yellow]{i18n.t('settings.mal_pending', count=pending)}[/yellow]\n")
             
-            opt_sync = i18n.get("settings.mal_sync")
-            opt_logout = i18n.get("settings.mal_logout")
+            opt_sync = i18n.t("settings.mal_sync")
+            opt_logout = i18n.t("settings.mal_logout")
             
             choices = []
             if pending > 0:
@@ -587,7 +587,7 @@ def mal_settings_menu():
             
             try:
                 sel = questionary.select(
-                    i18n.get("downloads.action_prompt"),
+                    i18n.t("downloads.action_prompt"),
                     choices=choices,
                     pointer=">",
                     use_shortcuts=False
@@ -597,31 +597,31 @@ def mal_settings_menu():
                     return
                 
                 if sel == opt_sync:
-                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                    with console.status(i18n.t("common.processing"), spinner="dots"):
                         synced = mal_tracker.sync_pending()
                     console.print(f"[green]{i18n.t('settings.mal_synced', count=synced)}[/green]")
                     time.sleep(1)
                 elif sel == opt_logout:
                     confirm = questionary.confirm(
-                        i18n.get("settings.confirm_logout"),
+                        i18n.t("settings.confirm_logout"),
                         default=False
                     ).ask()
                     if confirm:
                         mal_tracker.logout()
-                        console.print(f"[green]{i18n.get('settings.mal_logged_out')}[/green]")
+                        console.print(f"[green]{i18n.t('settings.mal_logged_out')}[/green]")
                         time.sleep(1)
                         return
                         
             except KeyboardInterrupt:
                 return
         else:
-            console.print(f"[dim]{i18n.get('settings.mal_not_connected')}[/dim]\n")
+            console.print(f"[dim]{i18n.t('settings.mal_not_connected')}[/dim]\n")
             
-            opt_login = i18n.get("settings.mal_login")
+            opt_login = i18n.t("settings.mal_login")
             
             try:
                 sel = questionary.select(
-                    i18n.get("downloads.action_prompt"),
+                    i18n.t("downloads.action_prompt"),
                     choices=[opt_login],
                     pointer=">",
                     use_shortcuts=False
@@ -631,16 +631,16 @@ def mal_settings_menu():
                     return
                 
                 if sel == opt_login:
-                    console.print(f"\n[cyan]{i18n.get('settings.mal_opening_browser')}[/cyan]")
-                    console.print(f"[dim]{i18n.get('settings.mal_waiting')}[/dim]\n")
+                    console.print(f"\n[cyan]{i18n.t('settings.mal_opening_browser')}[/cyan]")
+                    console.print(f"[dim]{i18n.t('settings.mal_waiting')}[/dim]\n")
                     
-                    with console.status(i18n.get("common.processing"), spinner="dots"):
+                    with console.status(i18n.t("common.processing"), spinner="dots"):
                         user = mal_tracker.start_auth_flow(timeout=120)
                     
                     if user:
-                        console.print(f"[green]{i18n.get('settings.mal_login_success')}[/green]")
+                        console.print(f"[green]{i18n.t('settings.mal_login_success')}[/green]")
                     else:
-                        console.print(f"[red]{i18n.get('settings.mal_login_failed')}[/red]")
+                        console.print(f"[red]{i18n.t('settings.mal_login_failed')}[/red]")
                     time.sleep(1)
                         
             except KeyboardInterrupt:
@@ -653,18 +653,18 @@ def backup_restore_menu():
     
     while True:
         console.clear()
-        show_header(i18n.get("settings.backup_restore"))
+        show_header(i18n.t("settings.backup_restore"))
         
         db_size = db.db_path.stat().st_size / 1024
-        console.print(f"[dim]{i18n.get('settings.db_location')}: {db.db_path}[/dim]")
-        console.print(f"[dim]{i18n.get('settings.db_size')}: {db_size:.2f} KB[/dim]\n")
+        console.print(f"[dim]{i18n.t('settings.db_location')}: {db.db_path}[/dim]")
+        console.print(f"[dim]{i18n.t('settings.db_size')}: {db_size:.2f} KB[/dim]\n")
         
-        opt_backup = i18n.get("settings.create_backup")
-        opt_restore = i18n.get("settings.restore_backup")
+        opt_backup = i18n.t("settings.create_backup")
+        opt_restore = i18n.t("settings.restore_backup")
         
         try:
             sel = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=[opt_backup, opt_restore],
                 pointer=">",
                 use_shortcuts=False
@@ -690,7 +690,7 @@ def create_backup():
     
     try:
         path = questionary.text(
-            i18n.get("settings.backup_path"),
+            i18n.t("settings.backup_path"),
             default=default_name,
             qmark=">"
         ).ask()
@@ -702,14 +702,14 @@ def create_backup():
         if not backup_path.suffix:
             backup_path = backup_path.with_suffix('.db')
         
-        with console.status(i18n.get("common.processing"), spinner="dots"):
+        with console.status(i18n.t("common.processing"), spinner="dots"):
             success = db.backup_database(backup_path)
         
         if success:
-            console.print(f"[green]{i18n.get('settings.backup_success')}[/green]")
+            console.print(f"[green]{i18n.t('settings.backup_success')}[/green]")
             console.print(f"[dim]{backup_path.absolute()}[/dim]")
         else:
-            console.print(f"[red]{i18n.get('settings.backup_failed')}[/red]")
+            console.print(f"[red]{i18n.t('settings.backup_failed')}[/red]")
         
         time.sleep(2)
         
@@ -722,7 +722,7 @@ def restore_backup():
     
     try:
         path = questionary.text(
-            i18n.get("settings.restore_path"),
+            i18n.t("settings.restore_path"),
             qmark=">"
         ).ask()
         
@@ -732,26 +732,26 @@ def restore_backup():
         backup_path = Path(path)
         
         if not backup_path.exists():
-            console.print(f"[red]{i18n.get('settings.backup_not_found')}[/red]")
+            console.print(f"[red]{i18n.t('settings.backup_not_found')}[/red]")
             time.sleep(1.5)
             return
         
         confirm = questionary.confirm(
-            i18n.get("settings.restore_confirm"),
+            i18n.t("settings.restore_confirm"),
             default=False
         ).ask()
         
         if not confirm:
             return
         
-        with console.status(i18n.get("common.processing"), spinner="dots"):
+        with console.status(i18n.t("common.processing"), spinner="dots"):
             success = db.restore_database(backup_path)
         
         if success:
-            console.print(f"[green]{i18n.get('settings.restore_success')}[/green]")
-            console.print(f"[yellow]{i18n.get('settings.restart_required')}[/yellow]")
+            console.print(f"[green]{i18n.t('settings.restore_success')}[/green]")
+            console.print(f"[yellow]{i18n.t('settings.restart_required')}[/yellow]")
         else:
-            console.print(f"[red]{i18n.get('settings.restore_failed')}[/red]")
+            console.print(f"[red]{i18n.t('settings.restore_failed')}[/red]")
         
         time.sleep(2)
         
@@ -764,22 +764,22 @@ def shortcuts_menu():
     
     while True:
         console.clear()
-        show_header(i18n.get("settings.shortcuts"))
+        show_header(i18n.t("settings.shortcuts"))
         
         shortcuts = shortcut_manager.get_shortcuts()
         
-        console.print(f"[dim]{i18n.get('settings.shortcuts_hint')}[/dim]\n")
+        console.print(f"[dim]{i18n.t('settings.shortcuts_hint')}[/dim]\n")
         
-        opt_search = f"{i18n.get('settings.shortcut_search')} [{shortcuts['search']}]"
-        opt_downloads = f"{i18n.get('settings.shortcut_downloads')} [{shortcuts['downloads']}]"
-        opt_watchlist = f"{i18n.get('settings.shortcut_watchlist')} [{shortcuts['watchlist']}]"
-        opt_settings = f"{i18n.get('settings.shortcut_settings')} [{shortcuts['settings']}]"
-        opt_exit = f"{i18n.get('settings.shortcut_exit')} [{shortcuts['exit']}]"
-        opt_next = f"{i18n.get('settings.shortcut_next_episode')} [{shortcuts['next_episode']}]"
-        opt_prev = f"{i18n.get('settings.shortcut_prev_episode')} [{shortcuts['prev_episode']}]"
-        opt_back = f"{i18n.get('settings.shortcut_back')} [{shortcuts['back']}]"
-        opt_help = f"{i18n.get('settings.shortcut_help')} [{shortcuts['help']}]"
-        opt_reset = i18n.get("settings.shortcuts_reset")
+        opt_search = f"{i18n.t('settings.shortcut_search')} [{shortcuts['search']}]"
+        opt_downloads = f"{i18n.t('settings.shortcut_downloads')} [{shortcuts['downloads']}]"
+        opt_watchlist = f"{i18n.t('settings.shortcut_watchlist')} [{shortcuts['watchlist']}]"
+        opt_settings = f"{i18n.t('settings.shortcut_settings')} [{shortcuts['settings']}]"
+        opt_exit = f"{i18n.t('settings.shortcut_exit')} [{shortcuts['exit']}]"
+        opt_next = f"{i18n.t('settings.shortcut_next_episode')} [{shortcuts['next_episode']}]"
+        opt_prev = f"{i18n.t('settings.shortcut_prev_episode')} [{shortcuts['prev_episode']}]"
+        opt_back = f"{i18n.t('settings.shortcut_back')} [{shortcuts['back']}]"
+        opt_help = f"{i18n.t('settings.shortcut_help')} [{shortcuts['help']}]"
+        opt_reset = i18n.t("settings.shortcuts_reset")
         
         choices = [
             opt_search,
@@ -796,7 +796,7 @@ def shortcuts_menu():
         
         try:
             sel = questionary.select(
-                i18n.get("downloads.action_prompt"),
+                i18n.t("downloads.action_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False
@@ -807,12 +807,12 @@ def shortcuts_menu():
             
             if sel == opt_reset:
                 confirm = questionary.confirm(
-                    i18n.get("settings.shortcuts_reset_confirm"),
+                    i18n.t("settings.shortcuts_reset_confirm"),
                     default=False
                 ).ask()
                 if confirm:
                     shortcut_manager.reset_shortcuts()
-                    console.print(f"[green]{i18n.get('settings.shortcuts_reset_success')}[/green]")
+                    console.print(f"[green]{i18n.t('settings.shortcuts_reset_success')}[/green]")
                     time.sleep(1)
             else:
                 action_map = {
@@ -851,12 +851,12 @@ def change_shortcut(action):
             return
         
         if len(new_key) > 1:
-            console.print(f"[yellow]{i18n.get('settings.shortcut_single_char')}[/yellow]")
+            console.print(f"[yellow]{i18n.t('settings.shortcut_single_char')}[/yellow]")
             time.sleep(1)
             return
         
         shortcut_manager.set_shortcut(action, new_key)
-        console.print(f"[green]{i18n.get('settings.shortcut_changed')}[/green]")
+        console.print(f"[green]{i18n.t('settings.shortcut_changed')}[/green]")
         time.sleep(0.5)
         
     except KeyboardInterrupt:

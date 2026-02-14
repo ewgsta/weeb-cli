@@ -33,15 +33,15 @@ def _sort_streams(streams: list) -> list:
 def search_anime():
     while True:
         console.clear()
-        show_header(i18n.get("menu.options.search"), show_source=True)
+        show_header(i18n.t("menu.options.search"), show_source=True)
         
         history = progress_tracker.get_search_history()
         if history:
-            console.print(f"[dim]{i18n.get('search.recent')}: {', '.join(history[:5])}[/dim]\n", justify="left")
+            console.print(f"[dim]{i18n.t('search.recent')}: {', '.join(history[:5])}[/dim]\n", justify="left")
         
         try:
             query = questionary.text(
-                i18n.get("search.prompt") + ":",
+                i18n.t("search.prompt") + ":",
                 qmark=">",
                 style=questionary.Style([
                     ('qmark', 'fg:cyan bold'),
@@ -63,7 +63,7 @@ def search_anime():
             data = cache.get(cache_key, max_age=1800)  # 30 min cache
             
             if data is None:
-                with console.status(i18n.get("search.searching"), spinner="dots"):
+                with console.status(i18n.t("search.searching"), spinner="dots"):
                     data = search(query)
                     if data:
                         cache.set(cache_key, data)
@@ -88,7 +88,7 @@ def search_anime():
                             data = inner["items"]
             
             if not data or not isinstance(data, list):
-                console.print(f"[red]{i18n.get('search.no_results')}[/red]")
+                console.print(f"[red]{i18n.t('search.no_results')}[/red]")
                 time.sleep(1.5)
                 continue
 
@@ -99,14 +99,14 @@ def search_anime():
                      choices.append(questionary.Choice(title, value=item))
             
             if not choices:
-                console.print(f"[red]{i18n.get('search.no_results')}[/red]")
+                console.print(f"[red]{i18n.t('search.no_results')}[/red]")
                 time.sleep(1.5)
                 continue
 
 
 
             selected = questionary.select(
-                i18n.get("search.results"),
+                i18n.t("search.results"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False,
@@ -128,7 +128,7 @@ def search_anime():
 def show_anime_details(anime):
     slug = anime.get("slug") or anime.get("id")
     if not slug:
-        console.print(f"[red]{i18n.get('details.error_slug')}[/red]")
+        console.print(f"[red]{i18n.t('details.error_slug')}[/red]")
         time.sleep(1)
         return
 
@@ -136,7 +136,7 @@ def show_anime_details(anime):
         console.clear()
         show_header(anime.get("title") or anime.get("name") or "Anime")
         
-        with console.status(i18n.get("common.processing"), spinner="dots"):
+        with console.status(i18n.t("common.processing"), spinner="dots"):
             details = get_details(slug)
         
         if isinstance(details, dict):
@@ -151,7 +151,7 @@ def show_anime_details(anime):
                     details["source"] = source
 
         if not details:
-            console.print(f"[red]{i18n.get('details.not_found')}[/red]")
+            console.print(f"[red]{i18n.t('details.not_found')}[/red]")
             time.sleep(1)
             return
         
@@ -159,8 +159,8 @@ def show_anime_details(anime):
         desc = details.get("description") or details.get("synopsis") or details.get("desc")
         show_desc = config.get("show_description", True)
 
-        opt_watch = i18n.get("details.watch")
-        opt_dl = i18n.get("details.download")
+        opt_watch = i18n.t("details.watch")
+        opt_dl = i18n.t("details.download")
         
         console.clear()
         show_header(details.get("title", ""))
@@ -172,7 +172,7 @@ def show_anime_details(anime):
         
         try:
             action = questionary.select(
-                i18n.get("details.action_prompt"),
+                i18n.t("details.action_prompt"),
                 choices=[opt_watch, opt_dl],
                 pointer=">",
                 use_shortcuts=False
@@ -222,7 +222,7 @@ def _make_season_episode_id(season, ep_num):
 def handle_watch_flow(slug, details):
     episodes = get_episodes_safe(details)
     if not episodes:
-        console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
+        console.print(f"[yellow]{i18n.t('details.no_episodes')}[/yellow]")
         time.sleep(1.5)
         return
 
@@ -259,12 +259,12 @@ def handle_watch_flow(slug, details):
             else:
                 status = f" [0/{total_in_season}]"
             
-            label = f"{i18n.get('details.season', 'Sezon')} {s_num}{status}"
+            label = f"{i18n.t('details.season', 'Sezon')} {s_num}{status}"
             season_choices.append(questionary.Choice(label, value=s_num))
         
         try:
             selected_season = questionary.select(
-                i18n.get("details.select_season", "Sezon Seçin") + ":",
+                i18n.t("details.select_season", "Sezon Seçin") + ":",
                 choices=season_choices,
                 pointer=">",
                 use_shortcuts=False
@@ -311,12 +311,12 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             elif num == next_ep_num:
                 prefix = "●  "
             
-            name = f"{prefix}{i18n.get('details.episode')} {num_val}"
+            name = f"{prefix}{i18n.t('details.episode')} {num_val}"
             ep_choices.append(questionary.Choice(name, value=ep))
 
         try:
             selected_ep = questionary.select(
-                i18n.get("details.select_episode") + ":",
+                i18n.t("details.select_episode") + ":",
                 choices=ep_choices,
                 pointer=">",
                 use_shortcuts=False
@@ -329,11 +329,11 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
             
             if not ep_id:
-                console.print(f"[red]{i18n.get('details.invalid_ep_id')}[/red]")
+                console.print(f"[red]{i18n.t('details.invalid_ep_id')}[/red]")
                 time.sleep(1)
                 continue
 
-            with console.status(i18n.get("common.processing"), spinner="dots"):
+            with console.status(i18n.t("common.processing"), spinner="dots"):
                 stream_resp = get_streams(slug, ep_id)
             
             streams_list = []
@@ -355,7 +355,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                     streams_list = sources
             
             if not streams_list:
-                error_msg = i18n.get('details.stream_not_found')
+                error_msg = i18n.t('details.stream_not_found')
                 if scraper.last_error:
                     error_msg += f" [{scraper.last_error}]"
                 console.print(f"[red]{error_msg}[/red]")
@@ -375,7 +375,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                 selected_stream = streams_list[0]
             else:
                 selected_stream = questionary.select(
-                    i18n.get("details.select_source"),
+                    i18n.t("details.select_source"),
                     choices=stream_choices,
                     pointer=">",
                     use_shortcuts=False
@@ -387,11 +387,11 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             stream_url = selected_stream.get("url")
             
             if not stream_url:
-                console.print(f"[red]{i18n.get('details.stream_not_found')}[/red]")
+                console.print(f"[red]{i18n.t('details.stream_not_found')}[/red]")
                 time.sleep(1.5)
                 continue
             
-            console.print(f"[green]{i18n.get('details.player_starting')}[/green]")
+            console.print(f"[green]{i18n.t('details.player_starting')}[/green]")
             title = f"{details.get('title', 'Anime')} - S{season}E{ep_num}"
             
             headers = {}
@@ -413,7 +413,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             
             if success:
                 try:
-                    ans = questionary.confirm(i18n.get("details.mark_watched")).ask()
+                    ans = questionary.confirm(i18n.t("details.mark_watched")).ask()
                     if ans:
                         n = int(ep_num)
                         total_eps = details.get("total_episodes") or len(episodes)
@@ -425,7 +425,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                             title=details.get("title"),
                             total_episodes=total_eps
                         )
-                        console.print(f"[green]✓ {i18n.get('details.marked_watched')}[/green]")
+                        console.print(f"[green]✓ {i18n.t('details.marked_watched')}[/green]")
                         
                         from weeb_cli.services.tracker import anilist_tracker, mal_tracker
                         
@@ -440,9 +440,9 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
                                     total_eps
                                 )
                                 if result:
-                                    console.print(f"[green]✓ {name} {i18n.get('watchlist.tracker_updated')}[/green]")
+                                    console.print(f"[green]✓ {name} {i18n.t('watchlist.tracker_updated')}[/green]")
                                 else:
-                                    console.print(f"[yellow]⏳ {name}: {i18n.get('watchlist.tracker_pending')}[/yellow]")
+                                    console.print(f"[yellow]⏳ {name}: {i18n.t('watchlist.tracker_pending')}[/yellow]")
                             else:
                                 tracker.update_progress(
                                     details.get("title"),
@@ -462,17 +462,17 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
 def handle_download_flow(slug, details):
     episodes = get_episodes_safe(details)
     if not episodes:
-        console.print(f"[yellow]{i18n.get('details.no_episodes')}[/yellow]")
+        console.print(f"[yellow]{i18n.t('details.no_episodes')}[/yellow]")
         time.sleep(1.5)
         return
 
-    opt_all = i18n.get("details.download_options.all")
-    opt_manual = i18n.get("details.download_options.manual")
-    opt_range = i18n.get("details.download_options.range")
+    opt_all = i18n.t("details.download_options.all")
+    opt_manual = i18n.t("details.download_options.manual")
+    opt_range = i18n.t("details.download_options.range")
 
     try:
         mode = questionary.select(
-            i18n.get("details.download_options.prompt"),
+            i18n.t("details.download_options.prompt"),
             choices=[opt_all, opt_manual, opt_range],
             pointer=">",
             use_shortcuts=False
@@ -489,7 +489,7 @@ def handle_download_flow(slug, details):
         elif mode == opt_manual:
              choices = []
              for ep in episodes:
-                 name = f"{i18n.get('details.episode')} {ep.get('number')}"
+                 name = f"{i18n.t('details.episode')} {ep.get('number')}"
                  choices.append(questionary.Choice(name, value=ep))
                  
              selected_eps = questionary.checkbox(
@@ -498,7 +498,7 @@ def handle_download_flow(slug, details):
              ).ask()
              
         elif mode == opt_range:
-             r_str = questionary.text(i18n.get("details.download_options.range_input")).ask()
+             r_str = questionary.text(i18n.t("details.download_options.range_input")).ask()
              if not r_str: return
              nums = set()
              try:
@@ -511,7 +511,7 @@ def handle_download_flow(slug, details):
                      elif p.isdigit():
                          nums.add(int(p))
              except:
-                 console.print(f"[red]{i18n.get('details.download_options.range_error')}[/red]")
+                 console.print(f"[red]{i18n.t('details.download_options.range_error')}[/red]")
                  time.sleep(1)
                  return
              
@@ -522,11 +522,11 @@ def handle_download_flow(slug, details):
         
         anime_title = details.get("title") or "Unknown Anime"
         
-        opt_now = i18n.get("downloads.start_now")
-        opt_queue = i18n.get("downloads.add_to_queue")
+        opt_now = i18n.t("downloads.start_now")
+        opt_queue = i18n.t("downloads.add_to_queue")
         
         action = questionary.select(
-            i18n.get("downloads.action_prompt"),
+            i18n.t("downloads.action_prompt"),
             choices=[opt_now, opt_queue],
             pointer=">",
             use_shortcuts=False
@@ -543,7 +543,7 @@ def handle_download_flow(slug, details):
             if action == opt_now:
                 queue_manager.start_queue()
         else:
-            console.print(f"[yellow]{i18n.get('downloads.already_in_queue')}[/yellow]")
+            console.print(f"[yellow]{i18n.t('downloads.already_in_queue')}[/yellow]")
         
         time.sleep(1)
         
