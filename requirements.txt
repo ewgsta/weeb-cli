@@ -3,6 +3,8 @@ rich
 questionary
 requests
 packaging
+beautifulsoup4
+lxml
 pycryptodome
 curl_cffi
 appdirs
