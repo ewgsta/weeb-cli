@@ -1,14 +1,10 @@
-"""Tests for cache manager."""
 import pytest
 import time
 from weeb_cli.services.cache import CacheManager, cached
 
 
 class TestCacheManager:
-    """Test cache manager functionality."""
-    
     def test_set_and_get(self, temp_dir):
-        """Test basic set and get operations."""
         cache = CacheManager(temp_dir / "cache")
         
         cache.set("test_key", "test_value")
@@ -17,7 +13,6 @@ class TestCacheManager:
         assert result == "test_value"
     
     def test_expiration(self, temp_dir):
-        """Test cache expiration."""
         cache = CacheManager(temp_dir / "cache")
         
         cache.set("test_key", "test_value")
@@ -28,7 +23,6 @@ class TestCacheManager:
         assert cache.get("test_key", max_age=0) is None
     
     def test_delete(self, temp_dir):
-        """Test cache deletion."""
         cache = CacheManager(temp_dir / "cache")
         
         cache.set("test_key", "test_value")
@@ -37,7 +31,6 @@ class TestCacheManager:
         assert cache.get("test_key") is None
     
     def test_clear(self, temp_dir):
-        """Test clearing all cache."""
         cache = CacheManager(temp_dir / "cache")
         
         cache.set("key1", "value1")
@@ -48,7 +41,6 @@ class TestCacheManager:
         assert cache.get("key2") is None
     
     def test_complex_values(self, temp_dir):
-        """Test caching complex data structures."""
         cache = CacheManager(temp_dir / "cache")
         
         data = {
@@ -64,10 +56,7 @@ class TestCacheManager:
 
 
 class TestCachedDecorator:
-    """Test cached decorator."""
-    
     def test_function_caching(self, temp_dir):
-        """Test that function results are cached."""
         cache = CacheManager(temp_dir / "cache")
         call_count = 0
         

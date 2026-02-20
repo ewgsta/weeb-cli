@@ -1,29 +1,15 @@
-"""Utility functions for sanitizing user input and filenames."""
 import re
 import unicodedata
 from pathlib import Path
 
 
 def sanitize_filename(name: str, max_length: int = 200) -> str:
-    """
-    Sanitize a filename to be safe for all operating systems.
-    
-    Args:
-        name: The filename to sanitize
-        max_length: Maximum length of the filename (default: 200)
-    
-    Returns:
-        A safe filename string
-    """
     if not name:
         return "unnamed"
     
     name = unicodedata.normalize('NFKD', name)
-    
     name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', name)
-    
     name = name.replace('..', '')
-    
     name = name.strip('. ')
     
     if not name:
@@ -36,15 +22,6 @@ def sanitize_filename(name: str, max_length: int = 200) -> str:
 
 
 def sanitize_path(path: str) -> Path:
-    """
-    Sanitize a full path to prevent directory traversal.
-    
-    Args:
-        path: The path to sanitize
-    
-    Returns:
-        A safe Path object
-    """
     p = Path(path)
     
     try:
@@ -55,15 +32,6 @@ def sanitize_path(path: str) -> Path:
 
 
 def validate_url(url: str) -> bool:
-    """
-    Validate if a URL is safe to use.
-    
-    Args:
-        url: The URL to validate
-    
-    Returns:
-        True if valid, False otherwise
-    """
     if not url:
         return False
     

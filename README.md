@@ -165,6 +165,142 @@ This project is licensed under [CC BY-NC-ND 4.0](LICENSE).
 
 ---
 
+## Project Structure
+
+```
+weeb-cli/
+├── weeb_cli/                    # Main application package
+│   ├── commands/                # CLI command handlers
+│   │   ├── downloads.py         # Download management commands
+│   │   ├── search.py            # Anime search functionality
+│   │   ├── settings.py          # Settings menu and configuration
+│   │   ├── setup.py             # Initial setup wizard
+│   │   └── watchlist.py         # Watch history and progress
+│   │
+│   ├── providers/               # Anime source integrations
+│   │   ├── extractors/          # Video stream extractors
+│   │   │   └── megacloud.py     # Megacloud extractor
+│   │   ├── allanime.py          # AllAnime provider (EN)
+│   │   ├── animecix.py          # Animecix provider (TR)
+│   │   ├── anizle.py            # Anizle provider (TR)
+│   │   ├── base.py              # Base provider interface
+│   │   ├── hianime.py           # HiAnime provider (EN)
+│   │   ├── registry.py          # Provider registration system
+│   │   └── turkanime.py         # Turkanime provider (TR)
+│   │
+│   ├── services/                # Business logic layer
+│   │   ├── cache.py             # File-based caching system
+│   │   ├── database.py          # SQLite database manager
+│   │   ├── dependency_manager.py # Auto-install FFmpeg, MPV, etc.
+│   │   ├── details.py           # Anime details fetcher
+│   │   ├── discord_rpc.py       # Discord Rich Presence
+│   │   ├── downloader.py        # Queue-based download manager
+│   │   ├── error_handler.py     # Global error handling
+│   │   ├── local_library.py     # Local anime indexing
+│   │   ├── logger.py            # Debug logging system
+│   │   ├── notifier.py          # System notifications
+│   │   ├── player.py            # MPV video player integration
+│   │   ├── progress.py          # Watch progress tracking
+│   │   ├── scraper.py           # Provider facade
+│   │   ├── search.py            # Search service
+│   │   ├── shortcuts.py         # Keyboard shortcuts manager
+│   │   ├── tracker.py           # MAL/AniList integration
+│   │   ├── updater.py           # Auto-update checker
+│   │   ├── watch.py             # Streaming service
+│   │   ├── _base.py             # Base service class
+│   │   └── _tracker_base.py     # Base tracker interface
+│   │
+│   ├── ui/                      # Terminal UI components
+│   │   ├── header.py            # Header display
+│   │   ├── menu.py              # Main menu
+│   │   └── prompt.py            # Custom prompts
+│   │
+│   ├── utils/                   # Utility functions
+│   │   └── sanitizer.py         # Filename/path sanitization
+│   │
+│   ├── locales/                 # Internationalization
+│   │   ├── en.json              # English translations
+│   │   └── tr.json              # Turkish translations
+│   │
+│   ├── templates/               # HTML templates
+│   │   ├── anilist_error.html   # AniList OAuth error page
+│   │   ├── anilist_success.html # AniList OAuth success page
+│   │   ├── mal_error.html       # MAL OAuth error page
+│   │   └── mal_success.html     # MAL OAuth success page
+│   │
+│   ├── config.py                # Configuration management
+│   ├── exceptions.py            # Custom exception hierarchy
+│   ├── i18n.py                  # Internationalization system
+│   ├── main.py                  # CLI entry point
+│   └── __main__.py              # Package execution entry
+│
+├── tests/                       # Test suite
+│   ├── test_cache.py            # Cache manager tests
+│   ├── test_exceptions.py       # Exception tests
+│   ├── test_sanitizer.py        # Sanitizer tests
+│   └── conftest.py              # Pytest fixtures
+│
+├── weeb_landing/                # Landing page assets
+│   ├── logo/                    # Logo files (various sizes)
+│   └── index.html               # Landing page
+│
+├── distribution/                # Build and distribution files
+├── pyproject.toml               # Project metadata and dependencies
+├── requirements.txt             # Python dependencies
+├── pytest.ini                   # Pytest configuration
+├── LICENSE                      # CC BY-NC-ND 4.0 license
+└── README.md                    # This file
+```
+
+---
+
+## Tech Stack
+
+### Core Technologies
+- **Python 3.8+** - Main programming language
+- **Typer** - CLI framework with rich terminal support
+- **Rich** - Terminal formatting and styling
+- **Questionary** - Interactive prompts and menus
+- **SQLite** - Local database (WAL mode)
+
+### Web & Networking
+- **requests** - HTTP client
+- **curl_cffi** - Advanced HTTP with browser impersonation
+- **BeautifulSoup4** - HTML parsing
+- **lxml** - Fast XML/HTML processing
+
+### Media & Download
+- **FFmpeg** - Video processing and conversion
+- **MPV** - High-quality video player
+- **Aria2** - Multi-connection downloader
+- **yt-dlp** - Complex stream downloader (HLS, DASH)
+
+### Encryption & Security
+- **pycryptodome** - Encryption/decryption (Turkanime)
+
+### Additional Features
+- **pypresence** - Discord Rich Presence
+- **py7zr** - 7z archive handling
+- **winotify** - Windows notifications
+- **pyfiglet** - ASCII art headers
+- **packaging** - Version comparison
+
+### Development & Testing
+- **pytest** - Testing framework
+- **pyinstaller** - Executable builder
+- **build** - Python package builder
+
+### Architecture Patterns
+- **Provider Pattern** - Pluggable anime sources
+- **Registry Pattern** - Dynamic provider registration
+- **Service Locator** - Lazy-loaded services
+- **Queue Pattern** - Thread-safe download queue
+- **Decorator Pattern** - Caching decorator
+- **Observer Pattern** - Progress tracking
+- **Strategy Pattern** - Multiple download strategies
+
+---
+
 <p align="center">
   <a href="https://weeb-cli.ewgsta.me">Website</a> •
   <a href="https://github.com/ewgsta/weeb-cli/issues">Report Issue</a>

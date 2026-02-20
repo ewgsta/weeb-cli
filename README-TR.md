@@ -177,6 +177,142 @@ Bu proje [CC BY-NC-ND 4.0](LICENSE) lisansı ile lisanslanmıştır.
 
 ---
 
+## Proje Yapısı
+
+```
+weeb-cli/
+├── weeb_cli/                    # Ana uygulama paketi
+│   ├── commands/                # CLI komut yöneticileri
+│   │   ├── downloads.py         # İndirme yönetimi komutları
+│   │   ├── search.py            # Anime arama fonksiyonları
+│   │   ├── settings.py          # Ayarlar menüsü ve yapılandırma
+│   │   ├── setup.py             # İlk kurulum sihirbazı
+│   │   └── watchlist.py         # İzleme geçmişi ve ilerleme
+│   │
+│   ├── providers/               # Anime kaynak entegrasyonları
+│   │   ├── extractors/          # Video stream çıkarıcıları
+│   │   │   └── megacloud.py     # Megacloud çıkarıcı
+│   │   ├── allanime.py          # AllAnime sağlayıcı (EN)
+│   │   ├── animecix.py          # Animecix sağlayıcı (TR)
+│   │   ├── anizle.py            # Anizle sağlayıcı (TR)
+│   │   ├── base.py              # Temel sağlayıcı arayüzü
+│   │   ├── hianime.py           # HiAnime sağlayıcı (EN)
+│   │   ├── registry.py          # Sağlayıcı kayıt sistemi
+│   │   └── turkanime.py         # Turkanime sağlayıcı (TR)
+│   │
+│   ├── services/                # İş mantığı katmanı
+│   │   ├── cache.py             # Dosya tabanlı önbellekleme
+│   │   ├── database.py          # SQLite veritabanı yöneticisi
+│   │   ├── dependency_manager.py # FFmpeg, MPV otomatik kurulum
+│   │   ├── details.py           # Anime detay çekici
+│   │   ├── discord_rpc.py       # Discord Rich Presence
+│   │   ├── downloader.py        # Kuyruk tabanlı indirme yöneticisi
+│   │   ├── error_handler.py     # Global hata yönetimi
+│   │   ├── local_library.py     # Yerel anime indeksleme
+│   │   ├── logger.py            # Debug loglama sistemi
+│   │   ├── notifier.py          # Sistem bildirimleri
+│   │   ├── player.py            # MPV video oynatıcı entegrasyonu
+│   │   ├── progress.py          # İzleme ilerleme takibi
+│   │   ├── scraper.py           # Sağlayıcı facade
+│   │   ├── search.py            # Arama servisi
+│   │   ├── shortcuts.py         # Klavye kısayol yöneticisi
+│   │   ├── tracker.py           # MAL/AniList entegrasyonu
+│   │   ├── updater.py           # Otomatik güncelleme kontrolü
+│   │   ├── watch.py             # Yayın servisi
+│   │   ├── _base.py             # Temel servis sınıfı
+│   │   └── _tracker_base.py     # Temel tracker arayüzü
+│   │
+│   ├── ui/                      # Terminal UI bileşenleri
+│   │   ├── header.py            # Başlık gösterimi
+│   │   ├── menu.py              # Ana menü
+│   │   └── prompt.py            # Özel promptlar
+│   │
+│   ├── utils/                   # Yardımcı fonksiyonlar
+│   │   └── sanitizer.py         # Dosya adı/yol temizleme
+│   │
+│   ├── locales/                 # Çoklu dil desteği
+│   │   ├── en.json              # İngilizce çeviriler
+│   │   └── tr.json              # Türkçe çeviriler
+│   │
+│   ├── templates/               # HTML şablonları
+│   │   ├── anilist_error.html   # AniList OAuth hata sayfası
+│   │   ├── anilist_success.html # AniList OAuth başarı sayfası
+│   │   ├── mal_error.html       # MAL OAuth hata sayfası
+│   │   └── mal_success.html     # MAL OAuth başarı sayfası
+│   │
+│   ├── config.py                # Yapılandırma yönetimi
+│   ├── exceptions.py            # Özel exception hiyerarşisi
+│   ├── i18n.py                  # Çoklu dil sistemi
+│   ├── main.py                  # CLI giriş noktası
+│   └── __main__.py              # Paket çalıştırma giriş noktası
+│
+├── tests/                       # Test paketi
+│   ├── test_cache.py            # Önbellek yöneticisi testleri
+│   ├── test_exceptions.py       # Exception testleri
+│   ├── test_sanitizer.py        # Sanitizer testleri
+│   └── conftest.py              # Pytest fixture'ları
+│
+├── weeb_landing/                # Landing sayfası varlıkları
+│   ├── logo/                    # Logo dosyaları (çeşitli boyutlar)
+│   └── index.html               # Landing sayfası
+│
+├── distribution/                # Build ve dağıtım dosyaları
+├── pyproject.toml               # Proje metadata ve bağımlılıklar
+├── requirements.txt             # Python bağımlılıkları
+├── pytest.ini                   # Pytest yapılandırması
+├── LICENSE                      # CC BY-NC-ND 4.0 lisansı
+└── README.md                    # Bu dosya
+```
+
+---
+
+## Teknoloji Yığını
+
+### Temel Teknolojiler
+- **Python 3.8+** - Ana programlama dili
+- **Typer** - Zengin terminal desteği ile CLI framework
+- **Rich** - Terminal formatlama ve stil
+- **Questionary** - İnteraktif promptlar ve menüler
+- **SQLite** - Yerel veritabanı (WAL modu)
+
+### Web & Ağ
+- **requests** - HTTP istemcisi
+- **curl_cffi** - Tarayıcı taklit özellikli gelişmiş HTTP
+- **BeautifulSoup4** - HTML ayrıştırma
+- **lxml** - Hızlı XML/HTML işleme
+
+### Medya & İndirme
+- **FFmpeg** - Video işleme ve dönüştürme
+- **MPV** - Yüksek kaliteli video oynatıcı
+- **Aria2** - Çoklu bağlantılı indirici
+- **yt-dlp** - Karmaşık stream indirici (HLS, DASH)
+
+### Şifreleme & Güvenlik
+- **pycryptodome** - Şifreleme/şifre çözme (Turkanime)
+
+### Ek Özellikler
+- **pypresence** - Discord Rich Presence
+- **py7zr** - 7z arşiv işleme
+- **winotify** - Windows bildirimleri
+- **pyfiglet** - ASCII art başlıklar
+- **packaging** - Versiyon karşılaştırma
+
+### Geliştirme & Test
+- **pytest** - Test framework
+- **pyinstaller** - Çalıştırılabilir dosya oluşturucu
+- **build** - Python paket oluşturucu
+
+### Mimari Desenler
+- **Provider Pattern** - Takılabilir anime kaynakları
+- **Registry Pattern** - Dinamik sağlayıcı kaydı
+- **Service Locator** - Lazy-loaded servisler
+- **Queue Pattern** - Thread-safe indirme kuyruğu
+- **Decorator Pattern** - Önbellekleme decorator
+- **Observer Pattern** - İlerleme takibi
+- **Strategy Pattern** - Çoklu indirme stratejileri
+
+---
+
 <p align="center">
   <a href="https://weeb-cli.ewgsta.me">Website</a> •
   <a href="https://github.com/ewgsta/weeb-cli/issues">Sorun Bildir</a>

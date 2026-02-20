@@ -5,7 +5,6 @@ APP_NAME = "weeb-cli"
 CONFIG_DIR = Path.home() / f".{APP_NAME}"
 
 def get_default_download_dir():
-    """Get default download directory based on current language."""
     from weeb_cli.i18n import i18n
     folder_name = i18n.t("downloads.default_folder_name", "weeb-downloads")
     return os.path.join(os.getcwd(), folder_name)
