@@ -122,13 +122,39 @@ weeb-cli
 
 Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 
-| Ayar | Açıklama | Varsayılan |
-|------|----------|------------|
-| `aria2_enabled` | Aria2 kullanımı | `true` |
-| `max_concurrent_downloads` | Eşzamanlı indirme | `3` |
-| `download_dir` | İndirme klasörü | `./weeb-downloads` |
-| `discord_rpc_enabled` | Discord RPC | `false` |
-| `debug_mode` | Debug loglama | `false` |
+### Mevcut Ayarlar
+
+| Ayar | Açıklama | Varsayılan | Tip |
+|------|----------|------------|-----|
+| `language` | Arayüz dili (tr/en) | `null` (ilk çalıştırmada sorar) | string |
+| `scraping_source` | Aktif anime kaynağı | `animecix` | string |
+| `aria2_enabled` | İndirmeler için Aria2 kullan | `true` | boolean |
+| `aria2_max_connections` | İndirme başına max bağlantı | `16` | integer |
+| `ytdlp_enabled` | HLS yayınlar için yt-dlp kullan | `true` | boolean |
+| `ytdlp_format` | yt-dlp format string | `bestvideo+bestaudio/best` | string |
+| `max_concurrent_downloads` | Eşzamanlı indirme sayısı | `3` | integer |
+| `download_dir` | İndirme klasörü yolu | `./weeb-downloads` | string |
+| `download_max_retries` | Başarısız indirmeleri yeniden dene | `3` | integer |
+| `download_retry_delay` | Denemeler arası bekleme (saniye) | `10` | integer |
+| `show_description` | Anime açıklamalarını göster | `true` | boolean |
+| `discord_rpc_enabled` | Discord Rich Presence | `false` | boolean |
+| `shortcuts_enabled` | Klavye kısayolları | `true` | boolean |
+| `debug_mode` | Debug loglama | `false` | boolean |
+
+### Tracker Ayarları (ayrı saklanır)
+- `anilist_token` - AniList OAuth token
+- `anilist_user_id` - AniList kullanıcı ID
+- `mal_token` - MyAnimeList OAuth token
+- `mal_refresh_token` - MAL yenileme token
+- `mal_username` - MAL kullanıcı adı
+
+### Harici Diskler
+Ayarlar > Harici Diskler menüsünden yönetilir. Her disk şunları saklar:
+- Yol (örn. `D:\Anime`)
+- Özel isim/takma ad
+- Eklenme zamanı
+
+Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
 
 ---
 

@@ -122,13 +122,39 @@ weeb-cli
 
 Config location: `~/.weeb-cli/weeb.db` (SQLite)
 
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `aria2_enabled` | Use Aria2 | `true` |
-| `max_concurrent_downloads` | Concurrent downloads | `3` |
-| `download_dir` | Download folder | `./weeb-downloads` |
-| `discord_rpc_enabled` | Discord RPC | `false` |
-| `debug_mode` | Debug logging | `false` |
+### Available Settings
+
+| Setting | Description | Default | Type |
+|---------|-------------|---------|------|
+| `language` | Interface language (tr/en) | `null` (asks on first run) | string |
+| `scraping_source` | Active anime source | `animecix` | string |
+| `aria2_enabled` | Use Aria2 for downloads | `true` | boolean |
+| `aria2_max_connections` | Max connections per download | `16` | integer |
+| `ytdlp_enabled` | Use yt-dlp for HLS streams | `true` | boolean |
+| `ytdlp_format` | yt-dlp format string | `bestvideo+bestaudio/best` | string |
+| `max_concurrent_downloads` | Simultaneous downloads | `3` | integer |
+| `download_dir` | Download folder path | `./weeb-downloads` | string |
+| `download_max_retries` | Retry failed downloads | `3` | integer |
+| `download_retry_delay` | Delay between retries (seconds) | `10` | integer |
+| `show_description` | Show anime descriptions | `true` | boolean |
+| `discord_rpc_enabled` | Discord Rich Presence | `false` | boolean |
+| `shortcuts_enabled` | Keyboard shortcuts | `true` | boolean |
+| `debug_mode` | Debug logging | `false` | boolean |
+
+### Tracker Settings (stored separately)
+- `anilist_token` - AniList OAuth token
+- `anilist_user_id` - AniList user ID
+- `mal_token` - MyAnimeList OAuth token
+- `mal_refresh_token` - MAL refresh token
+- `mal_username` - MAL username
+
+### External Drives
+Managed via Settings > External Drives menu. Each drive stores:
+- Path (e.g., `D:\Anime`)
+- Custom name/nickname
+- Added timestamp
+
+All settings can be modified through the interactive Settings menu.
 
 ---
 
