@@ -10,17 +10,22 @@ def start_setup_wizard(force=False):
     
     tools = ["yt-dlp", "ffmpeg", "aria2", "mpv"]
     
-    for tool in tools:
-        console.print(f"\n[bold]{tool.upper()}[/bold]")
-        console.print(i18n.t('setup.check', tool=tool))
-        
-        path = dependency_manager.check_dependency(tool)
-        if path and not force:
-            console.print(f"[green]{i18n.t('setup.found', path=path)}[/green]")
-            continue
+    with console.status("[cyan]Checking dependencies...[/cyan]", spinner="dots") as status:
+        for tool in tools:
+            status.update(f"[cyan]Checking {tool}...[/cyan]")
             
-        console.print(f"[yellow]{i18n.t('setup.not_found', tool=tool)}[/yellow]")
-        dependency_manager.install_dependency(tool)
+            path = dependency_manager.check_dependency(tool)
+            if path and not force:
+                console.print(f"[green]✓[/green] {tool}: {i18n.t('setup.found_short')}")
+                continue
+                
+            console.print(f"[yellow]⚠[/yellow] {tool}: {i18n.t('setup.not_found_short')}")
+            status.update(f"[cyan]Installing {tool}...[/cyan]")
+            
+            if dependency_manager.install_dependency(tool):
+                console.print(f"[green]✓[/green] {tool}: {i18n.t('setup.installed')}")
+            else:
+                console.print(f"[red]✗[/red] {tool}: {i18n.t('setup.failed_short')}")
     
     console.print(f"\n[bold green]{i18n.t('setup.complete')}[/bold green]")
     console.print(f"[dim]{i18n.t('setup.location', path=dependency_manager.bin_dir)}[/dim]")

@@ -5,7 +5,7 @@
 <h1 align="center">Weeb CLI</h1>
 
 <p align="center">
-  <strong>Anime severler için güçlü, platformlar arası komut satırı aracı</strong>
+  <strong>No browser, no ads, no distractions. Just you and an unparalleled anime viewing experience.</strong>
 </p>
 
 <p align="center">
@@ -16,68 +16,53 @@
 </p>
 
 <p align="center">
-  <a href="#kurulum">Kurulum</a> •
-  <a href="#özellikler">Özellikler</a> •
-  <a href="#kullanım">Kullanım</a> •
-  <a href="#kaynaklar">Kaynaklar</a> •
-  <a href="README-EN.md">English</a>
+  <a href="#installation">Installation</a> •
+  <a href="#features">Features</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#sources">Sources</a> •
+  <a href="README-TR.md">Türkçe</a>
 </p>
 
 ---
 
-## Demo
+## Features
 
-### 🎬 Anime Arama ve İzleme
-![Anime Search Demo](./demo-search.gif)
+### Multiple Sources
+- **Turkish**: Animecix, Turkanime, Anizle
+- **English**: HiAnime, AllAnime
 
-### 📋 Ana Menü ve Navigasyon
-![Main Menu Demo](./demo-menu.gif)
+### Smart Streaming
+- High-quality HLS/MP4 playback with MPV
+- Resume from where you left off (timestamp-based)
+- Watch history and statistics
+- Completed (✓) and in-progress (●) episode markers
 
-### ⚡ Tam Özellik Gösterimi
-![Full Feature Demo](./demo-full.gif)
+### Powerful Download System
+- **Aria2** for multi-connection fast downloads
+- **yt-dlp** for complex stream support
+- Queue system with concurrent downloads
+- Resume interrupted downloads
+- Smart file naming (`Anime Name - S1E1.mp4`)
 
-> Demo kayıtları [VHS](https://github.com/charmbracelet/vhs) ile oluşturulmuştur. Kendi demo'nuzu oluşturmak için [README-DEMO.md](./README-DEMO.md) dosyasına bakın.
+### Local Library
+- Auto-scan downloaded anime
+- External drive support (USB, HDD)
+- Offline anime indexing
+- Search across all sources
 
----
-
-## Özellikler
-
-### Çoklu Kaynak Desteği
-- **Türkçe**: Animecix, Turkanime, Anizle
-- **İngilizce**: HiAnime, AllAnime
-
-### Akıllı İzleme
-- MPV entegrasyonu ile yüksek kaliteli HLS/MP4 yayınları
-- Kaldığınız yerden devam etme (dakika bazında)
-- İzleme geçmişi ve istatistikler
-- Tamamlanan (✓) ve devam eden (●) bölüm işaretleri
-
-### Güçlü İndirme Sistemi
-- **Aria2** ile çoklu bağlantılı hızlı indirme
-- **yt-dlp** ile karmaşık yayın desteği
-- Kuyruk sistemi ve eşzamanlı indirme
-- Yarım kalan indirmeleri devam ettirme
-- Akıllı dosya isimlendirme (`Anime Adı - S1B1.mp4`)
-
-### Yerel Kütüphane
-- İndirilen animeleri otomatik tarama
-- Harici disk desteği (USB, HDD)
-- Çevrimdışı anime indexleme
-- Tüm kaynaklarda arama
-
-### Ek Özellikler
-- SQLite veritabanı (hızlı ve güvenilir)
-- İndirme tamamlandığında sistem bildirimi
-- Discord RPC entegrasyonu (izlediğiniz anime Discord'da görünsün)
-- Arama geçmişi
-- Debug modu ve loglama
-- Otomatik güncelleme kontrolü
+### Additional Features
+- SQLite database (fast and reliable)
+- System notifications on download completion
+- Discord RPC integration (show what you're watching on Discord)
+- Search history
+- Debug mode and logging
+- Automatic update checks
 
 ---
 
-## Kurulum
+## Installation
 
-### PyPI (Evrensel)
+### PyPI (Universal)
 ```bash
 pip install weeb-cli
 ```
@@ -88,9 +73,9 @@ yay -S weeb-cli
 ```
 
 ### Portable
-[Releases](https://github.com/ewgsta/weeb-cli/releases) sayfasından platformunuza uygun dosyayı indirin.
+Download the appropriate file for your platform from [Releases](https://github.com/ewgsta/weeb-cli/releases).
 
-### Geliştirici Kurulumu
+### Developer Setup
 ```bash
 git clone https://github.com/ewgsta/weeb-cli.git
 cd weeb-cli
@@ -99,100 +84,88 @@ pip install -e .
 
 ---
 
-## Kullanım
+## Usage
 
 ```bash
 weeb-cli
 ```
 
-### Klavye Kontrolleri
-| Tuş | İşlev |
-|-----|-------|
-| `↑` `↓` | Menüde gezinme |
-| `Enter` | Seçim yapma |
-| `s` | Anime Ara (Ana menüde) |
-| `d` | İndirmeler (Ana menüde) |
-| `w` | İzlediklerim (Ana menüde) |
-| `c` | Ayarlar (Ana menüde) |
-| `q` | Çıkış (Ana menüde) |
-| `Ctrl+C` | Geri dön / Çıkış |
+### Keyboard Controls
+| Key | Action |
+|-----|--------|
+| `↑` `↓` | Navigate menu |
+| `Enter` | Select |
+| `s` | Search Anime (Main menu) |
+| `d` | Downloads (Main menu) |
+| `w` | Watchlist (Main menu) |
+| `c` | Settings (Main menu) |
+| `q` | Exit (Main menu) |
+| `Ctrl+C` | Go back / Exit |
 
-**Not:** Tüm kısayollar Ayarlar > Klavye Kısayolları menüsünden özelleştirilebilir.
-
----
-
-## Kaynaklar
-
-| Kaynak | Dil |
-|--------|-----|
-| Animecix | Türkçe |
-| Turkanime | Türkçe |
-| Anizle | Türkçe |
-| HiAnime | İngilizce |
-| AllAnime | İngilizce |
+**Note:** All shortcuts can be customized in Settings > Keyboard Shortcuts.
 
 ---
 
-## Ayarlar
+## Sources
 
-Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
+| Source | Language |
+|--------|----------|
+| Animecix | Turkish |
+| Turkanime | Turkish |
+| Anizle | Turkish |
+| HiAnime | English |
+| AllAnime | English |
 
-| Ayar | Açıklama | Varsayılan |
-|------|----------|------------|
-| `aria2_enabled` | Aria2 kullanımı | `true` |
-| `max_concurrent_downloads` | Eşzamanlı indirme | `3` |
-| `download_dir` | İndirme klasörü | `./weeb-downloads` |
+---
+
+## Configuration
+
+Config location: `~/.weeb-cli/weeb.db` (SQLite)
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| `aria2_enabled` | Use Aria2 | `true` |
+| `max_concurrent_downloads` | Concurrent downloads | `3` |
+| `download_dir` | Download folder | `./weeb-downloads` |
 | `discord_rpc_enabled` | Discord RPC | `false` |
-| `debug_mode` | Debug loglama | `false` |
+| `debug_mode` | Debug logging | `false` |
 
 ---
 
-## Yol Haritası
+## Roadmap
 
-### Tamamlanan
-- [x] Çoklu kaynak desteği (TR/EN)
-- [x] MPV ile izleme
-- [x] İzleme geçmişi ve ilerleme takibi
-- [x] Aria2/yt-dlp indirme entegrasyonu
-- [x] Harici disk ve yerel kütüphane
-- [x] SQLite veritabanı
-- [x] Bildirim sistemi
-- [x] Debug modu
-- [x] MAL/AniList entegrasyonu
-- [x] Veritabanı yedekleme/geri yükleme
-- [x] Klavye kısayolları
+### Completed
+- [x] Multiple source support (TR/EN)
+- [x] MPV streaming
+- [x] Watch history and progress tracking
+- [x] Aria2/yt-dlp download integration
+- [x] External drives and local library
+- [x] SQLite database
+- [x] Notification system
+- [x] Debug mode
+- [x] MAL/AniList integration
+- [x] Database backup/restore
+- [x] Keyboard shortcuts
 
-## Gelecek Planlar
 
-### v2.6.0 (Planlanan)
-- [ ] Async/await refactoring
-- [ ] Download strategy pattern
-- [ ] Token şifreleme
-- [ ] Progress bar iyileştirmesi
-- [ ] Plugin sistemi
-
-### v2.7.0 (Planlanan)
-- [ ] Anime önerileri
-- [ ] Toplu işlemler
-- [ ] İzleme istatistikleri (grafik)
-- [ ] Tema desteği
-- [ ] Altyazı indirme
-
-### v3.0.0 (Uzun Vadeli)
-- [ ] Web UI (opsiyonel)
-- [ ] Torrent desteği
+### Planned
+- [ ] Anime recommendations
+- [ ] Batch operations
+- [ ] Watch statistics (graphs)
+- [ ] Theme support
+- [ ] Subtitle downloads
+- [ ] Torrent support (nyaa.si)
 - [ ] Watch party
-- [ ] Mobile app entegrasyonu
 
 ---
 
-## Lisans
+## License
 
-Bu proje [CC BY-NC-ND 4.0](LICENSE) lisansı ile lisanslanmıştır.
+This project is licensed under [CC BY-NC-ND 4.0](LICENSE).
 
 ---
 
 <p align="center">
   <a href="https://weeb-cli.ewgsta.me">Website</a> •
-  <a href="https://github.com/ewgsta/weeb-cli/issues">Sorun Bildir</a>
+  <a href="https://github.com/ewgsta/weeb-cli/issues">Report Issue</a>
 </p>

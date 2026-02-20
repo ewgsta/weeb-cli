@@ -153,16 +153,26 @@ class DependencyManager:
         }
         
         for mgr, cmd_prefix in managers.items():
-            if mgr in pkg_map and shutil.which(mgr):
+            if mgr in pkg_map:
+                # Check if package manager exists before trying to use it
+                if not shutil.which(mgr.split()[0] if ' ' in mgr else mgr):
+                    continue
+                    
                 pkg_name = pkg_map[mgr]
                 console.print(f"[cyan]{i18n.t('setup.pkg_manager_try', manager=mgr)}[/cyan]")
                 
                 full_cmd = cmd_prefix + [pkg_name]
                 try:
-                    subprocess.run(full_cmd, check=True, timeout=60)
+                    subprocess.run(
+                        full_cmd, 
+                        check=True, 
+                        timeout=60,
+                        stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL
+                    )
                     console.print(f"[green]{i18n.t('setup.success', tool=name)}[/green]")
                     return True
-                except subprocess.CalledProcessError:
+                except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
                     continue
         return False
 
