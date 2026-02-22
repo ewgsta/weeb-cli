@@ -15,15 +15,15 @@ DEFAULT_CONFIG = {
     "ytdlp_enabled": True,
     "aria2_max_connections": 16,
     "max_concurrent_downloads": 3,
-    "download_dir": None,  # Will be set dynamically
+    "download_dir": None,  
     "ytdlp_format": "bestvideo+bestaudio/best",
-    "scraping_source": "animecix",
+    "scraping_source": "None",
     "show_description": True,
     "debug_mode": False,
     "download_max_retries": 3,
     "download_retry_delay": 10,
-    "discord_rpc_enabled": False,
-    "shortcuts_enabled": True
+    "discord_rpc_enabled": True,
+    "shortcuts_enabled": False
 }
 
 class Config:
