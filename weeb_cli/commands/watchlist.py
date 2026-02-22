@@ -83,7 +83,7 @@ def show_completed_list():
         pass
 
 def show_in_progress_list():
-    from weeb_cli.commands.search import show_anime_details
+    from weeb_cli.commands.search.anime_details import show_anime_details
     from weeb_cli.commands.downloads import show_anime_episodes
     from weeb_cli.services.local_library import local_library
     
