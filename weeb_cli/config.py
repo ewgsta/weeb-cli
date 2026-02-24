@@ -29,6 +29,7 @@ DEFAULT_CONFIG = {
 class Config:
     def __init__(self):
         self._db = None
+        self._headless = False
     
     @property
     def db(self):
@@ -38,15 +39,21 @@ class Config:
         return self._db
     
     def get(self, key, default=None):
-        val = self.db.get_config(key)
-        if val is None:
-            # Special handling for download_dir
-            if key == "download_dir":
-                return get_default_download_dir()
-            return DEFAULT_CONFIG.get(key, default)
-        return val
+        if not self._headless:
+            try:
+                val = self.db.get_config(key)
+                if val is not None:
+                    return val
+            except Exception:
+                pass
+        if key == "download_dir":
+            return get_default_download_dir()
+        return DEFAULT_CONFIG.get(key, default)
     
     def set(self, key, value):
         self.db.set_config(key, value)
+
+    def set_headless(self, headless: bool = True):
+        self._headless = headless
 
 config = Config()

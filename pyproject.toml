@@ -36,6 +36,9 @@ dependencies = [
     "winotify; sys_platform == 'win32'"
 ]
 
+[project.optional-dependencies]
+serve = ["flask>=3.0", "pyyaml>=6.0"]
+
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["weeb_cli*"]

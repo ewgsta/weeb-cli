@@ -57,6 +57,8 @@
 - Search history
 - Debug mode and logging
 - Automatic update checks
+- Non-interactive JSON API for scripts and AI agents
+- Torznab server mode for Sonarr/*arr integration
 
 ---
 
@@ -88,6 +90,60 @@ pip install -e .
 
 ```bash
 weeb-cli
+```
+
+### API Mode (Non-interactive)
+
+For scripts, automation, and AI agents, weeb-cli provides JSON API commands that work headlessly without a database or TUI:
+
+```bash
+# List available providers
+weeb-cli api providers
+
+# Search for anime (returns IDs)
+weeb-cli api search "Angel Beats"
+# Returns: [{"id": "12345", "title": "Angel Beats!", ...}]
+
+# List episodes (use ID from search)
+weeb-cli api episodes 12345 --season 1
+
+# Get stream URLs for an episode
+weeb-cli api streams 12345 --season 1 --episode 1
+
+# Get anime details
+weeb-cli api details 12345
+
+# Download an episode
+weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads
+```
+
+All API commands output JSON to stdout.
+
+### Sonarr/*arr Integration (Serve Mode)
+
+weeb-cli can run as a Torznab-compatible server for Sonarr and other *arr applications:
+
+```bash
+pip install weeb-cli[serve]
+
+weeb-cli serve --port 9876 \
+  --watch-dir /downloads/watch \
+  --completed-dir /downloads/completed \
+  --sonarr-url http://sonarr:8989 \
+  --sonarr-api-key YOUR_KEY \
+  --providers animecix,anizle,turkanime
+```
+
+Then add `http://weeb-cli-host:9876` as a Torznab indexer in Sonarr with category 5070 (TV/Anime). The server includes a blackhole download worker that automatically processes grabbed episodes.
+
+#### Docker
+
+```dockerfile
+FROM python:3.13-slim
+RUN apt-get update && apt-get install -y --no-install-recommends aria2 ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir weeb-cli[serve] yt-dlp
+EXPOSE 9876
+CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "--completed-dir", "/downloads/completed"]
 ```
 
 ### Keyboard Controls
@@ -172,6 +228,8 @@ All settings can be modified through the interactive Settings menu.
 - [x] MAL/AniList integration
 - [x] Database backup/restore
 - [x] Keyboard shortcuts
+- [x] Non-interactive API mode (JSON output)
+- [x] Torznab server for Sonarr/*arr integration
 
 
 ### Planned
@@ -197,8 +255,10 @@ This project is licensed under [CC BY-NC-ND 4.0](LICENSE).
 weeb-cli/
 ├── weeb_cli/                    # Main application package
 │   ├── commands/                # CLI command handlers
+│   │   ├── api.py               # Non-interactive JSON API commands
 │   │   ├── downloads.py         # Download management commands
 │   │   ├── search.py            # Anime search functionality
+│   │   ├── serve.py             # Torznab server for *arr integration
 │   │   ├── settings.py          # Settings menu and configuration
 │   │   ├── setup.py             # Initial setup wizard
 │   │   └── watchlist.py         # Watch history and progress
@@ -222,6 +282,7 @@ weeb-cli/
 │   │   ├── discord_rpc.py       # Discord Rich Presence
 │   │   ├── downloader.py        # Queue-based download manager
 │   │   ├── error_handler.py     # Global error handling
+│   │   ├── headless_downloader.py # Headless download (no DB/TUI deps)
 │   │   ├── local_library.py     # Local anime indexing
 │   │   ├── logger.py            # Debug logging system
 │   │   ├── notifier.py          # System notifications
@@ -261,6 +322,7 @@ weeb-cli/
 │   └── __main__.py              # Package execution entry
 │
 ├── tests/                       # Test suite
+│   ├── test_api.py              # API commands and headless downloader tests
 │   ├── test_cache.py            # Cache manager tests
 │   ├── test_exceptions.py       # Exception tests
 │   ├── test_sanitizer.py        # Sanitizer tests

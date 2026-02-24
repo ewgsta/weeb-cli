@@ -167,7 +167,7 @@ class AnimeCixProvider(BaseProvider):
                     id=ep_url,
                     number=ep_num,
                     title=name,
-                    season=sidx + 1,
+                    season=self._parse_season_from_url(ep_url, sidx + 1),
                     url=ep_url
                 ))
         
@@ -274,3 +274,10 @@ class AnimeCixProvider(BaseProvider):
                 return int(match.group(1))
         
         return fallback
+
+    def _parse_season_from_url(self, url: str, fallback: int) -> int:
+        try:
+            qs = parse_qs(url.split("?", 1)[1]) if "?" in url else {}
+            return int(qs["season"][0])
+        except (KeyError, IndexError, ValueError):
+            return fallback
