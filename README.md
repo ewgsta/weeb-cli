@@ -159,16 +159,6 @@ All settings can be modified through the interactive Settings menu.
 
 ---
 
----
-
-## Support & Sponsorship
-
-We are committed to keeping Weeb-CLI free and open-source. If you find the project useful, please consider supporting its development:
-
-👉 **[Support us on Open Collective](https://opencollective.com/weeb-cli)**
-
----
-
 ## Roadmap
 
 ### Completed
