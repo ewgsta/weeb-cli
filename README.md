@@ -274,7 +274,7 @@ weeb-cli/
 ├── pyproject.toml               # Project metadata and dependencies
 ├── requirements.txt             # Python dependencies
 ├── pytest.ini                   # Pytest configuration
-├── LICENSE                      # CC BY-NC-ND 4.0 license
+├── LICENSE                      # GPL License 
 └── README.md                    # This file
 ```
 
