@@ -255,12 +255,6 @@ Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
 
 ---
 
-## Lisans
-
-Bu proje [CC BY-NC-ND 4.0](LICENSE) lisansı ile lisanslanmıştır.
-
----
-
 ## Proje Yapısı
 
 ```
