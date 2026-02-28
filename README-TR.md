@@ -191,7 +191,7 @@ Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
 
 ### v3.0.0 (Uzun Vadeli)
 - [ ] Web UI (opsiyonel)
-- [ ] Torrent desteği
+- [ ] Torrent desteği (nyaa.si)
 - [ ] Watch party
 - [ ] Mobile app entegrasyonu
 
@@ -336,6 +336,15 @@ weeb-cli/
 - **Decorator Pattern** - Önbellekleme decorator
 - **Observer Pattern** - İlerleme takibi
 - **Strategy Pattern** - Çoklu indirme stratejileri
+
+---
+
+## Lisans
+
+Bu proje **GNU Genel Kamu Lisansı v3.0** altında lisanslanmıştır.  
+Lisansın tam metni için [LICENSE](LICENSE) dosyasına bakın.
+
+Weeb-CLI (C) 2026
 
 ---
 
