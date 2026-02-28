@@ -25,7 +25,6 @@ class DependencyManager:
         self.os_type = platform.system().lower()
         self.arch = platform.machine().lower()
         self.bin_dir = Path.home() / ".weeb-cli" / "bin"
-        self._ensure_bin_dir()
 
         mpv_macos_url = "https://laboratory.stolendata.net/~djinn/mpv_osx/mpv-latest.tar.gz"
         if self.arch == "arm64":
@@ -113,12 +112,16 @@ class DependencyManager:
         }
 
     def _ensure_bin_dir(self):
-        if not self.bin_dir.exists():
-            self.bin_dir.mkdir(parents=True, exist_ok=True)
-        if str(self.bin_dir) not in os.environ["PATH"]:
-            os.environ["PATH"] += os.pathsep + str(self.bin_dir)
+        try:
+            if not self.bin_dir.exists():
+                self.bin_dir.mkdir(parents=True, exist_ok=True)
+            if str(self.bin_dir) not in os.environ.get("PATH", ""):
+                os.environ["PATH"] = os.environ.get("PATH", "") + os.pathsep + str(self.bin_dir)
+        except PermissionError:
+            pass
 
     def check_dependency(self, name):
+        self._ensure_bin_dir()
         exe_name = f"{name}.exe" if self.os_type == "windows" else name
         local_path = self.bin_dir / exe_name
         
@@ -129,6 +132,7 @@ class DependencyManager:
         return system_path
 
     def install_dependency(self, name):
+        self._ensure_bin_dir()
         if self.os_type not in self.dependencies or name not in self.dependencies[self.os_type]:
             console.print(f"[yellow]{i18n.t('setup.manual_required', tool=name)}[/yellow]")
             return False

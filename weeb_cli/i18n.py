@@ -18,7 +18,10 @@ LOCALES_DIR = get_locales_dir()
 
 class I18n:
     def __init__(self):
-        self.language = config.get("language", "en")
+        try:
+            self.language = config.get("language", "en")
+        except Exception:
+            self.language = "en"
         self.translations = {}
         self.load_translations()
 

@@ -10,12 +10,18 @@ DB_PATH = Path.home() / ".weeb-cli" / "weeb.db"
 class Database:
     def __init__(self):
         self.db_path = DB_PATH
+        self._initialized = False
+
+    def _ensure_initialized(self):
+        if self._initialized:
+            return
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
+        self._initialized = True
         self._migrate_from_json()
     
     @contextmanager
-    def _conn(self):
+    def _raw_conn(self):
         conn = sqlite3.connect(self.db_path, timeout=10)
         conn.row_factory = sqlite3.Row
         try:
@@ -23,9 +29,15 @@ class Database:
             conn.commit()
         finally:
             conn.close()
+
+    @contextmanager
+    def _conn(self):
+        self._ensure_initialized()
+        with self._raw_conn() as conn:
+            yield conn
     
     def _init_db(self):
-        with self._conn() as conn:
+        with self._raw_conn() as conn:
             conn.execute('PRAGMA journal_mode=WAL')
             
             conn.executescript('''
@@ -92,7 +104,7 @@ class Database:
     
     def _migrate_columns(self):
         """Add missing columns to existing tables."""
-        with self._conn() as conn:
+        with self._raw_conn() as conn:
             try:
                 conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
             except:

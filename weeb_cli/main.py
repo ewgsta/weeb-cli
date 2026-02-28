@@ -13,8 +13,12 @@ from weeb_cli.commands.setup import start_setup_wizard
 from weeb_cli.services.dependency_manager import dependency_manager
 from weeb_cli.services.updater import update_prompt
 from weeb_cli.ui.prompt import prompt
+from weeb_cli.commands.api import api_app
+from weeb_cli.commands.serve import serve_app
 
 app = typer.Typer(add_completion=False)
+app.add_typer(api_app, name="api")
+app.add_typer(serve_app, name="serve")
 console = Console()
 
 def check_network():

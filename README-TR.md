@@ -57,6 +57,8 @@
 - Arama geçmişi
 - Debug modu ve loglama
 - Otomatik güncelleme kontrolü
+- Scriptler ve yapay zeka ajanları için etkileşimsiz JSON API
+- Sonarr/*arr entegrasyonu için Torznab sunucu modu
 
 ---
 
@@ -88,6 +90,60 @@ pip install -e .
 
 ```bash
 weeb-cli
+```
+
+### API Modu (Etkileşimsiz)
+
+Scriptler, otomasyon ve yapay zeka ajanları icin weeb-cli, veritabanı veya TUI gerektirmeden headless calisan JSON API komutları sunar:
+
+```bash
+# Mevcut sağlayıcıları listele
+weeb-cli api providers
+
+# Anime ara (ID'leri döndürür)
+weeb-cli api search "Angel Beats"
+# Döndürür: [{"id": "12345", "title": "Angel Beats!", ...}]
+
+# Bölümleri listele (aramadan gelen ID ile)
+weeb-cli api episodes 12345 --season 1
+
+# Stream URL'lerini al
+weeb-cli api streams 12345 --season 1 --episode 1
+
+# Anime detaylarını al
+weeb-cli api details 12345
+
+# Bir bölüm indir
+weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads
+```
+
+Tüm API komutları stdout'a JSON çıktı verir.
+
+### Sonarr/*arr Entegrasyonu (Serve Modu)
+
+weeb-cli, Sonarr ve diğer *arr uygulamaları için Torznab uyumlu bir sunucu olarak çalışabilir:
+
+```bash
+pip install weeb-cli[serve]
+
+weeb-cli serve --port 9876 \
+  --watch-dir /downloads/watch \
+  --completed-dir /downloads/completed \
+  --sonarr-url http://sonarr:8989 \
+  --sonarr-api-key ANAHTARINIZ \
+  --providers animecix,anizle,turkanime
+```
+
+Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
+
+#### Docker
+
+```dockerfile
+FROM python:3.13-slim
+RUN apt-get update && apt-get install -y --no-install-recommends aria2 ffmpeg && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir weeb-cli[serve] yt-dlp
+EXPOSE 9876
+CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "--completed-dir", "/downloads/completed"]
 ```
 
 ### Klavye Kontrolleri
@@ -172,6 +228,8 @@ Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
 - [x] MAL/AniList entegrasyonu
 - [x] Veritabanı yedekleme/geri yükleme
 - [x] Klavye kısayolları
+- [x] Etkileşimsiz API modu (JSON çıktı)
+- [x] Sonarr/*arr entegrasyonu için Torznab sunucu
 
 ## Gelecek Planlar
 
@@ -209,8 +267,10 @@ Bu proje [CC BY-NC-ND 4.0](LICENSE) lisansı ile lisanslanmıştır.
 weeb-cli/
 ├── weeb_cli/                    # Ana uygulama paketi
 │   ├── commands/                # CLI komut yöneticileri
+│   │   ├── api.py               # Etkileşimsiz JSON API komutları
 │   │   ├── downloads.py         # İndirme yönetimi komutları
 │   │   ├── search.py            # Anime arama fonksiyonları
+│   │   ├── serve.py             # *arr entegrasyonu için Torznab sunucu
 │   │   ├── settings.py          # Ayarlar menüsü ve yapılandırma
 │   │   ├── setup.py             # İlk kurulum sihirbazı
 │   │   └── watchlist.py         # İzleme geçmişi ve ilerleme
@@ -234,6 +294,7 @@ weeb-cli/
 │   │   ├── discord_rpc.py       # Discord Rich Presence
 │   │   ├── downloader.py        # Kuyruk tabanlı indirme yöneticisi
 │   │   ├── error_handler.py     # Global hata yönetimi
+│   │   ├── headless_downloader.py # Headless indirme (DB/TUI bağımlılığı yok)
 │   │   ├── local_library.py     # Yerel anime indeksleme
 │   │   ├── logger.py            # Debug loglama sistemi
 │   │   ├── notifier.py          # Sistem bildirimleri
@@ -273,6 +334,7 @@ weeb-cli/
 │   └── __main__.py              # Paket çalıştırma giriş noktası
 │
 ├── tests/                       # Test paketi
+│   ├── test_api.py              # API komutları ve headless downloader testleri
 │   ├── test_cache.py            # Önbellek yöneticisi testleri
 │   ├── test_exceptions.py       # Exception testleri
 │   ├── test_sanitizer.py        # Sanitizer testleri
