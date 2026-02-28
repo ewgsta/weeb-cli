@@ -43,8 +43,11 @@ class Player:
         cmd.append("--save-position-on-quit")
             
         try:
-            subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return True
+            result = subprocess.run(cmd, capture_output=False)
+            return result.returncode == 0
+        except FileNotFoundError:
+            console.print(f"[red]{i18n.t('player.error')}: MPV not found at {self.mpv_path}[/red]")
+            return False
         except Exception as e:
             console.print(f"[red]{i18n.t('player.error')}: {e}[/red]")
             return False

@@ -67,8 +67,10 @@ def _get_search_query():
     ).ask()
 
 def _fetch_search_results(query):
+    from weeb_cli.config import config
     cache = get_cache()
-    cache_key = f"search:{query}"
+    provider = config.get("scraping_source", "None")
+    cache_key = f"search:{provider}:{query}"
     data = cache.get(cache_key, max_age=1800)
     
     if data is None:
