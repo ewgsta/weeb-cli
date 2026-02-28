@@ -244,12 +244,6 @@ All settings can be modified through the interactive Settings menu.
 
 ---
 
-## License
-
-This project is licensed under [CC BY-NC-ND 4.0](LICENSE).
-
----
-
 ## Project Structure
 
 ```
