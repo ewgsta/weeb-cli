@@ -41,9 +41,13 @@ class Player:
         cmd.append("--fs")
 
         cmd.append("--save-position-on-quit")
+        cmd.append("--really-quiet")
+        cmd.append("--no-terminal")
             
         try:
-            result = subprocess.run(cmd, capture_output=False)
+            result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+            if result.returncode != 0 and result.stderr:
+                console.print(f"[red]{i18n.t('player.error')}: {result.stderr.strip()}[/red]")
             return result.returncode == 0
         except FileNotFoundError:
             console.print(f"[red]{i18n.t('player.error')}: MPV not found at {self.mpv_path}[/red]")
