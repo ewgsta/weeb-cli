@@ -48,14 +48,16 @@
 - **AniList** entegrasyonu (OAuth)
 - **MyAnimeList** entegrasyonu (OAuth)
 - **Kitsu** entegrasyonu (email/şifre)
-- Otomatik ilerleme senkronizasyonu
+- Online ve offline izleme için otomatik ilerleme senkronizasyonu
 - Bekleyen güncellemeler için çevrimdışı kuyruk
+- Dosya adlarından akıllı anime başlığı eşleştirme
 
 ### Yerel Kütüphane
 - İndirilen animeleri otomatik tarama
 - Harici disk desteği (USB, HDD)
-- Çevrimdışı anime indexleme
+- Otomatik tracker senkronizasyonu ile çevrimdışı indexleme
 - Tüm kaynaklarda arama
+- **Önerilen format**: `Anime Adı - S1B1.mp4` (en iyi tracker uyumluluğu için)
 
 ### Ek Özellikler
 - SQLite veritabanı (hızlı ve güvenilir)

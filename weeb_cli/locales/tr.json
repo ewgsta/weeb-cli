@@ -263,6 +263,7 @@
         "episodes_watched": "İzlenen",
         "next": "Sonraki",
         "tracker_updated": "güncellendi",
+        "tracker_syncing": "senkronize ediliyor...",
         "tracker_pending": "Bekleyenlere eklendi",
         "tracker_error": "Tracker hatası"
     },

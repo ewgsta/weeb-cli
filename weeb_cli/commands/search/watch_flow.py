@@ -259,15 +259,25 @@ def _update_trackers(details, slug):
     total_watched = len(updated_prog.get("completed", []))
     total_eps = details.get("total_episodes", 0)
     
+    updated = []
+    pending = []
+    
     for name, tracker in [("AniList", anilist_tracker), ("MAL", mal_tracker), ("Kitsu", kitsu_tracker)]:
-        result = tracker.update_progress(
-            details.get("title"),
-            total_watched,
-            total_eps
-        )
-        
         if tracker.is_authenticated():
+            result = tracker.update_progress(
+                details.get("title"),
+                total_watched,
+                total_eps
+            )
             if result:
-                console.print(f"[green]✓ {name} {i18n.t('watchlist.tracker_updated')}[/green]")
+                updated.append(name)
             else:
-                console.print(f"[yellow]⏳ {name}: {i18n.t('watchlist.tracker_pending')}[/yellow]")
+                pending.append(name)
+    
+    # Show combined message
+    if updated:
+        trackers_str = ", ".join(updated)
+        console.print(f"[green]✓ {trackers_str} {i18n.t('watchlist.tracker_updated')}[/green]")
+    if pending:
+        trackers_str = ", ".join(pending)
+        console.print(f"[yellow]⏳ {trackers_str}: {i18n.t('watchlist.tracker_pending')}[/yellow]")

@@ -399,49 +399,20 @@ def play_local_episode(anime, episode):
                 )
                 console.print(f"[green]✓ {i18n.t('details.marked_watched')}[/green]")
                 
+                # Check which trackers are connected and show sync status
                 from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
                 
-                trackers_connected = []
+                connected = []
                 if anilist_tracker.is_authenticated():
-                    trackers_connected.append(("AniList", anilist_tracker))
+                    connected.append("AniList")
                 if mal_tracker.is_authenticated():
-                    trackers_connected.append(("MAL", mal_tracker))
+                    connected.append("MAL")
                 if kitsu_tracker.is_authenticated():
-                    trackers_connected.append(("Kitsu", kitsu_tracker))
+                    connected.append("Kitsu")
                 
-                if trackers_connected:
-                    tracker_names = ", ".join([t[0] for t in trackers_connected])
-                    sync_ans = questionary.confirm(
-                        i18n.t("details.sync_to_trackers", f"{tracker_names}'e de eklensin mi?")
-                    ).ask()
-                    
-                    if sync_ans:
-                        for name, tracker in trackers_connected:
-                            result = tracker.update_progress(
-                                anime["title"],
-                                episode["number"],
-                                anime["episode_count"]
-                            )
-                            if result:
-                                console.print(f"[green]✓ {name} {i18n.t('watchlist.tracker_updated')}[/green]")
-                            else:
-                                console.print(f"[yellow]⏳ {name}: {i18n.t('watchlist.tracker_pending')}[/yellow]")
-                else:
-                    anilist_tracker.update_progress(
-                        anime["title"],
-                        episode["number"],
-                        anime["episode_count"]
-                    )
-                    mal_tracker.update_progress(
-                        anime["title"],
-                        episode["number"],
-                        anime["episode_count"]
-                    )
-                    kitsu_tracker.update_progress(
-                        anime["title"],
-                        episode["number"],
-                        anime["episode_count"]
-                    )
+                if connected:
+                    trackers_str = ", ".join(connected)
+                    console.print(f"[dim]→ {trackers_str} {i18n.t('watchlist.tracker_syncing')}[/dim]")
                 
         except KeyboardInterrupt:
             pass

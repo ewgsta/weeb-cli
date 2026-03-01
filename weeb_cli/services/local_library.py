@@ -129,6 +129,28 @@ class LocalLibrary:
     def mark_episode_watched(self, anime_title: str, ep_number: int, total_episodes: int):
         slug = self._title_to_slug(anime_title)
         progress_tracker.mark_watched(slug, ep_number, title=anime_title, total_episodes=total_episodes)
+        
+        # Auto-sync to trackers if online
+        self._sync_to_trackers(anime_title, ep_number, total_episodes)
+    
+    def _sync_to_trackers(self, anime_title: str, ep_number: int, total_episodes: int):
+        """Sync watched episode to all connected trackers."""
+        from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
+        
+        connected_trackers = []
+        if anilist_tracker.is_authenticated():
+            connected_trackers.append(("AniList", anilist_tracker))
+        if mal_tracker.is_authenticated():
+            connected_trackers.append(("MAL", mal_tracker))
+        if kitsu_tracker.is_authenticated():
+            connected_trackers.append(("Kitsu", kitsu_tracker))
+        
+        if not connected_trackers:
+            return
+        
+        # Try to sync to all trackers
+        for name, tracker in connected_trackers:
+            tracker.update_progress(anime_title, ep_number, total_episodes)
     
     def _title_to_slug(self, title: str) -> str:
         slug = title.lower()

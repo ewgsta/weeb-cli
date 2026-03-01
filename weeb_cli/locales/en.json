@@ -263,6 +263,7 @@
         "episodes_watched": "Watched",
         "next": "Next",
         "tracker_updated": "updated",
+        "tracker_syncing": "syncing...",
         "tracker_pending": "Added to pending",
         "tracker_error": "Tracker error"
     },

@@ -49,14 +49,16 @@
 - **AniList** integration with OAuth
 - **MyAnimeList** integration with OAuth
 - **Kitsu** integration with email/password
-- Automatic progress sync
+- Automatic progress sync for online and offline viewing
 - Offline queue for pending updates
+- Smart anime title matching from filenames
 
 ### Local Library
 - Auto-scan downloaded anime
 - External drive support (USB, HDD)
-- Offline anime indexing
+- Offline anime indexing with automatic tracker sync
 - Search across all sources
+- **Recommended format**: `Anime Name - S1E1.mp4` for best tracker compatibility
 
 ### Additional Features
 - SQLite database (fast and reliable)
