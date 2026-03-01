@@ -65,8 +65,10 @@ def change_language():
 
 def change_source():
     from weeb_cli.services.scraper import scraper
+    from weeb_cli.services.cache import get_cache
     
     current_lang = config.get("language", "tr")
+    current_source = config.get("scraping_source", "")
     sources = scraper.get_sources_for_lang(current_lang)
     
     if not sources:
@@ -82,7 +84,10 @@ def change_source():
             use_shortcuts=False
         ).ask()
         
-        if selected:
+        if selected and selected != current_source:
+            cache = get_cache()
+            cache.invalidate_provider(current_source)
+            
             config.set("scraping_source", selected)
             console.print(f"[green]{i18n.t('settings.source_changed', source=selected)}[/green]")
             time.sleep(1)

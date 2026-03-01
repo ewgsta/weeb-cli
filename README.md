@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="weeb_landing/logo/512x512.webp" alt="Weeb CLI Logo" width="120">
+  <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" width="120">
 </p>
 
 <h1 align="center">Weeb CLI</h1>
@@ -389,4 +389,4 @@ weeb-cli/
 This project is licensed under the **GNU General Public License v3.0**.  
 See the [LICENSE](LICENSE) file for the full license text.
 
-Weeb-CLI (C) 2026 
+Weeb-CLI (C) 2026

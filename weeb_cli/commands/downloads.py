@@ -438,8 +438,8 @@ def play_local_episode(anime, episode):
                 
         except KeyboardInterrupt:
             pass
-        except Exception as e:
-            console.print(f"[dim]{i18n.t('watchlist.tracker_error')}: {e}[/dim]")
+        except Exception:
+            pass
 
 def manage_queue():
     while True:

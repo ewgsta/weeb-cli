@@ -1,41 +1,22 @@
-"""Simple file-based cache manager for Weeb CLI."""
 import pickle
 import time
 import hashlib
 from pathlib import Path
-from typing import Any, Optional, Callable
+from typing import Any, Optional, Callable, Dict
 from functools import wraps
 
 
 class CacheManager:
-    """Simple file-based cache with TTL support."""
     
-    def __init__(self, cache_dir: Path):
-        """
-        Initialize cache manager.
-        
-        Args:
-            cache_dir: Directory to store cache files
-        """
-        self.cache_dir = cache_dir
+    def __init__(self, cache_dir: Path) -> None:
+        self.cache_dir: Path = cache_dir
         self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self._memory_cache = {}
+        self._memory_cache: Dict[str, tuple] = {}
     
     def _get_cache_key(self, key: str) -> str:
-        """Generate a safe cache key from input."""
         return hashlib.md5(key.encode()).hexdigest()
     
     def get(self, key: str, max_age: int = 3600) -> Optional[Any]:
-        """
-        Get value from cache if not expired.
-        
-        Args:
-            key: Cache key
-            max_age: Maximum age in seconds (default: 1 hour)
-        
-        Returns:
-            Cached value or None if expired/not found
-        """
         if key in self._memory_cache:
             value, timestamp = self._memory_cache[key]
             if time.time() - timestamp < max_age:
@@ -60,13 +41,6 @@ class CacheManager:
         return None
     
     def set(self, key: str, value: Any) -> None:
-        """
-        Store value in cache.
-        
-        Args:
-            key: Cache key
-            value: Value to cache
-        """
         self._memory_cache[key] = (value, time.time())
         
         cache_key = self._get_cache_key(key)
@@ -76,15 +50,9 @@ class CacheManager:
             with open(cache_file, 'wb') as f:
                 pickle.dump(value, f)
         except (pickle.PickleError, OSError):
-            pass  # Fail silently for cache writes
+            pass
     
     def delete(self, key: str) -> None:
-        """
-        Delete value from cache.
-        
-        Args:
-            key: Cache key
-        """
         self._memory_cache.pop(key, None)
         
         cache_key = self._get_cache_key(key)
@@ -92,24 +60,54 @@ class CacheManager:
         cache_file.unlink(missing_ok=True)
     
     def clear(self) -> None:
-        """Clear all cache."""
         self._memory_cache.clear()
         
         for cache_file in self.cache_dir.glob("*.cache"):
             cache_file.unlink(missing_ok=True)
     
+    def clear_pattern(self, pattern: str) -> int:
+        removed = 0
+        keys_to_remove = [k for k in self._memory_cache.keys() if pattern in k]
+        for key in keys_to_remove:
+            del self._memory_cache[key]
+            removed += 1
+        
+        for cache_file in self.cache_dir.glob("*.cache"):
+            try:
+                with open(cache_file, 'rb') as f:
+                    value = pickle.load(f)
+            except:
+                continue
+        
+        return removed
+    
+    def invalidate_provider(self, provider_name: str) -> int:
+        removed = 0
+        patterns = [f"search:{provider_name}:", f"details:{provider_name}:"]
+        
+        for pattern in patterns:
+            keys_to_remove = [k for k in list(self._memory_cache.keys()) if k.startswith(pattern)]
+            for key in keys_to_remove:
+                del self._memory_cache[key]
+                removed += 1
+        
+        for cache_file in self.cache_dir.glob("*.cache"):
+            cache_file.unlink(missing_ok=True)
+        
+        return removed
+    
     def cleanup(self, max_age: int = 86400) -> int:
-        """
-        Remove expired cache files.
-        
-        Args:
-            max_age: Maximum age in seconds (default: 24 hours)
-        
-        Returns:
-            Number of files removed
-        """
         removed = 0
         cutoff = time.time() - max_age
+        
+        keys_to_remove = []
+        for key, (value, timestamp) in list(self._memory_cache.items()):
+            if timestamp < cutoff:
+                keys_to_remove.append(key)
+        
+        for key in keys_to_remove:
+            del self._memory_cache[key]
+            removed += 1
         
         for cache_file in self.cache_dir.glob("*.cache"):
             if cache_file.stat().st_mtime < cutoff:
@@ -117,21 +115,24 @@ class CacheManager:
                 removed += 1
         
         return removed
+    
+    def get_stats(self) -> Dict[str, Any]:
+        memory_count = len(self._memory_cache)
+        file_count = len(list(self.cache_dir.glob("*.cache")))
+        
+        total_size = 0
+        for cache_file in self.cache_dir.glob("*.cache"):
+            total_size += cache_file.stat().st_size
+        
+        return {
+            "memory_entries": memory_count,
+            "file_entries": file_count,
+            "total_size_bytes": total_size,
+            "total_size_mb": round(total_size / (1024 * 1024), 2)
+        }
 
 
 def cached(max_age: int = 3600, cache_manager: Optional[CacheManager] = None):
-    """
-    Decorator to cache function results.
-    
-    Args:
-        max_age: Cache TTL in seconds
-        cache_manager: CacheManager instance (uses global if None)
-    
-    Example:
-        @cached(max_age=1800)
-        def expensive_function(arg1, arg2):
-            pass
-    """
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -158,7 +159,6 @@ _global_cache = None
 
 
 def _get_global_cache() -> CacheManager:
-    """Get or create global cache instance."""
     global _global_cache
     if _global_cache is None:
         from weeb_cli.config import CONFIG_DIR
@@ -167,5 +167,4 @@ def _get_global_cache() -> CacheManager:
 
 
 def get_cache() -> CacheManager:
-    """Get global cache instance."""
     return _get_global_cache()

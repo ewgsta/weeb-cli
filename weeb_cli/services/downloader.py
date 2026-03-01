@@ -138,11 +138,12 @@ class QueueManager:
 
     def _run_task(self, item):
         from weeb_cli.services.notifier import send_notification
-        from weeb_cli.services.logger import debug, error
+        from weeb_cli.services.logger import debug
+        from weeb_cli.services.error_handler import handle_download_error
         from weeb_cli.i18n import i18n
         
         max_retries = config.get("download_max_retries", 3)
-        retry_delay = config.get("download_retry_delay", 10)
+        base_delay = config.get("download_retry_delay", 10)
         
         debug(f"Starting download: {item['anime_title']} - Ep {item['episode_number']}")
         
@@ -157,14 +158,15 @@ class QueueManager:
                 send_notification(i18n.t("common.error"), f"{item['anime_title']}: {error_msg}")
                 return
         except Exception as e:
-            error(f"Disk check failed: {e}")
+            handle_download_error(e, item['anime_title'], item['episode_number'])
 
         for attempt in range(max_retries):
             try:
                 if attempt > 0:
-                    debug(f"Retry attempt {attempt + 1}/{max_retries}")
+                    delay = self._calculate_backoff(attempt, base_delay)
+                    debug(f"Retry attempt {attempt + 1}/{max_retries} after {delay}s")
                     self._update_progress(item, eta=f"Yeniden deneniyor ({attempt + 1}/{max_retries})...")
-                    time.sleep(retry_delay)
+                    time.sleep(delay)
                 
                 self._download_item(item)
                 self.db.update_queue_item(item["episode_id"], status="completed", progress=100, eta="-", retry_count=0)
@@ -177,9 +179,13 @@ class QueueManager:
                 return
                 
             except Exception as e:
-                error(f"Download attempt {attempt + 1} failed: {item['anime_title']} - {str(e)}")
+                error_type = self._classify_error(e)
+                handle_download_error(e, item['anime_title'], item['episode_number'])
                 
                 if attempt < max_retries - 1:
+                    if error_type == "permanent":
+                        debug(f"Permanent error detected, skipping retries")
+                        break
                     continue
                 
                 self.db.update_queue_item(
@@ -189,12 +195,33 @@ class QueueManager:
                     eta="",
                     retry_count=attempt + 1
                 )
-                error(f"Download failed after {max_retries} attempts: {item['anime_title']}")
+                debug(f"Download failed after {max_retries} attempts: {item['anime_title']}")
+    
+    def _calculate_backoff(self, attempt: int, base_delay: int) -> int:
+        import random
+        delay = min(base_delay * (2 ** attempt), 300)
+        jitter = random.uniform(0, delay * 0.1)
+        return int(delay + jitter)
+    
+    def _classify_error(self, error: Exception) -> str:
+        error_str = str(error).lower()
+        
+        permanent_errors = [
+            "404", "not found", "forbidden", "unauthorized",
+            "invalid", "no streams", "no such file"
+        ]
+        
+        for err in permanent_errors:
+            if err in error_str:
+                return "permanent"
+        
+        return "transient"
 
     def _download_item(self, item):
         from weeb_cli.services.watch import get_streams
         from weeb_cli.services.scraper import scraper
         from weeb_cli.services.logger import debug, error as log_error
+        from weeb_cli.services.stream_validator import stream_validator
         
         download_dir = Path(config.get("download_dir"))
         safe_title = self._sanitize_filename(item["anime_title"])
@@ -220,17 +247,33 @@ class QueueManager:
             if not links:
                 raise DownloadError("Stream links boş", code="EMPTY_STREAM_LINKS")
             
-            debug(f"Found {len(links)} stream sources, trying each one...")
+            debug(f"Found {len(links)} stream sources, validating...")
+            
+            valid_links = []
+            for link in links:
+                stream_url = link.get("url")
+                if stream_url:
+                    is_valid, error = stream_validator.validate_url(stream_url, timeout=3)
+                    if is_valid:
+                        valid_links.append(link)
+                        debug(f"Valid: {link.get('server', 'unknown')}")
+                    else:
+                        debug(f"Invalid: {link.get('server', 'unknown')} - {error}")
+            
+            if not valid_links:
+                raise DownloadError("Geçerli stream bulunamadı", code="NO_VALID_STREAMS")
+            
+            debug(f"Found {len(valid_links)}/{len(links)} valid streams, trying each one...")
             
             last_error = None
-            for idx, link in enumerate(links):
+            for idx, link in enumerate(valid_links):
                 stream_url = link.get("url")
                 server_name = link.get("server", "unknown")
                 
                 if not stream_url:
                     continue
                 
-                debug(f"Trying source {idx + 1}/{len(links)}: {server_name} - {stream_url[:80]}...")
+                debug(f"Trying source {idx + 1}/{len(valid_links)}: {server_name} - {stream_url[:80]}...")
                 
                 try:
                     self._try_download(stream_url, output_path, item)
@@ -240,7 +283,7 @@ class QueueManager:
                 except Exception as e:
                     last_error = str(e)
                     log_error(f"Source {server_name} failed: {e}")
-                    if idx < len(links) - 1:
+                    if idx < len(valid_links) - 1:
                         debug(f"Trying next source...")
                         continue
             

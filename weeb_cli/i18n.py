@@ -38,8 +38,7 @@ class I18n:
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 self.translations = json.load(f)
-        except Exception as e:
-            print(f"Error loading translations: {e}")
+        except Exception:
             self.translations = {}
 
     def get(self, key_path, default=None, **kwargs):

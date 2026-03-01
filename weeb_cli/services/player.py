@@ -1,21 +1,25 @@
 import subprocess
 import shutil
 import sys
+from typing import Optional, Dict
 from rich.console import Console
 
 from weeb_cli.services.dependency_manager import dependency_manager
+from weeb_cli.services.error_handler import handle_error
 from weeb_cli.i18n import i18n
 
 console = Console()
 
 class Player:
-    def __init__(self):
-        self.mpv_path = dependency_manager.check_dependency("mpv")
+    def __init__(self) -> None:
+        self.mpv_path: Optional[str] = dependency_manager.check_dependency("mpv")
     
-    def is_installed(self):
+    def is_installed(self) -> bool:
         return self.mpv_path is not None
 
-    def play(self, url, title=None, start_time=None, headers=None, anime_title=None, episode_number=None, total_episodes=None):
+    def play(self, url: str, title: Optional[str] = None, start_time: Optional[int] = None, 
+             headers: Optional[Dict[str, str]] = None, anime_title: Optional[str] = None, 
+             episode_number: Optional[int] = None, total_episodes: Optional[int] = None) -> bool:
         if not self.mpv_path:
             console.print(f"[yellow]{i18n.t('player.installing_mpv')}[/yellow]")
             if dependency_manager.install_dependency("mpv"):
@@ -49,11 +53,11 @@ class Player:
             if result.returncode != 0 and result.stderr:
                 console.print(f"[red]{i18n.t('player.error')}: {result.stderr.strip()}[/red]")
             return result.returncode == 0
-        except FileNotFoundError:
-            console.print(f"[red]{i18n.t('player.error')}: MPV not found at {self.mpv_path}[/red]")
+        except FileNotFoundError as e:
+            handle_error(e, "Player:MPV", f"{i18n.t('player.error')}: MPV not found at {self.mpv_path}")
             return False
         except Exception as e:
-            console.print(f"[red]{i18n.t('player.error')}: {e}[/red]")
+            handle_error(e, "Player:MPV")
             return False
         finally:
             discord_rpc.clear_presence()

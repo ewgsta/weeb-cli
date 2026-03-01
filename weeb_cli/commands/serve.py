@@ -93,8 +93,7 @@ def _sonarr_get_series_title(q: str, sonarr_url: str, sonarr_api_key: str) -> st
                     if alt_title == q_try or alt_clean == q_clean:
                         return title
         return None
-    except Exception as e:
-        log.debug(f"Sonarr lookup failed: {e}")
+    except Exception:
         return None
 
 
@@ -194,8 +193,8 @@ def _get_fallback_streams(fallback_providers, sonarr_title, season, episode_num)
             if streams:
                 log.info(f"  Fallback: {fp.name} returned {len(streams)} stream(s)")
                 return streams
-        except Exception as e:
-            log.error(f"  Fallback: {fp.name} error: {e}")
+        except Exception:
+            pass
     return []
 
 
@@ -441,15 +440,14 @@ def serve(
                             stub_file.rename(stub_file.with_suffix(".failed"))
                             log.error(f"Failed: {release_name}")
 
-                    except Exception as e:
-                        log.error(f"Error processing {stub_file.name}: {e}")
+                    except Exception:
                         try:
                             stub_file.rename(stub_file.with_suffix(".failed"))
                         except Exception:
                             pass
 
-            except Exception as e:
-                log.error(f"Blackhole worker error: {e}")
+            except Exception:
+                pass
 
             time.sleep(poll_interval)
 

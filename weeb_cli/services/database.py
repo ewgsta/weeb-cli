@@ -1,45 +1,70 @@
 import sqlite3
 import json
 import os
+import threading
 from pathlib import Path
 from datetime import datetime
 from contextlib import contextmanager
+from typing import Optional, List, Dict, Any
 
 DB_PATH = Path.home() / ".weeb-cli" / "weeb.db"
 
 class Database:
-    def __init__(self):
-        self.db_path = DB_PATH
-        self._initialized = False
+    def __init__(self) -> None:
+        self.db_path: Path = DB_PATH
+        self._initialized: bool = False
+        self._connection: Optional[sqlite3.Connection] = None
+        self._lock: threading.RLock = threading.RLock()
 
-    def _ensure_initialized(self):
+    def _ensure_initialized(self) -> None:
         if self._initialized:
             return
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()
         self._initialized = True
         self._migrate_from_json()
     
+    def _get_connection(self) -> sqlite3.Connection:
+        with self._lock:
+            if self._connection is None:
+                self.db_path.parent.mkdir(parents=True, exist_ok=True)
+                self._connection = sqlite3.connect(
+                    self.db_path, 
+                    timeout=10,
+                    check_same_thread=False,
+                    isolation_level=None
+                )
+                self._connection.row_factory = sqlite3.Row
+                self._connection.execute('PRAGMA journal_mode=WAL')
+                self._connection.execute('PRAGMA synchronous=NORMAL')
+                self._connection.execute('PRAGMA cache_size=-64000')
+            return self._connection
+    
     @contextmanager
     def _raw_conn(self):
-        conn = sqlite3.connect(self.db_path, timeout=10)
-        conn.row_factory = sqlite3.Row
-        try:
-            yield conn
-            conn.commit()
-        finally:
-            conn.close()
+        self._ensure_initialized()
+        conn = self._get_connection()
+        with self._lock:
+            try:
+                yield conn
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
 
     @contextmanager
     def _conn(self):
-        self._ensure_initialized()
         with self._raw_conn() as conn:
             yield conn
     
+    def close(self) -> None:
+        with self._lock:
+            if self._connection:
+                self._connection.close()
+                self._connection = None
+    
     def _init_db(self):
-        with self._raw_conn() as conn:
-            conn.execute('PRAGMA journal_mode=WAL')
-            
+        conn = self._get_connection()
+        with self._lock:
             conn.executescript('''
                 CREATE TABLE IF NOT EXISTS config (
                     key TEXT PRIMARY KEY,
@@ -99,12 +124,13 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_anime_title ON anime_index(title);
                 CREATE INDEX IF NOT EXISTS idx_anime_source ON anime_index(source_path);
             ''')
+            conn.commit()
             
-            self._migrate_columns()
+        self._migrate_columns()
     
     def _migrate_columns(self):
-        """Add missing columns to existing tables."""
-        with self._raw_conn() as conn:
+        conn = self._get_connection()
+        with self._lock:
             try:
                 conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
             except:
@@ -114,6 +140,8 @@ class Database:
                 conn.execute('SELECT speed FROM download_queue LIMIT 1')
             except:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN speed TEXT')
+            
+            conn.commit()
     
     def _migrate_from_json(self):
         config_dir = Path.home() / ".weeb-cli"
@@ -233,7 +261,7 @@ class Database:
                 }
             return result
     
-    def add_search_history(self, query):
+    def add_search_history(self, query: str) -> None:
         with self._conn() as conn:
             conn.execute('DELETE FROM search_history WHERE query = ?', (query,))
             conn.execute(
@@ -246,14 +274,14 @@ class Database:
                 )
             ''')
     
-    def get_search_history(self):
+    def get_search_history(self) -> List[str]:
         with self._conn() as conn:
             rows = conn.execute(
                 'SELECT query FROM search_history ORDER BY searched_at DESC LIMIT 10'
             ).fetchall()
             return [row['query'] for row in rows]
     
-    def add_to_queue(self, item):
+    def add_to_queue(self, item: Dict[str, Any]) -> bool:
         with self._conn() as conn:
             existing = conn.execute(
                 'SELECT id FROM download_queue WHERE episode_id = ? AND status IN (?, ?)',
@@ -278,38 +306,38 @@ class Database:
             ))
             return True
     
-    def get_queue(self):
+    def get_queue(self) -> List[Dict[str, Any]]:
         with self._conn() as conn:
             rows = conn.execute('SELECT * FROM download_queue ORDER BY added_at').fetchall()
             return [dict(row) for row in rows]
     
-    def update_queue_item(self, episode_id, **kwargs):
+    def update_queue_item(self, episode_id: str, **kwargs) -> None:
         with self._conn() as conn:
             sets = ', '.join(f'{k} = ?' for k in kwargs.keys())
             values = list(kwargs.values()) + [episode_id]
             conn.execute(f'UPDATE download_queue SET {sets} WHERE episode_id = ?', values)
     
-    def clear_completed_queue(self):
+    def clear_completed_queue(self) -> None:
         with self._conn() as conn:
             conn.execute('DELETE FROM download_queue WHERE status NOT IN (?, ?)', ('pending', 'processing'))
     
-    def get_external_drives(self):
+    def get_external_drives(self) -> List[Dict[str, Any]]:
         with self._conn() as conn:
             rows = conn.execute('SELECT * FROM external_drives ORDER BY name').fetchall()
             return [dict(row) for row in rows]
     
-    def add_external_drive(self, path, name=None):
+    def add_external_drive(self, path: str, name: Optional[str] = None) -> None:
         with self._conn() as conn:
             conn.execute(
                 'INSERT OR REPLACE INTO external_drives (path, name, added_at) VALUES (?, ?, ?)',
                 (path, name or os.path.basename(path), datetime.now().isoformat())
             )
     
-    def remove_external_drive(self, path):
+    def remove_external_drive(self, path: str) -> None:
         with self._conn() as conn:
             conn.execute('DELETE FROM external_drives WHERE path = ?', (path,))
     
-    def update_drive_name(self, path, name):
+    def update_drive_name(self, path: str, name: str) -> None:
         with self._conn() as conn:
             conn.execute('UPDATE external_drives SET name = ? WHERE path = ?', (name, path))
     
@@ -321,11 +349,11 @@ class Database:
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (title, source_path, source_name, folder_path, episode_count, datetime.now().isoformat()))
     
-    def clear_source_index(self, source_path):
+    def clear_source_index(self, source_path: str) -> None:
         with self._conn() as conn:
             conn.execute('DELETE FROM anime_index WHERE source_path = ?', (source_path,))
     
-    def get_all_indexed_anime(self):
+    def get_all_indexed_anime(self) -> List[Dict[str, Any]]:
         with self._conn() as conn:
             rows = conn.execute('SELECT * FROM anime_index ORDER BY title').fetchall()
             return [dict(row) for row in rows]
@@ -338,11 +366,11 @@ class Database:
             ).fetchall()
             return [dict(row) for row in rows]
     
-    def remove_indexed_anime(self, folder_path):
+    def remove_indexed_anime(self, folder_path: str) -> None:
         with self._conn() as conn:
             conn.execute('DELETE FROM anime_index WHERE folder_path = ?', (folder_path,))
     
-    def backup_database(self, backup_path):
+    def backup_database(self, backup_path: str) -> bool:
         import shutil
         try:
             shutil.copy2(self.db_path, backup_path)
@@ -350,7 +378,7 @@ class Database:
         except Exception as e:
             return False
     
-    def restore_database(self, backup_path):
+    def restore_database(self, backup_path: str) -> bool:
         import shutil
         try:
             if not Path(backup_path).exists():
@@ -360,14 +388,22 @@ class Database:
             shutil.copy2(self.db_path, backup_temp)
             
             try:
+                self.close()
                 shutil.copy2(backup_path, self.db_path)
                 backup_temp.unlink()
+                self._initialized = False
+                self._ensure_initialized()
                 return True
             except Exception:
                 shutil.copy2(backup_temp, self.db_path)
                 backup_temp.unlink()
+                self._initialized = False
+                self._ensure_initialized()
                 return False
         except Exception:
             return False
+    
+    def __del__(self) -> None:
+        self.close()
 
-db = Database()
+db: Database = Database()

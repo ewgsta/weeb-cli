@@ -10,7 +10,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-weeb_landing/
 lib/
 lib64/
 parts/

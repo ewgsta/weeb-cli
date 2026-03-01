@@ -105,7 +105,8 @@ class Prompt:
                             current_idx = (current_idx - 1) % total_options
                         elif next_key == 'P': 
                             current_idx = (current_idx + 1) % total_options
-                    except: pass
+                    except:
+                        pass
                 elif key == '\x1b':
                     try:
                         k2 = typer.getchar()
@@ -115,6 +116,7 @@ class Prompt:
                                 current_idx = (current_idx - 1) % total_options
                             elif k3 == 'B': 
                                 current_idx = (current_idx + 1) % total_options
-                    except: pass
+                    except:
+                        pass
 
 prompt = Prompt()

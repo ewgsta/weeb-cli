@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Weeb CLI - No browser, no ads, no distractions. Just you and an unparalleled anime viewing experience.">
+    <meta name="keywords" content="weeb cli, anime, terminal, command line, mpv, aria2, yt-dlp, sonarr, torznab, tracker">
+    <meta name="author" content="ewgsta">
+    <meta name="robots" content="index, follow">
+
+    <meta property="og:title" content="Weeb CLI">
+    <meta property="og:description" content="No browser, no ads, no distractions. Unparalleled anime viewing experience from the terminal.">
+    <meta property="og:image" content="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg">
+    <meta property="og:type" content="website">
+
+    <title>Weeb CLI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Menlo', 'Monaco', 'Courier New', 'monospace'],
+                    },
+                    colors: {
+                        black: '#000000',
+                        white: '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <style>
+        [v-cloak] { display: none; }
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Minimalist Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d4; }
+        .dark ::-webkit-scrollbar-thumb { background: #404040; }
+
+        /* Initial Loading Animation for the whole app */
+        @keyframes pageLoad {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .page-enter {
+            animation: pageLoad 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-white text-black dark:bg-black dark:text-white transition-colors duration-200 font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black">
+
+    <div id="app" v-cloak class="min-h-screen flex flex-col page-enter">
+        <nav class="w-full border-b border-gray-200 dark:border-gray-800 transition-colors duration-200 fixed top-0 bg-white/80 dark:bg-black/80 backdrop-blur-md z-50">
+            <div class="max-w-5xl mx-auto px-6 h-16 flex justify-between items-center">
+                <div class="flex items-center gap-3">
+                    <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" class="w-8 h-8 rounded-md grayscale opacity-90">
+                    <span class="font-medium text-lg tracking-tight">Weeb CLI</span>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button @click="toggleLang" class="text-sm font-medium text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+                        {{ lang === 'en' ? 'TR' : 'EN' }}
+                    </button>
+
+                    <button @click="toggleTheme" class="text-lg text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+                        <i :class="isDark ? 'ph ph-sun' : 'ph ph-moon'"></i>
+                    </button>
+
+                    <a href="https://github.com/ewgsta/weeb-cli" target="_blank" aria-label="GitHub Repository" class="text-lg text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+                        <i class="ph ph-github-logo"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <main class="flex-grow max-w-5xl mx-auto px-6 py-32 w-full">
+
+            <section class="mb-32 flex flex-col items-start" v-fade>
+                <h1 class="text-4xl sm:text-5xl font-medium tracking-tight mb-6">
+                    Weeb CLI
+                </h1>
+                <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-400 font-light max-w-2xl mb-8 leading-relaxed">
+                    {{ t('tagline') }}
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+                    <div class="flex items-center border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#0a0a0a] rounded-md px-4 py-2">
+                        <code class="font-mono text-sm mr-4">pip install weeb-cli</code>
+                        <button @click="copyCommand" class="text-gray-500 hover:text-black dark:hover:text-white transition-colors" aria-label="Copy install command">
+                            <i :class="copied ? 'ph ph-check' : 'ph ph-copy'"></i>
+                        </button>
+                    </div>
+                    <a href="https://github.com/ewgsta/weeb-cli/releases" class="text-sm font-medium underline underline-offset-4 text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors">
+                        {{ t('releases') }}
+                    </a>
+                </div>
+            </section>
+
+            <section class="mb-32" v-fade>
+                <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('features') }}</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <article class="border border-gray-200 dark:border-gray-800 p-6 rounded-md bg-white dark:bg-black">
+                        <h3 class="font-medium text-lg mb-3 flex items-center gap-2">
+                            <i class="ph ph-list-dashes"></i>
+                            {{ t('feat1Title') }}
+                        </h3>
+                        <ul class="text-gray-600 dark:text-gray-400 text-sm font-light space-y-1 list-inside list-disc">
+                            <li>{{ t('feat1Desc1') }}</li>
+                            <li>{{ t('feat1Desc2') }}</li>
+                        </ul>
+                    </article>
+
+                    <article class="border border-gray-200 dark:border-gray-800 p-6 rounded-md bg-white dark:bg-black">
+                        <h3 class="font-medium text-lg mb-3 flex items-center gap-2">
+                            <i class="ph ph-play"></i>
+                            {{ t('feat2Title') }}
+                        </h3>
+                        <ul class="text-gray-600 dark:text-gray-400 text-sm font-light space-y-1 list-inside list-disc">
+                            <li>{{ t('feat2Desc1') }}</li>
+                            <li>{{ t('feat2Desc2') }}</li>
+                            <li>{{ t('feat2Desc3') }}</li>
+                            <li>{{ t('feat2Desc4') }}</li>
+                        </ul>
+                    </article>
+
+                    <article class="border border-gray-200 dark:border-gray-800 p-6 rounded-md bg-white dark:bg-black">
+                        <h3 class="font-medium text-lg mb-3 flex items-center gap-2">
+                            <i class="ph ph-download"></i>
+                            {{ t('feat3Title') }}
+                        </h3>
+                        <ul class="text-gray-600 dark:text-gray-400 text-sm font-light space-y-1 list-inside list-disc">
+                            <li>{{ t('feat3Desc1') }}</li>
+                            <li>{{ t('feat3Desc2') }}</li>
+                            <li>{{ t('feat3Desc3') }}</li>
+                            <li>{{ t('feat3Desc4') }}</li>
+                        </ul>
+                    </article>
+
+                    <article class="border border-gray-200 dark:border-gray-800 p-6 rounded-md bg-white dark:bg-black">
+                        <h3 class="font-medium text-lg mb-3 flex items-center gap-2">
+                            <i class="ph ph-folder"></i>
+                            {{ t('feat4Title') }}
+                        </h3>
+                        <ul class="text-gray-600 dark:text-gray-400 text-sm font-light space-y-1 list-inside list-disc">
+                            <li>{{ t('feat4Desc1') }}</li>
+                            <li>{{ t('feat4Desc2') }}</li>
+                            <li>{{ t('feat4Desc3') }}</li>
+                            <li>{{ t('feat4Desc4') }}</li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div>
+                    <h3 class="font-medium text-lg mb-4">{{ t('addFeatures') }}</h3>
+                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400 font-light list-inside list-disc">
+                        <li>{{ t('addFeat1') }}</li>
+                        <li>{{ t('addFeat2') }}</li>
+                        <li>{{ t('addFeat3') }}</li>
+                        <li>{{ t('addFeat4') }}</li>
+                        <li>{{ t('addFeat5') }}</li>
+                        <li>{{ t('addFeat6') }}</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="mb-32 grid grid-cols-1 lg:grid-cols-2 gap-16">
+                <div v-fade>
+                    <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('installation') }}</h2>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-sm font-medium mb-2">PyPI (Universal)</h3>
+                            <code class="block bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 px-3 py-2 rounded-md font-mono text-xs text-gray-800 dark:text-gray-300">pip install weeb-cli</code>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium mb-2">Arch Linux (AUR)</h3>
+                            <code class="block bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 px-3 py-2 rounded-md font-mono text-xs text-gray-800 dark:text-gray-300">yay -S weeb-cli</code>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-medium mb-2">Developer Setup</h3>
+                            <div class="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-3 rounded-md overflow-x-auto">
+<pre class="font-mono text-xs text-gray-800 dark:text-gray-300"><code>git clone https://github.com/ewgsta/weeb-cli.git
+cd weeb-cli
+pip install -e .</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-fade>
+                    <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('controls') }}</h2>
+                    <div class="border border-gray-200 dark:border-gray-800 rounded-md overflow-hidden bg-white dark:bg-black">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-50 dark:bg-[#0a0a0a] text-gray-700 dark:text-gray-300 font-medium border-b border-gray-200 dark:border-gray-800">
+                                <tr>
+                                    <th class="px-4 py-3">{{ t('key') }}</th>
+                                    <th class="px-4 py-3">{{ t('action') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-600 dark:text-gray-400 font-light divide-y divide-gray-200 dark:divide-gray-800">
+                                <tr><td class="px-4 py-2 font-mono text-xs">↑ ↓</td><td class="px-4 py-2">{{ t('ctrlNav') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">Enter</td><td class="px-4 py-2">{{ t('ctrlSelect') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">s</td><td class="px-4 py-2">{{ t('ctrlSearch') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">d</td><td class="px-4 py-2">{{ t('ctrlDown') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">w</td><td class="px-4 py-2">{{ t('ctrlWatch') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">c</td><td class="px-4 py-2">{{ t('ctrlSet') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">q</td><td class="px-4 py-2">{{ t('ctrlExit') }}</td></tr>
+                                <tr><td class="px-4 py-2 font-mono text-xs">Ctrl+C</td><td class="px-4 py-2">{{ t('ctrlBack') }}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-32" v-fade>
+                <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('usage') }}</h2>
+
+                <div class="space-y-12">
+                    <div>
+                        <h3 class="font-medium mb-2">{{ t('apiModeTitle') }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 font-light mb-4">{{ t('apiModeDesc') }}</p>
+                        <div class="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-4 rounded-md overflow-x-auto">
+<pre class="font-mono text-xs sm:text-sm text-gray-800 dark:text-gray-300"><code>weeb-cli api providers
+weeb-cli api search "Angel Beats"
+weeb-cli api episodes 12345 --season 1
+weeb-cli api streams 12345 --season 1 --episode 1
+weeb-cli api details 12345
+weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads</code></pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="font-medium mb-2">{{ t('sonarrTitle') }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400 font-light mb-4">{{ t('sonarrDesc') }}</p>
+                        <div class="bg-gray-50 dark:bg-[#0a0a0a] border border-gray-200 dark:border-gray-800 p-4 rounded-md overflow-x-auto">
+<pre class="font-mono text-xs sm:text-sm text-gray-800 dark:text-gray-300"><code>pip install weeb-cli[serve]
+
+weeb-cli serve --port 9876 \
+  --watch-dir /downloads/watch \
+  --completed-dir /downloads/completed \
+  --sonarr-url http://sonarr:8989 \
+  --sonarr-api-key YOUR_KEY \
+  --providers animecix,anizle,turkanime</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grid grid-cols-1 md:grid-cols-2 gap-16" v-fade>
+                <div>
+                    <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('techStack') }}</h2>
+                    <div class="space-y-6 text-sm">
+                        <div>
+                            <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Core</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light">Python 3.8+, Typer, Rich, Questionary, SQLite.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Web & Networking</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light">requests, curl_cffi, BeautifulSoup4, lxml.</p>
+                        </div>
+                        <div>
+                            <h3 class="font-medium mb-2 text-gray-800 dark:text-gray-200">Media & Download</h3>
+                            <p class="text-gray-600 dark:text-gray-400 font-light">FFmpeg, MPV, Aria2, yt-dlp.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="text-xl font-medium mb-8 border-b border-gray-200 dark:border-gray-800 pb-4">{{ t('roadmap') }}</h2>
+                    <ul class="text-sm text-gray-600 dark:text-gray-400 font-light space-y-2 list-inside list-none">
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road1') }}</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road2') }}</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road3') }}</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road4') }}</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road5') }}</li>
+                        <li class="flex items-center gap-2"><i class="ph ph-circle text-gray-400"></i> {{ t('road6') }}</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="w-full border-t border-gray-200 dark:border-gray-800 py-8 mt-auto">
+            <div class="max-w-5xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 font-light gap-4">
+                <p>Weeb-CLI (C) 2026</p>
+                <div class="flex gap-6">
+                    <a href="https://github.com/ewgsta/weeb-cli/blob/main/LICENSE" target="_blank" class="hover:text-black dark:hover:text-white transition-colors">
+                        GNU General Public License v3.0
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                tagline: "No browser, no ads, no distractions. Just you and an unparalleled anime viewing experience.",
+                releases: "View Releases",
+                features: "Features",
+                feat1Title: "Multiple Sources",
+                feat1Desc1: "Turkish: Animecix, Turkanime, Anizle",
+                feat1Desc2: "English: HiAnime, AllAnime",
+                feat2Title: "Smart Streaming",
+                feat2Desc1: "High-quality HLS/MP4 playback with MPV",
+                feat2Desc2: "Resume from where you left off (timestamp-based)",
+                feat2Desc3: "Watch history and statistics",
+                feat2Desc4: "Completed (✓) and in-progress (●) episode markers",
+                feat3Title: "Powerful Download System",
+                feat3Desc1: "Aria2 for multi-connection fast downloads",
+                feat3Desc2: "yt-dlp for complex stream support",
+                feat3Desc3: "Queue system with concurrent downloads",
+                feat3Desc4: "Smart file naming (Anime Name - S1E1.mp4)",
+                feat4Title: "Local Library",
+                feat4Desc1: "Auto-scan downloaded anime",
+                feat4Desc2: "External drive support (USB, HDD)",
+                feat4Desc3: "Offline anime indexing",
+                feat4Desc4: "Search across all sources",
+                addFeatures: "Additional Features",
+                addFeat1: "SQLite database (fast and reliable)",
+                addFeat2: "System notifications on download completion",
+                addFeat3: "Discord RPC integration",
+                addFeat4: "Search history & debug mode",
+                addFeat5: "Automatic update checks",
+                addFeat6: "Non-interactive JSON API & Torznab server mode",
+                installation: "Installation",
+                controls: "Keyboard Controls",
+                key: "Key",
+                action: "Action",
+                ctrlNav: "Navigate menu",
+                ctrlSelect: "Select",
+                ctrlSearch: "Search Anime (Main menu)",
+                ctrlDown: "Downloads (Main menu)",
+                ctrlWatch: "Watchlist (Main menu)",
+                ctrlSet: "Settings (Main menu)",
+                ctrlExit: "Exit (Main menu)",
+                ctrlBack: "Go back / Exit",
+                usage: "Usage",
+                apiModeTitle: "API Mode (Non-interactive)",
+                apiModeDesc: "For scripts, automation, and AI agents, weeb-cli provides JSON API commands that work headlessly without a database or TUI:",
+                sonarrTitle: "Sonarr/*arr Integration (Serve Mode)",
+                sonarrDesc: "weeb-cli can run as a Torznab-compatible server for Sonarr and other *arr applications:",
+                techStack: "Tech Stack",
+                roadmap: "Planned Roadmap",
+                road1: "Anime recommendations",
+                road2: "Batch operations",
+                road3: "Watch statistics (graphs)",
+                road4: "Theme support",
+                road5: "Subtitle downloads",
+                road6: "Torrent support (nyaa.si)"
+            },
+            tr: {
+                tagline: "Tarayıcı yok, reklam yok, dikkat dağıtıcı unsurlar yok. Sadece siz ve benzersiz bir anime izleme deneyimi.",
+                releases: "Sürümleri Görüntüle",
+                features: "Özellikler",
+                feat1Title: "Çoklu Kaynak",
+                feat1Desc1: "Türkçe: Animecix, Turkanime, Anizle",
+                feat1Desc2: "İngilizce: HiAnime, AllAnime",
+                feat2Title: "Akıllı Oynatma",
+                feat2Desc1: "MPV ile yüksek kaliteli HLS/MP4 oynatma",
+                feat2Desc2: "Kaldığınız yerden devam etme (zaman damgası tabanlı)",
+                feat2Desc3: "İzleme geçmişi ve istatistikler",
+                feat2Desc4: "Tamamlanan (✓) ve devam eden (●) bölüm işaretleri",
+                feat3Title: "Güçlü İndirme Sistemi",
+                feat3Desc1: "Çoklu bağlantılı hızlı indirmeler için Aria2",
+                feat3Desc2: "Karmaşık yayın desteği için yt-dlp",
+                feat3Desc3: "Eşzamanlı indirmeler ile kuyruk sistemi",
+                feat3Desc4: "Akıllı dosya adlandırma (Anime Adı - S1E1.mp4)",
+                feat4Title: "Yerel Kütüphane",
+                feat4Desc1: "İndirilen animeleri otomatik tara",
+                feat4Desc2: "Harici sürücü desteği (USB, HDD)",
+                feat4Desc3: "Çevrimdışı anime indeksleme",
+                feat4Desc4: "Tüm kaynaklarda arama yapma",
+                addFeatures: "Ek Özellikler",
+                addFeat1: "SQLite veritabanı (hızlı ve güvenilir)",
+                addFeat2: "İndirme tamamlandığında sistem bildirimleri",
+                addFeat3: "Discord RPC entegrasyonu",
+                addFeat4: "Arama geçmişi ve hata ayıklama modu",
+                addFeat5: "Otomatik güncelleme kontrolleri",
+                addFeat6: "Etkileşimsiz JSON API ve Torznab sunucu modu",
+                installation: "Kurulum",
+                controls: "Klavye Kontrolleri",
+                key: "Tuş",
+                action: "Eylem",
+                ctrlNav: "Menüde gezinme",
+                ctrlSelect: "Seç",
+                ctrlSearch: "Anime Ara (Ana menü)",
+                ctrlDown: "İndirmeler (Ana menü)",
+                ctrlWatch: "İzleme Listesi (Ana menü)",
+                ctrlSet: "Ayarlar (Ana menü)",
+                ctrlExit: "Çıkış (Ana menü)",
+                ctrlBack: "Geri dön / Çıkış",
+                usage: "Kullanım",
+                apiModeTitle: "API Modu (Etkileşimsiz)",
+                apiModeDesc: "Betikler, otomasyon ve yapay zeka ajanları için weeb-cli, veritabanı veya TUI olmadan arkaplanda çalışan JSON API komutları sunar:",
+                sonarrTitle: "Sonarr/*arr Entegrasyonu (Sunucu Modu)",
+                sonarrDesc: "weeb-cli, Sonarr ve diğer *arr uygulamaları için Torznab uyumlu bir sunucu olarak çalışabilir:",
+                techStack: "Teknoloji Yığını (Tech Stack)",
+                roadmap: "Planlanan Geliştirmeler (Roadmap)",
+                road1: "Anime önerileri",
+                road2: "Toplu işlemler",
+                road3: "İzleme istatistikleri (grafikler)",
+                road4: "Tema desteği",
+                road5: "Altyazı indirmeleri",
+                road6: "Torrent desteği (nyaa.si)"
+            }
+        };
+
+        const { createApp } = Vue;
+
+        const app = createApp({
+            data() {
+                return {
+                    isDark: true,
+                    lang: 'en',
+                    copied: false
+                }
+            },
+            methods: {
+                t(key) {
+                    return translations[this.lang][key];
+                },
+                toggleTheme() {
+                    this.isDark = !this.isDark;
+                    this.applyTheme();
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                },
+                applyTheme() {
+                    if (this.isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                },
+                toggleLang() {
+                    this.lang = this.lang === 'en' ? 'tr' : 'en';
+                    localStorage.setItem('lang', this.lang);
+                    document.documentElement.lang = this.lang;
+                },
+                copyCommand() {
+                    navigator.clipboard.writeText('pip install weeb-cli').then(() => {
+                        this.copied = true;
+                        setTimeout(() => { this.copied = false; }, 2000);
+                    });
+                }
+            },
+            mounted() {
+                // Theme Init
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    this.isDark = savedTheme === 'dark';
+                } else {
+                    this.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                }
+                this.applyTheme();
+
+                // Lang Init
+                const savedLang = localStorage.getItem('lang');
+                if (savedLang) {
+                    this.lang = savedLang;
+                } else {
+                    const browserLang = navigator.language || navigator.userLanguage;
+                    this.lang = browserLang.startsWith('tr') ? 'tr' : 'en';
+                }
+                document.documentElement.lang = this.lang;
+            }
+        });
+
+        // Custom directive for scroll-triggered fade-up animation
+        app.directive('fade', {
+            mounted(el) {
+                // Initial state
+                el.classList.add('opacity-0', 'translate-y-8', 'transition-all', 'duration-700', 'ease-out');
+
+                // Intersection Observer
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            // Elements visible in viewport
+                            el.classList.remove('opacity-0', 'translate-y-8');
+                            el.classList.add('opacity-100', 'translate-y-0');
+                            observer.unobserve(el); // Animate only once
+                        }
+                    });
+                }, {
+                    threshold: 0.15,
+                    rootMargin: "0px 0px -50px 0px"
+                });
+
+                observer.observe(el);
+            }
+        });
+
+        app.mount('#app');
+    </script>
+</body>
+</html>

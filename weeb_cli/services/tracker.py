@@ -28,7 +28,7 @@ def load_template(filename):
     try:
         with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
-    except Exception as e:
+    except Exception:
         logger.error(f"Failed to load template {filename}: {e}")
         return ""
 

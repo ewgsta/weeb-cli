@@ -4,6 +4,7 @@ from weeb_cli import __version__
 from rich.console import Console
 import questionary
 from weeb_cli.i18n import i18n
+from weeb_cli.services.error_handler import handle_error
 import sys
 import os
 import platform
@@ -130,7 +131,7 @@ del "%~f0"
         return True
         
     except Exception as e:
-        console.print(f"[red]{i18n.t('update.error')}: {e}[/red]")
+        handle_error(e, "Updater:Download", i18n.t('update.error'))
         return False
 
 def update_via_pip():
@@ -152,7 +153,7 @@ def update_via_pip():
             return False
             
     except Exception as e:
-        console.print(f"[red]{i18n.t('update.error')}: {e}[/red]")
+        handle_error(e, "Updater:Install", i18n.t('update.error'))
         return False
 
 from weeb_cli.config import config

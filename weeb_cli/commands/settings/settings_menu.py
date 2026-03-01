@@ -9,6 +9,7 @@ from .settings_drives import external_drives_menu
 from .settings_trackers import trackers_menu
 from .settings_backup import backup_restore_menu
 from .settings_shortcuts import shortcuts_menu
+from .settings_cache import cache_settings_menu
 
 console = Console()
 
@@ -75,6 +76,7 @@ def _build_settings_menu():
     
     choices.extend([
         i18n.t("settings.trackers"),
+        i18n.t("settings.cache"),
         i18n.t("settings.backup_restore")
     ])
     
@@ -86,6 +88,7 @@ def _handle_settings_action(answer):
         i18n.t("settings.download_settings"): download_settings_menu,
         i18n.t("settings.external_drives"): external_drives_menu,
         i18n.t("settings.trackers"): trackers_menu,
+        i18n.t("settings.cache"): cache_settings_menu,
         i18n.t("settings.backup_restore"): backup_restore_menu,
     }
     

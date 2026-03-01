@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any, Tuple
 from weeb_cli.exceptions import ProviderError
+from weeb_cli.services.logger import debug
 
 
 @dataclass
@@ -72,21 +73,35 @@ class BaseProvider(ABC):
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
         pass
     
-    def _request(self, url: str, params: dict = None, json_response: bool = True) -> Any:
+    def _request(self, url: str, params: Optional[dict] = None, json_response: bool = True, max_retries: int = 3) -> Any:
         import requests
+        import time
+        import random
         
-        try:
-            response = requests.get(
-                url, 
-                headers=self.headers, 
-                params=params,
-                timeout=15
-            )
-            response.raise_for_status()
-            
-            if json_response:
-                return response.json()
-            return response.text
-            
-        except requests.RequestException:
-            return None
+        for attempt in range(max_retries):
+            try:
+                response = requests.get(
+                    url, 
+                    headers=self.headers, 
+                    params=params,
+                    timeout=15
+                )
+                response.raise_for_status()
+                
+                if json_response:
+                    return response.json()
+                return response.text
+                
+            except requests.RequestException as e:
+                debug(f"[HTTP] Request failed (attempt {attempt + 1}/{max_retries}): {url} - {e}")
+                
+                if attempt < max_retries - 1:
+                    if isinstance(e, requests.HTTPError) and e.response.status_code in [404, 403, 401]:
+                        debug(f"[HTTP] Permanent error, skipping retries")
+                        return None
+                    
+                    delay = min(2 ** attempt, 10) + random.uniform(0, 1)
+                    time.sleep(delay)
+                    continue
+                
+                return None

@@ -6,7 +6,7 @@ _provider_meta: Dict[str, dict] = {}
 
 
 def register_provider(name: str, lang: str = "tr", region: str = "TR"):
-    def decorator(cls: Type[BaseProvider]):
+    def decorator(cls: Type[BaseProvider]) -> Type[BaseProvider]:
         cls.name = name
         cls.lang = lang
         cls.region = region
