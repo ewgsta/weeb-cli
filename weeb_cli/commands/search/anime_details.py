@@ -12,6 +12,9 @@ from .download_flow import handle_download_flow
 console = Console()
 
 def show_anime_details(anime):
+    from weeb_cli.services.local_library import local_library
+    from weeb_cli.config import config as app_config
+    
     slug = anime.get("slug") or anime.get("id")
     if not slug:
         console.print(f"[red]{i18n.t('details.error_slug')}[/red]")
@@ -35,7 +38,10 @@ def show_anime_details(anime):
         _display_anime_info(details)
         
         try:
-            action = _get_user_action()
+            provider_name = app_config.get("scraping_source", "")
+            in_library = local_library.is_in_virtual_library(slug, provider_name)
+            
+            action = _get_user_action(in_library)
             if action is None:
                 return
             
@@ -43,6 +49,21 @@ def show_anime_details(anime):
                 handle_download_flow(slug, details)
             elif action == i18n.t("details.watch"):
                 handle_watch_flow(slug, details)
+            elif action == i18n.t("details.add_to_library"):
+                anime_title = details.get("title", "")
+                cover = anime.get("cover") or details.get("cover")
+                anime_type = anime.get("type") or details.get("type")
+                year = anime.get("year") or details.get("year")
+                
+                if local_library.add_to_virtual_library(slug, anime_title, provider_name, cover, anime_type, year):
+                    console.print(f"[green]{i18n.t('details.added_to_library')}[/green]")
+                else:
+                    console.print(f"[yellow]{i18n.t('details.already_in_library')}[/yellow]")
+                time.sleep(1)
+            elif action == i18n.t("details.remove_from_library"):
+                local_library.remove_from_virtual_library(slug, provider_name)
+                console.print(f"[green]{i18n.t('details.removed_from_library')}[/green]")
+                time.sleep(1)
                 
         except KeyboardInterrupt:
             return
@@ -59,13 +80,22 @@ def _display_anime_info(details):
             desc = desc[:497] + "..."
         console.print(f"\n[dim]{desc}[/dim]\n", justify="left")
 
-def _get_user_action():
+def _get_user_action(in_library=False):
     opt_watch = i18n.t("details.watch")
     opt_dl = i18n.t("details.download")
+    opt_add = i18n.t("details.add_to_library")
+    opt_remove = i18n.t("details.remove_from_library")
+    
+    choices = [opt_watch, opt_dl]
+    
+    if in_library:
+        choices.append(opt_remove)
+    else:
+        choices.append(opt_add)
     
     return questionary.select(
         i18n.t("details.action_prompt"),
-        choices=[opt_watch, opt_dl],
+        choices=choices,
         pointer=">",
         use_shortcuts=False
     ).ask()

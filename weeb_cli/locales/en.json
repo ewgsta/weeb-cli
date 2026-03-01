@@ -29,6 +29,7 @@
             "search": "Search Anime",
             "watchlist": "My Watchlist",
             "downloads": "Downloads",
+            "library": "My Library",
             "settings": "Settings",
             "exit": "Exit"
         }
@@ -220,6 +221,11 @@
         "selected": "Selected: {episode}",
         "watch": "Watch",
         "download": "Download",
+        "add_to_library": "Add to Library",
+        "remove_from_library": "Remove from Library",
+        "added_to_library": "Added to library!",
+        "already_in_library": "Already in library.",
+        "removed_from_library": "Removed from library.",
         "mark_watched": "Mark as watched?",
         "marked_watched": "Marked as watched",
         "sync_to_trackers": "Sync to trackers as well?",
@@ -327,5 +333,18 @@
         "retrying": "Retrying {count} downloads...",
         "disk_full": "Insufficient disk space!",
         "episode_short": "Ep"
+    },
+    "library": {
+        "title": "My Library",
+        "online_library": "Online Library",
+        "local_library": "Local Library",
+        "select_type": "Select Library Type",
+        "online_empty": "Your online library is empty. You can add anime from the anime details page.",
+        "local_empty": "Your local library is empty. Downloaded anime will appear here.",
+        "local_not_available": "This anime is no longer available. Drive may be disconnected or file deleted.",
+        "total_anime": "Total Anime",
+        "select_anime": "Select Anime",
+        "switching_provider": "Switching to {provider}...",
+        "provider_not_found": "Provider {provider} not found."
     }
 }

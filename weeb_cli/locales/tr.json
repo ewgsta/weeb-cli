@@ -29,6 +29,7 @@
             "search": "Anime Ara",
             "watchlist": "İzlediklerim",
             "downloads": "İndirmeler",
+            "library": "Kütüphanem",
             "settings": "Ayarlar",
             "exit": "Çıkış"
         }
@@ -220,6 +221,11 @@
         "selected": "Seçildi: {episode}",
         "watch": "İzle",
         "download": "İndir",
+        "add_to_library": "Kütüphaneye Ekle",
+        "remove_from_library": "Kütüphaneden Çıkar",
+        "added_to_library": "Kütüphaneye eklendi!",
+        "already_in_library": "Zaten kütüphanede.",
+        "removed_from_library": "Kütüphaneden çıkarıldı.",
         "mark_watched": "İzlendi olarak işaretlensin mi?",
         "marked_watched": "İzlendi olarak işaretlendi",
         "sync_to_trackers": "Tracker'lara da eklensin mi?",
@@ -327,5 +333,18 @@
         "retrying": "{count} indirme yeniden deneniyor...",
         "disk_full": "Disk alanı yetersiz!",
         "episode_short": "Blm"
+    },
+    "library": {
+        "title": "Kütüphanem",
+        "online_library": "Online Kütüphane",
+        "local_library": "Yerel Kütüphane",
+        "select_type": "Kütüphane Türü Seçin",
+        "online_empty": "Online kütüphaneniz boş. Anime detay sayfasından kütüphaneye ekleyebilirsiniz.",
+        "local_empty": "Yerel kütüphaneniz boş. İndirdiğiniz animeler burada görünecek.",
+        "local_not_available": "Bu anime artık mevcut değil. Disk bağlı değil veya dosya silinmiş olabilir.",
+        "total_anime": "Toplam Anime",
+        "select_anime": "Anime Seçin",
+        "switching_provider": "Kaynak {provider} olarak değiştiriliyor...",
+        "provider_not_found": "Kaynak {provider} bulunamadı."
     }
 }

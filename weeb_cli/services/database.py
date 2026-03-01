@@ -119,10 +119,23 @@ class Database:
                     indexed_at TEXT
                 );
                 
+                CREATE TABLE IF NOT EXISTS virtual_library (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    anime_id TEXT,
+                    anime_title TEXT,
+                    provider_name TEXT,
+                    cover_url TEXT,
+                    anime_type TEXT,
+                    year INTEGER,
+                    added_at TEXT
+                );
+                
                 CREATE INDEX IF NOT EXISTS idx_queue_status ON download_queue(status);
                 CREATE INDEX IF NOT EXISTS idx_progress_slug ON progress(slug);
                 CREATE INDEX IF NOT EXISTS idx_anime_title ON anime_index(title);
                 CREATE INDEX IF NOT EXISTS idx_anime_source ON anime_index(source_path);
+                CREATE INDEX IF NOT EXISTS idx_virtual_library_title ON virtual_library(anime_title);
+                CREATE INDEX IF NOT EXISTS idx_virtual_library_provider ON virtual_library(provider_name);
             ''')
             conn.commit()
             
@@ -402,6 +415,49 @@ class Database:
                 return False
         except Exception:
             return False
+    
+    def add_to_virtual_library(self, anime_id: str, anime_title: str, provider_name: str, 
+                               cover_url: str = None, anime_type: str = None, year: int = None) -> bool:
+        with self._conn() as conn:
+            existing = conn.execute(
+                'SELECT id FROM virtual_library WHERE anime_id = ? AND provider_name = ?',
+                (anime_id, provider_name)
+            ).fetchone()
+            if existing:
+                return False
+            
+            conn.execute('''
+                INSERT INTO virtual_library 
+                (anime_id, anime_title, provider_name, cover_url, anime_type, year, added_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (anime_id, anime_title, provider_name, cover_url, anime_type, year, datetime.now().isoformat()))
+            return True
+    
+    def remove_from_virtual_library(self, anime_id: str, provider_name: str) -> None:
+        with self._conn() as conn:
+            conn.execute('DELETE FROM virtual_library WHERE anime_id = ? AND provider_name = ?', 
+                        (anime_id, provider_name))
+    
+    def get_virtual_library(self) -> List[Dict[str, Any]]:
+        with self._conn() as conn:
+            rows = conn.execute('SELECT * FROM virtual_library ORDER BY added_at DESC').fetchall()
+            return [dict(row) for row in rows]
+    
+    def search_virtual_library(self, query: str) -> List[Dict[str, Any]]:
+        with self._conn() as conn:
+            rows = conn.execute(
+                'SELECT * FROM virtual_library WHERE anime_title LIKE ? ORDER BY anime_title',
+                (f'%{query}%',)
+            ).fetchall()
+            return [dict(row) for row in rows]
+    
+    def is_in_virtual_library(self, anime_id: str, provider_name: str) -> bool:
+        with self._conn() as conn:
+            row = conn.execute(
+                'SELECT id FROM virtual_library WHERE anime_id = ? AND provider_name = ?',
+                (anime_id, provider_name)
+            ).fetchone()
+            return row is not None
     
     def __del__(self) -> None:
         self.close()

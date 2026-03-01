@@ -295,5 +295,21 @@ class LocalLibrary:
     
     def is_source_available(self, source_path: str) -> bool:
         return Path(source_path).exists()
+    
+    def add_to_virtual_library(self, anime_id: str, anime_title: str, provider_name: str,
+                               cover_url: str = None, anime_type: str = None, year: int = None) -> bool:
+        return self.db.add_to_virtual_library(anime_id, anime_title, provider_name, cover_url, anime_type, year)
+    
+    def remove_from_virtual_library(self, anime_id: str, provider_name: str) -> None:
+        self.db.remove_from_virtual_library(anime_id, provider_name)
+    
+    def get_virtual_library(self) -> List[Dict]:
+        return self.db.get_virtual_library()
+    
+    def search_virtual_library(self, query: str) -> List[Dict]:
+        return self.db.search_virtual_library(query)
+    
+    def is_in_virtual_library(self, anime_id: str, provider_name: str) -> bool:
+        return self.db.is_in_virtual_library(anime_id, provider_name)
 
 local_library = LocalLibrary()

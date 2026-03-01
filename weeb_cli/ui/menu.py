@@ -49,6 +49,7 @@ def show_main_menu():
     opt_search = i18n.t("menu.options.search")
     opt_downloads = i18n.t("menu.options.downloads")
     opt_watchlist = i18n.t("menu.options.watchlist")
+    opt_library = i18n.t("menu.options.library")
     opt_settings = i18n.t("menu.options.settings")
     
     if shortcuts_enabled:
@@ -56,12 +57,14 @@ def show_main_menu():
             questionary.Choice(opt_search, shortcut_key=shortcuts.get('search')),
             questionary.Choice(opt_downloads, shortcut_key=shortcuts.get('downloads')),
             questionary.Choice(opt_watchlist, shortcut_key=shortcuts.get('watchlist')),
+            questionary.Choice(opt_library, shortcut_key=shortcuts.get('library')),
         ]
     else:
         choices = [
             opt_search,
             opt_downloads,
             opt_watchlist,
+            opt_library,
         ]
     
     active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
@@ -99,6 +102,9 @@ def show_main_menu():
             search_anime()
         elif selected == opt_watchlist:
             show_watchlist()
+        elif selected == opt_library:
+            from weeb_cli.commands.library import show_library_menu
+            show_library_menu()
         elif selected == opt_downloads:
             show_downloads()
         elif opt_active and selected == opt_active:
