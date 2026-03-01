@@ -86,7 +86,7 @@ def check_incomplete_downloads():
             queue_manager.cancel_incomplete()
 
 def sync_anilist_pending():
-    from weeb_cli.services.tracker import anilist_tracker, mal_tracker
+    from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
     
     if anilist_tracker.is_authenticated():
         pending = anilist_tracker.get_pending_count()
@@ -101,6 +101,13 @@ def sync_anilist_pending():
             synced = mal_tracker.sync_pending()
             if synced > 0:
                 console.print(f"[dim]MAL: {synced} {i18n.t('settings.mal_synced').split()[1]}[/dim]")
+    
+    if kitsu_tracker.is_authenticated():
+        pending = kitsu_tracker.get_pending_count()
+        if pending > 0:
+            synced = kitsu_tracker.sync_pending()
+            if synced > 0:
+                console.print(f"[dim]Kitsu: {synced} {i18n.t('settings.kitsu_synced').split()[1]}[/dim]")
 
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):

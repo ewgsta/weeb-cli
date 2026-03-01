@@ -44,6 +44,13 @@
 - Yarım kalan indirmeleri devam ettirme
 - Akıllı dosya isimlendirme (`Anime Adı - S1B1.mp4`)
 
+### İzleme Takibi ve Senkronizasyon
+- **AniList** entegrasyonu (OAuth)
+- **MyAnimeList** entegrasyonu (OAuth)
+- **Kitsu** entegrasyonu (email/şifre)
+- Otomatik ilerleme senkronizasyonu
+- Bekleyen güncellemeler için çevrimdışı kuyruk
+
 ### Yerel Kütüphane
 - İndirilen animeleri otomatik tarama
 - Harici disk desteği (USB, HDD)

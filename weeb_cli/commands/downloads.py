@@ -399,13 +399,15 @@ def play_local_episode(anime, episode):
                 )
                 console.print(f"[green]✓ {i18n.t('details.marked_watched')}[/green]")
                 
-                from weeb_cli.services.tracker import anilist_tracker, mal_tracker
+                from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
                 
                 trackers_connected = []
                 if anilist_tracker.is_authenticated():
                     trackers_connected.append(("AniList", anilist_tracker))
                 if mal_tracker.is_authenticated():
                     trackers_connected.append(("MAL", mal_tracker))
+                if kitsu_tracker.is_authenticated():
+                    trackers_connected.append(("Kitsu", kitsu_tracker))
                 
                 if trackers_connected:
                     tracker_names = ", ".join([t[0] for t in trackers_connected])
@@ -431,6 +433,11 @@ def play_local_episode(anime, episode):
                         anime["episode_count"]
                     )
                     mal_tracker.update_progress(
+                        anime["title"],
+                        episode["number"],
+                        anime["episode_count"]
+                    )
+                    kitsu_tracker.update_progress(
                         anime["title"],
                         episode["number"],
                         anime["episode_count"]

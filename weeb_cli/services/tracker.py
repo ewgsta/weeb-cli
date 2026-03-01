@@ -598,3 +598,258 @@ class MALTracker:
         return len(pending)
 
 mal_tracker = MALTracker()
+
+
+class KitsuTracker:
+    def __init__(self):
+        self._db = None
+        self._access_token = None
+        self._user_id = None
+    
+    @property
+    def db(self):
+        if self._db is None:
+            from weeb_cli.services.database import db
+            self._db = db
+        return self._db
+    
+    @property
+    def access_token(self):
+        if self._access_token is None:
+            self._access_token = self.db.get_config("kitsu_access_token")
+        return self._access_token
+    
+    @property
+    def user_id(self):
+        if self._user_id is None:
+            self._user_id = self.db.get_config("kitsu_user_id")
+        return self._user_id
+    
+    def is_authenticated(self):
+        return self.access_token is not None
+    
+    def authenticate(self, email, password):
+        try:
+            resp = requests.post(
+                "https://kitsu.io/api/oauth/token",
+                json={
+                    "grant_type": "password",
+                    "username": email,
+                    "password": password
+                },
+                headers={"Content-Type": "application/json"},
+                timeout=30
+            )
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                self._access_token = data.get("access_token")
+                self.db.set_config("kitsu_access_token", self._access_token)
+                
+                user = self._get_user()
+                if user:
+                    self._user_id = user["id"]
+                    self.db.set_config("kitsu_user_id", self._user_id)
+                    self.db.set_config("kitsu_username", user["attributes"]["name"])
+                    return True
+            else:
+                logger.error(f"Kitsu authentication failed: {resp.status_code}")
+        except Exception as e:
+            logger.error(f"Kitsu authentication error: {e}")
+        return False
+    
+    def logout(self):
+        self._access_token = None
+        self._user_id = None
+        self.db.set_config("kitsu_access_token", None)
+        self.db.set_config("kitsu_user_id", None)
+        self.db.set_config("kitsu_username", None)
+    
+    def get_username(self):
+        return self.db.get_config("kitsu_username")
+    
+    def _get_user(self):
+        if not self.access_token:
+            return None
+        
+        try:
+            resp = requests.get(
+                "https://kitsu.io/api/edge/users",
+                params={"filter[self]": "true"},
+                headers={"Authorization": f"Bearer {self.access_token}"},
+                timeout=10
+            )
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                users = data.get("data", [])
+                if users:
+                    return users[0]
+        except Exception as e:
+            logger.error(f"Kitsu get user error: {e}")
+        return None
+    
+    def search_anime(self, title):
+        try:
+            resp = requests.get(
+                "https://kitsu.io/api/edge/anime",
+                params={"filter[text]": title, "page[limit]": 5},
+                headers={"Accept": "application/vnd.api+json"},
+                timeout=10
+            )
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                results = data.get("data", [])
+                if results:
+                    return results[0]
+        except Exception as e:
+            logger.error(f"Kitsu search error: {e}")
+        return None
+    
+    def _get_library_entry(self, anime_id):
+        if not self.access_token or not self.user_id:
+            return None
+        
+        try:
+            resp = requests.get(
+                "https://kitsu.io/api/edge/library-entries",
+                params={
+                    "filter[user_id]": self.user_id,
+                    "filter[anime_id]": anime_id,
+                    "page[limit]": 1
+                },
+                headers={"Authorization": f"Bearer {self.access_token}"},
+                timeout=10
+            )
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                entries = data.get("data", [])
+                if entries:
+                    return entries[0]
+        except Exception as e:
+            logger.error(f"Kitsu get library entry error: {e}")
+        return None
+    
+    def update_progress(self, anime_title, episode, total_episodes=None):
+        if not self.is_authenticated():
+            self._queue_update(anime_title, episode, total_episodes)
+            return False
+        
+        anime = self.search_anime(anime_title)
+        if not anime:
+            logger.warning(f"Kitsu: Anime not found: {anime_title}")
+            return False
+        
+        anime_id = anime["id"]
+        entry = self._get_library_entry(anime_id)
+        
+        status = "current"
+        if total_episodes and episode >= total_episodes:
+            status = "completed"
+        
+        payload = {
+            "data": {
+                "type": "library-entries",
+                "attributes": {
+                    "progress": episode,
+                    "status": status
+                },
+                "relationships": {
+                    "anime": {
+                        "data": {
+                            "type": "anime",
+                            "id": anime_id
+                        }
+                    },
+                    "user": {
+                        "data": {
+                            "type": "users",
+                            "id": self.user_id
+                        }
+                    }
+                }
+            }
+        }
+        
+        try:
+            if entry:
+                entry_id = entry["id"]
+                payload["data"]["id"] = entry_id
+                resp = requests.patch(
+                    f"https://kitsu.io/api/edge/library-entries/{entry_id}",
+                    json=payload,
+                    headers={
+                        "Authorization": f"Bearer {self.access_token}",
+                        "Content-Type": "application/vnd.api+json"
+                    },
+                    timeout=10
+                )
+            else:
+                resp = requests.post(
+                    "https://kitsu.io/api/edge/library-entries",
+                    json=payload,
+                    headers={
+                        "Authorization": f"Bearer {self.access_token}",
+                        "Content-Type": "application/vnd.api+json"
+                    },
+                    timeout=10
+                )
+            
+            if resp.status_code in [200, 201]:
+                logger.info(f"Kitsu: Updated {anime_title} to episode {episode}")
+                return True
+            else:
+                logger.error(f"Kitsu update failed: {resp.status_code}")
+        except Exception as e:
+            logger.error(f"Kitsu update error: {e}")
+        return False
+    
+    def _queue_update(self, anime_title, episode, total_episodes):
+        pending = self.db.get_config("kitsu_pending") or []
+        if isinstance(pending, str):
+            pending = json.loads(pending) if pending else []
+        pending.append({
+            "title": anime_title,
+            "episode": episode,
+            "total": total_episodes,
+            "timestamp": time.time()
+        })
+        self.db.set_config("kitsu_pending", pending)
+        logger.info(f"Kitsu: Queued update for {anime_title} ep {episode}")
+    
+    def sync_pending(self):
+        if not self.is_authenticated():
+            return 0
+        
+        pending = self.db.get_config("kitsu_pending") or []
+        if isinstance(pending, str):
+            pending = json.loads(pending) if pending else []
+        if not pending:
+            return 0
+        
+        synced = 0
+        failed = []
+        
+        for item in pending:
+            success = self.update_progress(
+                item["title"],
+                item["episode"],
+                item.get("total")
+            )
+            if success:
+                synced += 1
+            else:
+                failed.append(item)
+        
+        self.db.set_config("kitsu_pending", failed)
+        return synced
+    
+    def get_pending_count(self):
+        pending = self.db.get_config("kitsu_pending") or []
+        if isinstance(pending, str):
+            pending = json.loads(pending) if pending else []
+        return len(pending)
+
+kitsu_tracker = KitsuTracker()

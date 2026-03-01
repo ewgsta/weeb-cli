@@ -253,13 +253,13 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         return False
 
 def _update_trackers(details, slug):
-    from weeb_cli.services.tracker import anilist_tracker, mal_tracker
+    from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
     
     updated_prog = progress_tracker.get_anime_progress(slug)
     total_watched = len(updated_prog.get("completed", []))
     total_eps = details.get("total_episodes", 0)
     
-    for name, tracker in [("AniList", anilist_tracker), ("MAL", mal_tracker)]:
+    for name, tracker in [("AniList", anilist_tracker), ("MAL", mal_tracker), ("Kitsu", kitsu_tracker)]:
         result = tracker.update_progress(
             details.get("title"),
             total_watched,

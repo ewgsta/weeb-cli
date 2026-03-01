@@ -45,6 +45,13 @@
 - Resume interrupted downloads
 - Smart file naming (`Anime Name - S1E1.mp4`)
 
+### Tracking & Sync
+- **AniList** integration with OAuth
+- **MyAnimeList** integration with OAuth
+- **Kitsu** integration with email/password
+- Automatic progress sync
+- Offline queue for pending updates
+
 ### Local Library
 - Auto-scan downloaded anime
 - External drive support (USB, HDD)
