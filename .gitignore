@@ -53,3 +53,4 @@ weeb-downloads/
 # Distribution
 distribution/
 *.spec
+release.sh
