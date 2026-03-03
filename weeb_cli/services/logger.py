@@ -60,7 +60,6 @@ def reload():
     get_logger()
 
 def _clean_old_logs(log_dir: Path):
-    """Delete logs older than 7 days"""
     try:
         import time
         cutoff = time.time() - (7 * 86400) # 7 days

@@ -134,7 +134,6 @@ class LocalLibrary:
         self._sync_to_trackers(anime_title, ep_number, total_episodes)
     
     def _sync_to_trackers(self, anime_title: str, ep_number: int, total_episodes: int):
-        """Sync watched episode to all connected trackers."""
         from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
         
         connected_trackers = []

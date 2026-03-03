@@ -210,9 +210,8 @@ def serve(
     poll_interval: int = typer.Option(5, "--poll-interval", envvar="POLL_INTERVAL", help="Blackhole poll interval in seconds"),
     sonarr_url: str = typer.Option("", "--sonarr-url", envvar="SONARR_URL", help="Sonarr base URL"),
     sonarr_api_key: str = typer.Option("", "--sonarr-api-key", envvar="SONARR_API_KEY", help="Sonarr API key"),
-    provider_names: str = typer.Option("animecix,anizle,turkanime", "--providers", envvar="PROVIDERS", help="Comma-separated provider names (first is primary)"),
+    provider_names: str = typer.Option("animecix,anizle,turkanime", "--providers", envvar="PROVIDERS"),
 ):
-    """Start a Torznab-compatible HTTP server for Sonarr/*arr integration."""
     try:
         from flask import Flask, request, Response
     except ImportError:

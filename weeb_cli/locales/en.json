@@ -199,7 +199,8 @@
         "disabled": "Disabled",
         "network_error": "No internet connection!",
         "ctrl_c_hint": "Tip: Use Ctrl+C to go back. (Exit on Main Menu)",
-        "wip": "Work in progress..."
+        "wip": "Work in progress...",
+        "cancelled": "Cancelled"
     },
     "search": {
         "prompt": "Enter anime name",
@@ -332,7 +333,11 @@
         "retry_failed": "Retry Failed",
         "retrying": "Retrying {count} downloads...",
         "disk_full": "Insufficient disk space!",
-        "episode_short": "Ep"
+        "episode_short": "Ep",
+        "retrying_status": "Retrying ({attempt}/{max})...",
+        "stream_data_failed": "Failed to fetch stream data",
+        "empty_stream_links": "Stream links are empty",
+        "no_valid_streams_found": "No valid streams found"
     },
     "library": {
         "title": "My Library",

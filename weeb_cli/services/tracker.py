@@ -13,7 +13,6 @@ ANILIST_REDIRECT_URI = "http://localhost:8765/callback"
 ANILIST_PORT = 8765
 
 def get_templates_dir():
-    """Get templates directory path."""
     if getattr(sys, 'frozen', False):
         base_path = Path(sys._MEIPASS)
         possible_path = base_path / "weeb_cli" / "templates"
@@ -23,12 +22,11 @@ def get_templates_dir():
     return Path(__file__).parent.parent / "templates"
 
 def load_template(filename):
-    """Load HTML template from file."""
     template_path = get_templates_dir() / filename
     try:
         with open(template_path, "r", encoding="utf-8") as f:
             return f.read()
-    except Exception:
+    except Exception as e:
         logger.error(f"Failed to load template {filename}: {e}")
         return ""
 
@@ -39,7 +37,7 @@ def wait_for_anilist_callback(timeout=120):
     try:
         sock.bind(("127.0.0.1", ANILIST_PORT))
         sock.listen(1)
-        sock.settimeout(timeout)
+        sock.settimeout(5)
         
         token = None
         start_time = time.time()
@@ -54,11 +52,24 @@ def wait_for_anilist_callback(timeout=120):
                 data = conn.recv(4096).decode("utf-8", errors="ignore")
                 first_line = data.split("\r\n")[0] if data else ""
                 
-                if "/token?" in first_line:
-                    if "?t=" in first_line:
-                        query_part = first_line.split("?")[1].split(" ")[0]
-                        params = parse_qs(query_part)
-                        token = params.get("t", [None])[0]
+                if "GET /callback" in first_line and "#access_token=" in data:
+                    parts = data.split("#access_token=")
+                    if len(parts) > 1:
+                        token_part = parts[1].split("&")[0].split(" ")[0]
+                        if token_part:
+                            token = token_part
+                    
+                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
+                    conn.sendall(response.encode("utf-8"))
+                    conn.close()
+                    
+                    if token:
+                        sock.close()
+                        return token
+                elif "/token?" in first_line and "?t=" in first_line:
+                    query_part = first_line.split("?")[1].split(" ")[0]
+                    params = parse_qs(query_part)
+                    token = params.get("t", [None])[0]
                     
                     response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nOK"
                     conn.sendall(response.encode("utf-8"))
@@ -68,17 +79,27 @@ def wait_for_anilist_callback(timeout=120):
                         sock.close()
                         return token
                 else:
-                    conn.sendall(callback_html_success.encode("utf-8"))
+                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
+                    conn.sendall(response.encode("utf-8"))
                     conn.close()
                     
             except socket.timeout:
                 continue
+            except KeyboardInterrupt:
+                sock.close()
+                return None
             except Exception:
                 continue
         
         sock.close()
         return None
                 
+    except KeyboardInterrupt:
+        try:
+            sock.close()
+        except:
+            pass
+        return None
     except Exception as e:
         logger.error(f"AniList callback error: {e}")
         try:
@@ -312,12 +333,14 @@ def wait_for_mal_callback(timeout=120):
     try:
         sock.bind(("127.0.0.1", MAL_LOCAL_PORT))
         sock.listen(1)
-        sock.settimeout(timeout)
+        sock.settimeout(5)
         
         mal_callback_success = load_template("mal_success.html")
         mal_callback_error = load_template("mal_error.html")
         
-        while True:
+        start_time = time.time()
+        
+        while time.time() - start_time < timeout:
             try:
                 conn, addr = sock.accept()
                 conn.settimeout(10)
@@ -333,9 +356,11 @@ def wait_for_mal_callback(timeout=120):
                         code = params.get("code", [None])[0]
                 
                 if code:
-                    conn.sendall(mal_callback_success.encode("utf-8"))
+                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_success}"
+                    conn.sendall(response.encode("utf-8"))
                 else:
-                    conn.sendall(mal_callback_error.encode("utf-8"))
+                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_error}"
+                    conn.sendall(response.encode("utf-8"))
                 
                 conn.close()
                 
@@ -344,11 +369,22 @@ def wait_for_mal_callback(timeout=120):
                     return code
                     
             except socket.timeout:
+                continue
+            except KeyboardInterrupt:
                 sock.close()
                 return None
             except Exception:
                 continue
+        
+        sock.close()
+        return None
                 
+    except KeyboardInterrupt:
+        try:
+            sock.close()
+        except:
+            pass
+        return None
     except Exception as e:
         logger.error(f"MAL callback server error: {e}")
         try:

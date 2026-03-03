@@ -2,7 +2,6 @@ import re
 import unicodedata
 from pathlib import Path
 
-
 def sanitize_filename(name: str, max_length: int = 200) -> str:
     if not name:
         return "unnamed"
@@ -32,16 +31,15 @@ def sanitize_path(path: str) -> Path:
 
 
 def validate_url(url: str) -> bool:
-    if not url:
+    if not url or len(url) < 10:
         return False
     
-    url_pattern = re.compile(
-        r'^https?://'
-        r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'
-        r'localhost|'
-        r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
-        r'(?::\d+)?'
-        r'(?:/?|[/?]\S+)$', re.IGNORECASE
-    )
+    if not url.startswith(('http://', 'https://')):
+        return False
     
-    return bool(url_pattern.match(url))
+    try:
+        from urllib.parse import urlparse
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except:
+        return False

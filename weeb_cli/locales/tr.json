@@ -199,7 +199,8 @@
         "disabled": "Pasif",
         "network_error": "İnternet bağlantısı yok!",
         "ctrl_c_hint": "İpucu: Geri dönmek için Ctrl+C kullanın. (Ana menüde çıkış yapar)",
-        "wip": "Çalışma devam ediyor..."
+        "wip": "Çalışma devam ediyor...",
+        "cancelled": "İptal edildi"
     },
     "search": {
         "prompt": "Anime adı girin",
@@ -332,7 +333,11 @@
         "retry_failed": "Başarısızları Yeniden Dene",
         "retrying": "{count} indirme yeniden deneniyor...",
         "disk_full": "Disk alanı yetersiz!",
-        "episode_short": "Blm"
+        "episode_short": "Blm",
+        "retrying_status": "Yeniden deneniyor ({attempt}/{max})...",
+        "stream_data_failed": "Stream verisi alınamadı",
+        "empty_stream_links": "Stream linkleri boş",
+        "no_valid_streams_found": "Geçerli stream bulunamadı"
     },
     "library": {
         "title": "Kütüphanem",

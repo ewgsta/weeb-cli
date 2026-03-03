@@ -112,7 +112,6 @@ class QueueManager:
         return added
 
     def _sanitize_filename(self, name):
-        """Sanitize filename for safe file system operations."""
         return sanitize_filename(name)
 
     def _manage_queue(self):
@@ -153,7 +152,7 @@ class QueueManager:
             total, used, free = shutil.disk_usage(download_dir)
             
             if free < 500 * 1024 * 1024:
-                error_msg = i18n.t("downloads.disk_full", "Yetersiz disk alanı!")
+                error_msg = i18n.t("downloads.disk_full")
                 self.db.update_queue_item(item["episode_id"], status="failed", error=error_msg, eta="")
                 send_notification(i18n.t("common.error"), f"{item['anime_title']}: {error_msg}")
                 return
@@ -165,7 +164,8 @@ class QueueManager:
                 if attempt > 0:
                     delay = self._calculate_backoff(attempt, base_delay)
                     debug(f"Retry attempt {attempt + 1}/{max_retries} after {delay}s")
-                    self._update_progress(item, eta=f"Yeniden deneniyor ({attempt + 1}/{max_retries})...")
+                    retry_msg = i18n.t("downloads.retrying_status", attempt=attempt + 1, max=max_retries)
+                    self._update_progress(item, eta=retry_msg)
                     time.sleep(delay)
                 
                 self._download_item(item)
@@ -236,7 +236,7 @@ class QueueManager:
         stream_data = get_streams(item["slug"], item["episode_id"])
         
         if not stream_data:
-            err_msg = "Stream verisi alınamadı"
+            err_msg = i18n.t("downloads.stream_data_failed")
             if scraper.last_error:
                 err_msg = f"{err_msg}: {scraper.last_error}"
             log_error(f"Download failed - {err_msg}")
@@ -245,7 +245,7 @@ class QueueManager:
         if isinstance(stream_data, dict) and "data" in stream_data and "links" in stream_data["data"]:
             links = stream_data["data"]["links"]
             if not links:
-                raise DownloadError("Stream links boş", code="EMPTY_STREAM_LINKS")
+                raise DownloadError(i18n.t("downloads.empty_stream_links"), code="EMPTY_STREAM_LINKS")
             
             debug(f"Found {len(links)} stream sources, validating...")
             
@@ -261,7 +261,7 @@ class QueueManager:
                         debug(f"Invalid: {link.get('server', 'unknown')} - {error}")
             
             if not valid_links:
-                raise DownloadError("Geçerli stream bulunamadı", code="NO_VALID_STREAMS")
+                raise DownloadError(i18n.t("downloads.no_valid_streams_found"), code="NO_VALID_STREAMS")
             
             debug(f"Found {len(valid_links)}/{len(links)} valid streams, trying each one...")
             
@@ -302,7 +302,6 @@ class QueueManager:
         self._try_download(stream_url, output_path, item)
 
     def _extract_all_urls(self, data):
-        """Extract all available stream URLs with their server names."""
         PRIORITY = ["ALUCARD", "AMATERASU", "SIBNET", "MP4UPLOAD", "UQLOAD"]
         
         results = []
@@ -338,7 +337,6 @@ class QueueManager:
         return results
     
     def _try_download(self, stream_url, output_path, item):
-        """Try to download from a stream URL."""
         is_hls = ".m3u8" in stream_url
         
         if is_hls:

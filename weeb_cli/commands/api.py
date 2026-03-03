@@ -50,7 +50,6 @@ def api_callback(ctx: typer.Context):
 
 @api_app.command()
 def providers():
-    """List all available providers."""
     from weeb_cli.providers.registry import list_providers
     _output(list_providers())
 
@@ -58,9 +57,8 @@ def providers():
 @api_app.command()
 def search(
     query: str = typer.Argument(..., help="Search query"),
-    provider: str = typer.Option("animecix", "--provider", "-p", help="Provider name"),
+    provider: str = typer.Option("animecix", "--provider", "-p"),
 ):
-    """Search for anime by title. Returns a list with IDs to use in other commands."""
     p = _get_provider(provider)
     results = p.search(query)
     _output([
@@ -73,9 +71,8 @@ def search(
 def episodes(
     anime_id: str = typer.Argument(..., help="Anime ID from search results"),
     season: Optional[int] = typer.Option(None, "--season", "-s", help="Filter by season number"),
-    provider: str = typer.Option("animecix", "--provider", "-p", help="Provider name"),
+    provider: str = typer.Option("animecix", "--provider", "-p"),
 ):
-    """List episodes for an anime by ID."""
     p = _get_provider(provider)
     eps = p.get_episodes(anime_id)
     if season is not None:
@@ -91,9 +88,8 @@ def streams(
     anime_id: str = typer.Argument(..., help="Anime ID from search results"),
     season: int = typer.Option(1, "--season", "-s", help="Season number"),
     episode: int = typer.Option(..., "--episode", "-e", help="Episode number"),
-    provider: str = typer.Option("animecix", "--provider", "-p", help="Provider name"),
+    provider: str = typer.Option("animecix", "--provider", "-p"),
 ):
-    """Get stream URLs for a specific episode by anime ID and episode number."""
     p = _get_provider(provider)
     eps = p.get_episodes(anime_id)
     target = [e for e in eps if e.season == season and e.number == episode]
@@ -111,9 +107,8 @@ def streams(
 @api_app.command()
 def details(
     anime_id: str = typer.Argument(..., help="Anime ID from search results"),
-    provider: str = typer.Option("animecix", "--provider", "-p", help="Provider name"),
+    provider: str = typer.Option("animecix", "--provider", "-p"),
 ):
-    """Get anime details by ID."""
     p = _get_provider(provider)
     d = p.get_details(anime_id)
     if d is None:
@@ -135,9 +130,8 @@ def download(
     season: int = typer.Option(1, "--season", "-s", help="Season number"),
     episode: int = typer.Option(..., "--episode", "-e", help="Episode number"),
     provider: str = typer.Option("animecix", "--provider", "-p", help="Provider name"),
-    output: str = typer.Option(".", "--output", "-o", help="Output directory"),
+    output: str = typer.Option(".", "--output", "-o"),
 ):
-    """Download an episode by anime ID and episode number."""
     from weeb_cli.services.headless_downloader import download_episode
 
     p = _get_provider(provider)
@@ -181,9 +175,8 @@ def download_url(
     title: str = typer.Option(..., "--title", "-t", help="Series title for filename"),
     season: int = typer.Option(1, "--season", "-s", help="Season number"),
     episode: int = typer.Option(..., "--episode", "-e", help="Episode number"),
-    output: str = typer.Option(".", "--output", "-o", help="Output directory"),
+    output: str = typer.Option(".", "--output", "-o"),
 ):
-    """Download a single episode from a direct stream URL."""
     from weeb_cli.services.headless_downloader import download_episode
     result = download_episode(
         stream_url=stream_url,

@@ -43,10 +43,17 @@ def anilist_settings_menu():
         console.clear()
         show_header("AniList")
         
-        if anilist_tracker.is_authenticated():
-            _handle_authenticated_anilist()
-        else:
-            _handle_unauthenticated_anilist()
+        try:
+            if anilist_tracker.is_authenticated():
+                should_continue = _handle_authenticated_anilist()
+                if not should_continue:
+                    return
+            else:
+                should_continue = _handle_unauthenticated_anilist()
+                if not should_continue:
+                    return
+        except KeyboardInterrupt:
+            return
 
 def _handle_authenticated_anilist():
     from weeb_cli.services.tracker import anilist_tracker
@@ -75,13 +82,14 @@ def _handle_authenticated_anilist():
         ).ask()
         
         if sel is None:
-            return
+            return False
         
         if sel == opt_sync:
             with console.status(i18n.t("common.processing"), spinner="dots"):
                 synced = anilist_tracker.sync_pending()
             console.print(f"[green]{i18n.t('settings.anilist_synced', count=synced)}[/green]")
             time.sleep(1)
+            return True
         elif sel == opt_logout:
             confirm = questionary.confirm(
                 i18n.t("settings.confirm_logout"),
@@ -91,10 +99,10 @@ def _handle_authenticated_anilist():
                 anilist_tracker.logout()
                 console.print(f"[green]{i18n.t('settings.anilist_logged_out')}[/green]")
                 time.sleep(1)
-                return
+            return True
                 
     except KeyboardInterrupt:
-        return
+        return False
 
 def _handle_unauthenticated_anilist():
     from weeb_cli.services.tracker import anilist_tracker
@@ -112,27 +120,31 @@ def _handle_unauthenticated_anilist():
         ).ask()
         
         if sel is None:
-            return
+            return False
         
         if sel == opt_login:
             console.print(f"\n[cyan]{i18n.t('settings.anilist_opening_browser')}[/cyan]")
             console.print(f"[dim]{i18n.t('settings.anilist_waiting')}[/dim]\n")
             
-            with console.status(i18n.t("common.processing"), spinner="dots"):
+            try:
                 token = anilist_tracker.start_auth_server(timeout=120)
-            
-            if token:
-                success = anilist_tracker.authenticate(token)
-                if success:
-                    console.print(f"[green]{i18n.t('settings.anilist_login_success')}[/green]")
+                
+                if token:
+                    success = anilist_tracker.authenticate(token)
+                    if success:
+                        console.print(f"[green]{i18n.t('settings.anilist_login_success')}[/green]")
+                    else:
+                        console.print(f"[red]{i18n.t('settings.anilist_login_failed')}[/red]")
                 else:
-                    console.print(f"[red]{i18n.t('settings.anilist_login_failed')}[/red]")
-            else:
-                console.print(f"[yellow]{i18n.t('settings.anilist_timeout')}[/yellow]")
+                    console.print(f"[yellow]{i18n.t('settings.anilist_timeout')}[/yellow]")
+            except KeyboardInterrupt:
+                console.print(f"\n[yellow]{i18n.t('common.cancelled')}[/yellow]")
+            
             time.sleep(1)
+            return True
                 
     except KeyboardInterrupt:
-        return
+        return False
 
 def mal_settings_menu():
     from weeb_cli.services.tracker import mal_tracker
@@ -141,10 +153,17 @@ def mal_settings_menu():
         console.clear()
         show_header("MyAnimeList")
         
-        if mal_tracker.is_authenticated():
-            _handle_authenticated_mal()
-        else:
-            _handle_unauthenticated_mal()
+        try:
+            if mal_tracker.is_authenticated():
+                should_continue = _handle_authenticated_mal()
+                if not should_continue:
+                    return
+            else:
+                should_continue = _handle_unauthenticated_mal()
+                if not should_continue:
+                    return
+        except KeyboardInterrupt:
+            return
 
 def _handle_authenticated_mal():
     from weeb_cli.services.tracker import mal_tracker
@@ -173,13 +192,14 @@ def _handle_authenticated_mal():
         ).ask()
         
         if sel is None:
-            return
+            return False
         
         if sel == opt_sync:
             with console.status(i18n.t("common.processing"), spinner="dots"):
                 synced = mal_tracker.sync_pending()
             console.print(f"[green]{i18n.t('settings.mal_synced', count=synced)}[/green]")
             time.sleep(1)
+            return True
         elif sel == opt_logout:
             confirm = questionary.confirm(
                 i18n.t("settings.confirm_logout"),
@@ -189,10 +209,10 @@ def _handle_authenticated_mal():
                 mal_tracker.logout()
                 console.print(f"[green]{i18n.t('settings.mal_logged_out')}[/green]")
                 time.sleep(1)
-                return
+            return True
                 
     except KeyboardInterrupt:
-        return
+        return False
 
 def _handle_unauthenticated_mal():
     from weeb_cli.services.tracker import mal_tracker
@@ -210,23 +230,27 @@ def _handle_unauthenticated_mal():
         ).ask()
         
         if sel is None:
-            return
+            return False
         
         if sel == opt_login:
             console.print(f"\n[cyan]{i18n.t('settings.mal_opening_browser')}[/cyan]")
             console.print(f"[dim]{i18n.t('settings.mal_waiting')}[/dim]\n")
             
-            with console.status(i18n.t("common.processing"), spinner="dots"):
+            try:
                 user = mal_tracker.start_auth_flow(timeout=120)
+                
+                if user:
+                    console.print(f"[green]{i18n.t('settings.mal_login_success')}[/green]")
+                else:
+                    console.print(f"[red]{i18n.t('settings.mal_login_failed')}[/red]")
+            except KeyboardInterrupt:
+                console.print(f"\n[yellow]{i18n.t('common.cancelled')}[/yellow]")
             
-            if user:
-                console.print(f"[green]{i18n.t('settings.mal_login_success')}[/green]")
-            else:
-                console.print(f"[red]{i18n.t('settings.mal_login_failed')}[/red]")
             time.sleep(1)
+            return True
                 
     except KeyboardInterrupt:
-        return
+        return False
 
 
 def kitsu_settings_menu():
