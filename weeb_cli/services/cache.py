@@ -14,7 +14,7 @@ class CacheManager:
         self._memory_cache: Dict[str, tuple] = {}
     
     def _get_cache_key(self, key: str) -> str:
-        return hashlib.md5(key.encode()).hexdigest()
+        return hashlib.sha256(key.encode()).hexdigest()
     
     def get(self, key: str, max_age: int = 3600) -> Optional[Any]:
         if key in self._memory_cache:
@@ -70,14 +70,10 @@ class CacheManager:
         keys_to_remove = [k for k in self._memory_cache.keys() if pattern in k]
         for key in keys_to_remove:
             del self._memory_cache[key]
+            cache_key = self._get_cache_key(key)
+            cache_file = self.cache_dir / f"{cache_key}.cache"
+            cache_file.unlink(missing_ok=True)
             removed += 1
-        
-        for cache_file in self.cache_dir.glob("*.cache"):
-            try:
-                with open(cache_file, 'rb') as f:
-                    value = pickle.load(f)
-            except:
-                continue
         
         return removed
     

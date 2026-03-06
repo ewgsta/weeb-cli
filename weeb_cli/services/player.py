@@ -1,6 +1,4 @@
 import subprocess
-import shutil
-import sys
 from typing import Optional, Dict
 from rich.console import Console
 
@@ -37,6 +35,9 @@ class Player:
         cmd = [self.mpv_path, url]
         if title:
             cmd.extend([f"--force-media-title={title}"])
+        
+        if start_time:
+            cmd.append(f"--start={start_time}")
         
         if headers:
             header_strs = [f"{k}: {v}" for k, v in headers.items()]

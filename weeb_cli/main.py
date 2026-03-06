@@ -22,8 +22,17 @@ app.add_typer(serve_app, name="serve")
 console = Console()
 
 def check_network():
+    import requests
     with console.status(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]", spinner="dots"):
-        time.sleep(1)
+        try:
+            requests.get("https://api.github.com", timeout=5)
+        except requests.ConnectionError:
+            console.print(f"[red]{i18n.t('errors.network', 'Network connection error. Please check your internet connection.')}[/red]")
+            sys.exit(1)
+        except requests.Timeout:
+            console.print(f"[yellow]{i18n.t('errors.network_timeout', 'Network timeout. Continuing anyway...')}[/yellow]")
+        except Exception:
+            pass
 
 def run_setup():
     langs = {
@@ -58,7 +67,7 @@ def start():
 
     check_network()
     check_ffmpeg_silent()
-    sync_anilist_pending()
+    sync_tracker_pending()
 
     try:
         show_main_menu()
@@ -85,7 +94,7 @@ def check_incomplete_downloads():
         except KeyboardInterrupt:
             queue_manager.cancel_incomplete()
 
-def sync_anilist_pending():
+def sync_tracker_pending():
     from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
     
     if anilist_tracker.is_authenticated():
@@ -101,6 +110,13 @@ def sync_anilist_pending():
             synced = mal_tracker.sync_pending()
             if synced > 0:
                 console.print(f"[dim]MAL: {synced} {i18n.t('settings.mal_synced').split()[1]}[/dim]")
+    
+    if kitsu_tracker.is_authenticated():
+        pending = kitsu_tracker.get_pending_count()
+        if pending > 0:
+            synced = kitsu_tracker.sync_pending()
+            if synced > 0:
+                console.print(f"[dim]Kitsu: {synced} synced[/dim]")
     
     if kitsu_tracker.is_authenticated():
         pending = kitsu_tracker.get_pending_count()

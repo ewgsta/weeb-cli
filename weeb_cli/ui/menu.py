@@ -20,7 +20,7 @@ def _handle_exit():
         total = active_count + pending_count
         try:
             confirm = questionary.confirm(
-                i18n.t("menu.exit_confirm_downloads", f"{total} aktif indirme var. Çıkmak istediğinize emin misiniz?"),
+                i18n.t("menu.exit_confirm_downloads", count=total, default=f"{total} aktif indirme var. Çıkmak istediğinize emin misiniz?"),
                 default=False
             ).ask()
             
