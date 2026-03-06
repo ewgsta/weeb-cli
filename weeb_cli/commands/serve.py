@@ -185,7 +185,7 @@ def _get_fallback_streams(fallback_providers, sonarr_title, season, episode_num)
             ).ratio())
             log.info(f"  Fallback: {fp.name} matched '{best.title}' (id={best.id})")
             episodes = fp.get_episodes(best.id)
-            target = [e for e in episodes if e.number == episode_num]
+            target = [e for e in episodes if e.number == episode_num and e.season == season]
             if not target:
                 continue
             ep = target[0]

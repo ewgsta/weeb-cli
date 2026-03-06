@@ -160,6 +160,56 @@ class TestHeadlessDownloader:
         assert _sanitize_filename('Normal Name') == "Normal Name"
 
 
+class TestGetFallbackStreams:
+
+    def _make_provider(self, episodes, streams):
+        p = MagicMock()
+        p.name = "mock-provider"
+        p.search.return_value = [MOCK_ANIME]
+        p.get_episodes.return_value = episodes
+        p.get_streams.return_value = streams
+        return p
+
+    def test_fallback_filters_by_season(self):
+        s1_stream = StreamLink(url="https://example.com/s1e8.mp4", quality="1080p", server="tau")
+        s3_stream = StreamLink(url="https://example.com/s3e8.mp4", quality="1080p", server="tau")
+
+        episodes = [
+            Episode(id="s1e8", number=8, title="S1 Episode 8", season=1),
+            Episode(id="s2e8", number=8, title="S2 Episode 8", season=2),
+            Episode(id="s3e8", number=8, title="S3 Episode 8", season=3),
+        ]
+
+        def mock_get_streams(anime_id, episode_id):
+            if episode_id == "s1e8":
+                return [s1_stream]
+            if episode_id == "s3e8":
+                return [s3_stream]
+            return []
+
+        fp = self._make_provider(episodes, [])
+        fp.get_streams.side_effect = mock_get_streams
+
+        from weeb_cli.commands.serve import _get_fallback_streams
+        result = _get_fallback_streams([fp], "Angel Beats!", season=3, episode_num=8)
+
+        assert len(result) == 1
+        assert result[0].url == "https://example.com/s3e8.mp4"
+
+    def test_fallback_returns_empty_when_season_not_found(self):
+        episodes = [
+            Episode(id="s1e5", number=5, title="S1 Episode 5", season=1),
+            Episode(id="s2e5", number=5, title="S2 Episode 5", season=2),
+        ]
+
+        fp = self._make_provider(episodes, MOCK_STREAMS)
+
+        from weeb_cli.commands.serve import _get_fallback_streams
+        result = _get_fallback_streams([fp], "Angel Beats!", season=3, episode_num=5)
+
+        assert result == []
+
+
 class TestDatabaseLazyInit:
 
     def test_no_recursion_on_first_access(self, temp_dir):
