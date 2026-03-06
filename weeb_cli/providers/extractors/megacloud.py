@@ -39,7 +39,7 @@ def _get_json(url: str, headers: dict = None) -> Optional[dict]:
     try:
         data = _http_get(url, headers)
         return json.loads(data)
-    except:
+    except Exception:
         return None
 
 
@@ -47,7 +47,7 @@ def _get_html(url: str, headers: dict = None) -> str:
     try:
         data = _http_get(url, headers)
         return data.decode('utf-8')
-    except:
+    except Exception:
         return ""
 
 
@@ -63,7 +63,7 @@ def _get_decryption_key() -> Optional[str]:
         _cached_key = data.decode('utf-8').strip()
         _key_fetched_at = now
         return _cached_key
-    except:
+    except Exception:
         return _cached_key
 
 
@@ -78,7 +78,7 @@ def _decrypt_aes(encrypted: str, key: str) -> Optional[List[dict]]:
         cipher = AES.new(key_bytes, AES.MODE_ECB)
         decrypted = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
         return json.loads(decrypted.decode('utf-8'))
-    except:
+    except Exception:
         pass
     
     try:
@@ -88,7 +88,7 @@ def _decrypt_aes(encrypted: str, key: str) -> Optional[List[dict]]:
         cipher = AES.new(key_bytes, AES.MODE_ECB)
         decrypted = unpad(cipher.decrypt(encrypted_bytes), AES.block_size)
         return json.loads(decrypted.decode('utf-8'))
-    except:
+    except Exception:
         return None
 
 
@@ -169,7 +169,7 @@ def _get_fallback_source(ep_id: str, server_type: str, server_name: str) -> Opti
                     "tracks": data.get('tracks', []),
                     "server": name
                 }
-        except:
+        except Exception:
             continue
     
     return None

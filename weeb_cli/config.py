@@ -17,7 +17,7 @@ DEFAULT_CONFIG = {
     "max_concurrent_downloads": 3,
     "download_dir": None,  
     "ytdlp_format": "bestvideo+bestaudio/best",
-    "scraping_source": "None",
+    "scraping_source": None,
     "show_description": True,
     "debug_mode": False,
     "download_max_retries": 3,

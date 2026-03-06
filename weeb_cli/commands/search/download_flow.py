@@ -77,7 +77,7 @@ def _select_episodes_by_range(episodes):
                     nums.add(x)
             elif p.isdigit():
                 nums.add(int(p))
-    except:
+    except Exception:
         console.print(f"[red]{i18n.t('details.download_options.range_error')}[/red]")
         time.sleep(1)
         return None

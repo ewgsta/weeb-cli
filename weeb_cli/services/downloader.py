@@ -230,10 +230,12 @@ class QueueManager:
 
         ep_num = item["episode_number"]
         season = item.get("season", 1)
-        filename = f"{safe_title} - S{season}B{ep_num}.mp4" 
+        filename = f"{safe_title} - S{season}E{ep_num}.mp4" 
         output_path = anime_dir / filename
 
         stream_data = get_streams(item["slug"], item["episode_id"])
+        
+        from weeb_cli.i18n import i18n
         
         if not stream_data:
             err_msg = i18n.t("downloads.stream_data_failed")
@@ -429,7 +431,7 @@ class QueueManager:
                             speed = speed_match.group(1) + "/s"
                         
                         self._update_progress(item, progress=progress, eta=eta_part.strip(), speed=speed)
-                    except:
+                    except Exception:
                         pass
         
         if process.returncode != 0:
@@ -464,7 +466,7 @@ class QueueManager:
                             speed = speed_match.group(1)
                         
                         self._update_progress(item, progress=progress, eta=eta, speed=speed)
-                    except:
+                    except Exception:
                         pass
         if process.returncode != 0:
             raise DownloadError("yt-dlp download failed", code="YTDLP_FAILED")

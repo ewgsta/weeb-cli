@@ -97,14 +97,14 @@ def wait_for_anilist_callback(timeout=120):
     except KeyboardInterrupt:
         try:
             sock.close()
-        except:
+        except Exception:
             pass
         return None
     except Exception as e:
         logger.error(f"AniList callback error: {e}")
         try:
             sock.close()
-        except:
+        except Exception:
             pass
         return None
 
@@ -382,14 +382,14 @@ def wait_for_mal_callback(timeout=120):
     except KeyboardInterrupt:
         try:
             sock.close()
-        except:
+        except Exception:
             pass
         return None
     except Exception as e:
         logger.error(f"MAL callback server error: {e}")
         try:
             sock.close()
-        except:
+        except Exception:
             pass
         return None
 

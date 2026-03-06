@@ -41,5 +41,5 @@ def validate_url(url: str) -> bool:
         from urllib.parse import urlparse
         result = urlparse(url)
         return all([result.scheme, result.netloc])
-    except:
+    except Exception:
         return False

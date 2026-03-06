@@ -146,12 +146,12 @@ class Database:
         with self._lock:
             try:
                 conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
-            except:
+            except Exception:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN retry_count INTEGER DEFAULT 0')
             
             try:
                 conn.execute('SELECT speed FROM download_queue LIMIT 1')
-            except:
+            except Exception:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN speed TEXT')
             
             conn.commit()
@@ -167,7 +167,7 @@ class Database:
                 for key, value in data.items():
                     self.set_config(key, value)
                 config_file.rename(config_file.with_suffix('.json.bak'))
-            except:
+            except Exception:
                 pass
         
         progress_file = config_dir / "progress.json"
@@ -185,7 +185,7 @@ class Database:
                         info.get("last_watched_at")
                     )
                 progress_file.rename(progress_file.with_suffix('.json.bak'))
-            except:
+            except Exception:
                 pass
         
         history_file = config_dir / "search_history.json"
@@ -196,7 +196,7 @@ class Database:
                 for query in reversed(data):
                     self.add_search_history(query)
                 history_file.rename(history_file.with_suffix('.json.bak'))
-            except:
+            except Exception:
                 pass
         
         queue_file = config_dir / "download_queue.json"
@@ -207,7 +207,7 @@ class Database:
                 for item in data:
                     self.add_to_queue(item)
                 queue_file.rename(queue_file.with_suffix('.json.bak'))
-            except:
+            except Exception:
                 pass
     
     def get_config(self, key, default=None):
@@ -216,7 +216,7 @@ class Database:
             if row:
                 try:
                     return json.loads(row['value'])
-                except:
+                except Exception:
                     return row['value']
             return default
     
@@ -234,7 +234,7 @@ class Database:
             for row in rows:
                 try:
                     result[row['key']] = json.loads(row['value'])
-                except:
+                except Exception:
                     result[row['key']] = row['value']
             return result
     

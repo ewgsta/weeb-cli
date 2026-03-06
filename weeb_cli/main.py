@@ -118,13 +118,6 @@ def sync_tracker_pending():
             if synced > 0:
                 console.print(f"[dim]Kitsu: {synced} synced[/dim]")
     
-    if kitsu_tracker.is_authenticated():
-        pending = kitsu_tracker.get_pending_count()
-        if pending > 0:
-            synced = kitsu_tracker.sync_pending()
-            if synced > 0:
-                console.print(f"[dim]Kitsu: {synced} {i18n.t('settings.kitsu_synced').split()[1]}[/dim]")
-
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):
     if ctx.invoked_subcommand is None:

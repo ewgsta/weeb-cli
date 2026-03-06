@@ -1,6 +1,7 @@
 import subprocess
 from typing import Optional, Dict
 from rich.console import Console
+from weeb_cli.services.logger import debug as log_debug
 
 from weeb_cli.services.dependency_manager import dependency_manager
 from weeb_cli.services.error_handler import handle_error
@@ -40,14 +41,16 @@ class Player:
             cmd.append(f"--start={start_time}")
         
         if headers:
-            header_strs = [f"{k}: {v}" for k, v in headers.items()]
-            cmd.append(f"--http-header-fields={','.join(header_strs)}")
+            for k, v in headers.items():
+                cmd.append(f"--http-header-fields={k}: {v}")
         
         cmd.append("--fs")
 
         cmd.append("--save-position-on-quit")
         cmd.append("--really-quiet")
         cmd.append("--no-terminal")
+        
+        log_debug(f"[Player] MPV cmd: {' '.join(cmd[:5])}... ({len(cmd)} args)")
             
         try:
             result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)

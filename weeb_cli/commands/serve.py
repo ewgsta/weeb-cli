@@ -20,6 +20,16 @@ import typer
 
 log = logging.getLogger("weeb-cli")
 
+
+def _sanitize_for_release(name: str) -> str:
+    """Sanitize release name to prevent path traversal."""
+    import unicodedata
+    name = unicodedata.normalize('NFKD', name)
+    name = re.sub(r'[<>:"/\\|?*\x00-\x1f]', '', name)
+    name = name.replace('..', '').replace('/', '').replace('\\', '')
+    name = name.strip('. ')
+    return name or 'download'
+
 serve_app = typer.Typer(
     name="serve",
     help="Start a Torznab-compatible server for Sonarr/*arr integration.",
@@ -374,8 +384,10 @@ def serve(
 
         wd = Path(watch_dir)
         wd.mkdir(parents=True, exist_ok=True)
-        stub_name = f"{data.get('release_name', 'download')}.torrent"
+        stub_name = f"{_sanitize_for_release(data.get('release_name', 'download'))}.torrent"
         stub_path = wd / stub_name
+        if not stub_path.resolve().is_relative_to(wd.resolve()):
+            return "Invalid release name", 400
         with open(stub_path, "w") as f:
             json.dump(stub, f)
         log.info(f"Created stub: {stub_path}")
@@ -404,8 +416,8 @@ def serve(
                             retried = failed_file.with_suffix(".torrent")
                             failed_file.rename(retried)
                             log.info(f"Retrying: {retried.name}")
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        log.warning(f"Failed to retry {failed_file.name}: {e}")
 
                 for stub_file in watch.glob("*.torrent"):
                     try:
@@ -439,14 +451,15 @@ def serve(
                             stub_file.rename(stub_file.with_suffix(".failed"))
                             log.error(f"Failed: {release_name}")
 
-                    except Exception:
+                    except Exception as e:
+                        log.error(f"Error processing stub {stub_file.name}: {e}")
                         try:
                             stub_file.rename(stub_file.with_suffix(".failed"))
                         except Exception:
                             pass
 
-            except Exception:
-                pass
+            except Exception as e:
+                log.error(f"Blackhole worker error: {e}")
 
             time.sleep(poll_interval)
 

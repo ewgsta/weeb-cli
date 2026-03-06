@@ -126,7 +126,7 @@ def _build_episode_choices(episodes, season, completed_ids, next_ep_num):
         num_val = ep.get('number') or ep.get('ep_num')
         try:
             num = int(num_val)
-        except:
+        except Exception:
             num = -1
         
         ep_progress_id = make_season_episode_id(season, num)
@@ -249,7 +249,7 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         
         completed_ids.add(season_ep_id)
         return True
-    except:
+    except Exception:
         return False
 
 def _update_trackers(details, slug):

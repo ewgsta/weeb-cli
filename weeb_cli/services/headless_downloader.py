@@ -40,7 +40,7 @@ def download_episode(
         log.info(f"Already exists: {output_path}")
         return str(output_path)
 
-    temp_path = output_path.with_suffix(".mp4.part")
+    temp_path = output_path.with_suffix(".part")
 
     is_hls = ".m3u8" in stream_url
 

@@ -35,7 +35,7 @@ def _get_json(url: str, headers: dict = None) -> Optional[dict]:
     try:
         data = _http_get(url, headers)
         return json.loads(data)
-    except:
+    except Exception:
         return None
 
 
@@ -43,7 +43,7 @@ def _get_html(url: str, headers: dict = None) -> str:
     try:
         data = _http_get(url, headers)
         return data.decode('utf-8')
-    except:
+    except Exception:
         return ""
 
 
@@ -104,7 +104,7 @@ class HiAnimeProvider(BaseProvider):
                     type=self._parse_type(anime_type),
                     cover=cover
                 ))
-            except:
+            except Exception:
                 continue
         
         return results
@@ -181,7 +181,7 @@ class HiAnimeProvider(BaseProvider):
                     number=ep_num,
                     title=title
                 ))
-            except:
+            except Exception:
                 continue
         
         return episodes
@@ -213,7 +213,7 @@ class HiAnimeProvider(BaseProvider):
                         "name": server_name,
                         "type": "sub"
                     })
-            except:
+            except Exception:
                 continue
         
         for server_item in soup.select('.servers-dub .server-item'):
@@ -230,7 +230,7 @@ class HiAnimeProvider(BaseProvider):
                         "name": server_name,
                         "type": "dub"
                     })
-            except:
+            except Exception:
                 continue
         
         streams = []
@@ -253,7 +253,7 @@ class HiAnimeProvider(BaseProvider):
                             headers={"Referer": "https://megacloud.tv"},
                             subtitles=self._get_subtitle_url(stream_data.get("tracks", []))
                         ))
-                except:
+                except Exception:
                     continue
         
         if not streams:

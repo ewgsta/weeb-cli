@@ -106,7 +106,8 @@ class LocalLibrary:
     
     def _extract_episode_number(self, filename: str) -> int:
         patterns = [
-            r'S\d+B(\d+)',
+            r'S\d+E(\d+)',
+            r'S\d+B(\d+)',  # legacy :p
             r'[Ee]p?(\d+)',
             r'[Bb]ölüm\s*(\d+)',
             r'[Ee]pisode\s*(\d+)',
@@ -273,7 +274,7 @@ class LocalLibrary:
             for future in as_completed(futures):
                 try:
                     total += future.result()
-                except:
+                except Exception:
                     pass
         return total
     
