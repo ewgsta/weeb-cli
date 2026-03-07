@@ -29,14 +29,21 @@ class Database:
                 self.db_path.parent.mkdir(parents=True, exist_ok=True)
                 self._connection = sqlite3.connect(
                     self.db_path, 
-                    timeout=10,
+                    timeout=30,  # Increased timeout for better reliability
                     check_same_thread=False,
                     isolation_level=None
                 )
                 self._connection.row_factory = sqlite3.Row
+                # WAL mode for better concurrent access
                 self._connection.execute('PRAGMA journal_mode=WAL')
+                # NORMAL is safe with WAL mode
                 self._connection.execute('PRAGMA synchronous=NORMAL')
+                # Larger cache for better performance
                 self._connection.execute('PRAGMA cache_size=-64000')
+                # Enable foreign keys
+                self._connection.execute('PRAGMA foreign_keys=ON')
+                # Busy timeout for concurrent access
+                self._connection.execute('PRAGMA busy_timeout=30000')
             return self._connection
     
     @contextmanager
@@ -216,7 +223,8 @@ class Database:
             if row:
                 try:
                     return json.loads(row['value'])
-                except Exception:
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    # If JSON decode fails, return raw value
                     return row['value']
             return default
     

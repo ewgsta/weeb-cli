@@ -46,9 +46,15 @@ class Config:
                     return val
             except Exception:
                 pass
+        
+        # Special handling for download_dir
         if key == "download_dir":
-            return get_default_download_dir()
-        return DEFAULT_CONFIG.get(key, default)
+            return default if default is not None else get_default_download_dir()
+        
+        # Use provided default, fallback to DEFAULT_CONFIG, then None
+        if default is not None:
+            return DEFAULT_CONFIG.get(key, default)
+        return DEFAULT_CONFIG.get(key)
     
     def set(self, key, value):
         self.db.set_config(key, value)

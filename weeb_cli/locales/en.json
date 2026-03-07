@@ -285,6 +285,11 @@
         "no_streams": "No streams found"
     },
     "downloads": {
+    "disk_full": "Insufficient disk space: {free} available. Need at least 1GB free.",
+    "no_stream_url": "Stream URL not found",
+    "stream_data_failed": "Failed to get stream data",
+    "empty_stream_links": "No stream links available",
+    "no_valid_streams_found": "No valid streams found after validation",
         "title": "Downloads",
         "empty": "You haven't downloaded anything yet.",
         "status": "Status",

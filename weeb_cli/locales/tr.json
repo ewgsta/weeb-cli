@@ -285,6 +285,11 @@
         "no_streams": "Stream bulunamadı"
     },
     "downloads": {
+    "disk_full": "Yetersiz disk alanı: {free} mevcut. En az 1GB boş alan gerekli.",
+    "no_stream_url": "Stream URL bulunamadı",
+    "stream_data_failed": "Stream verisi alınamadı",
+    "empty_stream_links": "Stream linkleri bulunamadı",
+    "no_valid_streams_found": "Doğrulama sonrası geçerli stream bulunamadı",
         "title": "İndirmeler",
         "empty": "Henüz hiç indirme yapmamışsınız.",
         "status": "Durum",

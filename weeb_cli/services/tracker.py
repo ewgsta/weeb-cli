@@ -31,6 +31,7 @@ def load_template(filename):
         return ""
 
 def wait_for_anilist_callback(timeout=120):
+    """Wait for AniList OAuth callback with proper resource cleanup."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
@@ -49,64 +50,62 @@ def wait_for_anilist_callback(timeout=120):
                 conn, addr = sock.accept()
                 conn.settimeout(10)
                 
-                data = conn.recv(4096).decode("utf-8", errors="ignore")
-                first_line = data.split("\r\n")[0] if data else ""
-                
-                if "GET /callback" in first_line and "#access_token=" in data:
-                    parts = data.split("#access_token=")
-                    if len(parts) > 1:
-                        token_part = parts[1].split("&")[0].split(" ")[0]
-                        if token_part:
-                            token = token_part
+                try:
+                    data = conn.recv(4096).decode("utf-8", errors="ignore")
+                    first_line = data.split("\r\n")[0] if data else ""
                     
-                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
-                    conn.sendall(response.encode("utf-8"))
-                    conn.close()
-                    
-                    if token:
-                        sock.close()
-                        return token
-                elif "/token?" in first_line and "?t=" in first_line:
-                    query_part = first_line.split("?")[1].split(" ")[0]
-                    params = parse_qs(query_part)
-                    token = params.get("t", [None])[0]
-                    
-                    response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nOK"
-                    conn.sendall(response.encode("utf-8"))
-                    conn.close()
-                    
-                    if token:
-                        sock.close()
-                        return token
-                else:
-                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
-                    conn.sendall(response.encode("utf-8"))
-                    conn.close()
+                    if "GET /callback" in first_line and "#access_token=" in data:
+                        parts = data.split("#access_token=")
+                        if len(parts) > 1:
+                            token_part = parts[1].split("&")[0].split(" ")[0]
+                            if token_part:
+                                token = token_part
+                        
+                        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
+                        conn.sendall(response.encode("utf-8"))
+                        
+                        if token:
+                            return token
+                    elif "/token?" in first_line and "?t=" in first_line:
+                        query_part = first_line.split("?")[1].split(" ")[0]
+                        params = parse_qs(query_part)
+                        token = params.get("t", [None])[0]
+                        
+                        response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nConnection: close\r\n\r\nOK"
+                        conn.sendall(response.encode("utf-8"))
+                        
+                        if token:
+                            return token
+                    else:
+                        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{callback_html_success}"
+                        conn.sendall(response.encode("utf-8"))
+                finally:
+                    # Always close connection
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
                     
             except socket.timeout:
                 continue
             except KeyboardInterrupt:
-                sock.close()
                 return None
             except Exception:
                 continue
         
-        sock.close()
         return None
                 
     except KeyboardInterrupt:
-        try:
-            sock.close()
-        except Exception:
-            pass
         return None
     except Exception as e:
         logger.error(f"AniList callback error: {e}")
+        return None
+    finally:
+        # Always close socket
         try:
             sock.close()
         except Exception:
             pass
-        return None
 
 class AniListTracker:
     def __init__(self):
@@ -168,11 +167,14 @@ class AniListTracker:
         return None
     
     def authenticate(self, token):
+        if not token:
+            return False
+            
         self._token = token
         self.db.set_config("anilist_token", token)
         
         user = self._get_viewer()
-        if user:
+        if user and isinstance(user, dict) and "id" in user and "name" in user:
             self._user_id = str(user["id"])
             self.db.set_config("anilist_user_id", self._user_id)
             self.db.set_config("anilist_username", user["name"])
@@ -220,6 +222,9 @@ class AniListTracker:
         return data.get("Viewer") if data else None
     
     def search_anime(self, title):
+        if not title:
+            return None
+            
         query = """
         query ($search: String) {
             Media(search: $search, type: ANIME) {
@@ -234,7 +239,9 @@ class AniListTracker:
         }
         """
         data = self._graphql(query, {"search": title})
-        return data.get("Media") if data else None
+        if data and isinstance(data, dict):
+            return data.get("Media")
+        return None
     
     def update_progress(self, anime_title, episode, total_episodes=None):
         if not self.is_authenticated():
@@ -327,6 +334,7 @@ MAL_PROXY_URL = "https://weeb-malproxy.vercel.app"
 MAL_LOCAL_PORT = 8766
 
 def wait_for_mal_callback(timeout=120):
+    """Wait for MAL OAuth callback with proper resource cleanup."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     
@@ -345,53 +353,53 @@ def wait_for_mal_callback(timeout=120):
                 conn, addr = sock.accept()
                 conn.settimeout(10)
                 
-                data = conn.recv(4096).decode("utf-8", errors="ignore")
-                
-                code = None
-                if "GET " in data:
-                    first_line = data.split("\r\n")[0]
-                    if "?" in first_line:
-                        query_part = first_line.split("?")[1].split(" ")[0]
-                        params = parse_qs(query_part)
-                        code = params.get("code", [None])[0]
-                
-                if code:
-                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_success}"
-                    conn.sendall(response.encode("utf-8"))
-                else:
-                    response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_error}"
-                    conn.sendall(response.encode("utf-8"))
-                
-                conn.close()
-                
-                if code:
-                    sock.close()
-                    return code
+                try:
+                    data = conn.recv(4096).decode("utf-8", errors="ignore")
+                    
+                    code = None
+                    if "GET " in data:
+                        first_line = data.split("\r\n")[0]
+                        if "?" in first_line:
+                            query_part = first_line.split("?")[1].split(" ")[0]
+                            params = parse_qs(query_part)
+                            code = params.get("code", [None])[0]
+                    
+                    if code:
+                        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_success}"
+                        conn.sendall(response.encode("utf-8"))
+                    else:
+                        response = f"HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\nConnection: close\r\n\r\n{mal_callback_error}"
+                        conn.sendall(response.encode("utf-8"))
+                    
+                    if code:
+                        return code
+                finally:
+                    # Always close connection
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
                     
             except socket.timeout:
                 continue
             except KeyboardInterrupt:
-                sock.close()
                 return None
             except Exception:
                 continue
         
-        sock.close()
         return None
                 
     except KeyboardInterrupt:
-        try:
-            sock.close()
-        except Exception:
-            pass
         return None
     except Exception as e:
         logger.error(f"MAL callback server error: {e}")
+        return None
+    finally:
+        # Always close socket
         try:
             sock.close()
         except Exception:
             pass
-        return None
 
 class MALTracker:
     def __init__(self):

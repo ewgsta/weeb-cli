@@ -115,7 +115,12 @@ class QueueManager:
         return sanitize_filename(name)
 
     def _manage_queue(self):
-        while self.running:
+        """Manage download queue with safety limits."""
+        max_iterations = 86400  # 24 hours max (1 iteration per second)
+        iteration = 0
+        
+        while self.running and iteration < max_iterations:
+            iteration += 1
             max_workers = config.get("max_concurrent_downloads", 3)
             
             queue = self.queue
@@ -126,7 +131,7 @@ class QueueManager:
                 to_start = pending[0]
                 self.db.update_queue_item(to_start["episode_id"], status="processing")
                 
-                t = threading.Thread(target=self._run_task, args=(to_start,))
+                t = threading.Thread(target=self._run_task, args=(to_start,), daemon=True)
                 t.start()
             
             if not pending and active_count == 0:
@@ -134,6 +139,10 @@ class QueueManager:
                 break
             
             time.sleep(1)
+        
+        if iteration >= max_iterations:
+            from weeb_cli.services.logger import error
+            error("Download queue manager reached max iterations, stopping for safety")
 
     def _run_task(self, item):
         from weeb_cli.services.notifier import send_notification
@@ -146,17 +155,26 @@ class QueueManager:
         
         debug(f"Starting download: {item['anime_title']} - Ep {item['episode_number']}")
         
+        # Enhanced disk space check
         try:
             import shutil
             download_dir = config.get("download_dir")
             total, used, free = shutil.disk_usage(download_dir)
             
-            if free < 500 * 1024 * 1024:
-                error_msg = i18n.t("downloads.disk_full")
+            # Require at least 1GB free space for safety
+            # Average anime episode is 300-500MB, so 1GB ensures we have enough room
+            min_free_space = 1024 * 1024 * 1024  # 1GB
+            
+            if free < min_free_space:
+                free_gb = free / (1024 * 1024 * 1024)
+                error_msg = i18n.t("downloads.disk_full", free=f"{free_gb:.2f}GB")
                 self.db.update_queue_item(item["episode_id"], status="failed", error=error_msg, eta="")
                 send_notification(i18n.t("common.error"), f"{item['anime_title']}: {error_msg}")
+                debug(f"Insufficient disk space: {free_gb:.2f}GB free, need at least 1GB")
                 return
         except Exception as e:
+            # Don't fail download if disk check fails, just log warning
+            debug(f"Disk space check failed: {e}")
             handle_download_error(e, item['anime_title'], item['episode_number'])
 
         for attempt in range(max_retries):
@@ -307,8 +325,8 @@ class QueueManager:
         debug(f"Extracted stream URL: {stream_url}")
         
         if not stream_url:
-            log_error(f"Download failed - Stream URL bulunamadı. Data: {stream_data}")
-            raise DownloadError("Stream URL bulunamadı", code="NO_STREAM_URL")
+            log_error(f"Download failed - {i18n.t('downloads.no_stream_url')}. Data: {stream_data}")
+            raise DownloadError(i18n.t("downloads.no_stream_url"), code="NO_STREAM_URL")
 
         debug(f"Stream URL found: {stream_url[:80]}...")
         
