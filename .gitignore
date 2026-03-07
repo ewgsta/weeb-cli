@@ -51,6 +51,5 @@ weeb-downloads/
 .weeb-cli/
 
 # Distribution
-distribution/
 *.spec
 publish.sh
