@@ -15,7 +15,7 @@ def show_header(title="Weeb CLI", show_version=False, show_source=False):
     parts = []
     
     if show_source:
-        cfg_source = config.get("scraping_source", "local")
+        cfg_source = config.get("scraping_source") or "local"
         disp_source = "Weeb" if cfg_source == "local" else cfg_source.capitalize()
         parts.append(disp_source)
         

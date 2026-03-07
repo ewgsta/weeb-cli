@@ -1,3 +1,4 @@
+import json
 import pickle
 import time
 import hashlib
@@ -31,11 +32,19 @@ class CacheManager:
             age = time.time() - cache_file.stat().st_mtime
             if age < max_age:
                 try:
+                    with open(cache_file, 'r', encoding='utf-8') as f:
+                        value = json.load(f)
+                        self._memory_cache[key] = (value, time.time())
+                        return value
+                except (json.JSONDecodeError, UnicodeDecodeError, OSError):
+                    pass
+                # Fallback: try reading as pickle for backward compatibility with existing cache files
+                try:
                     with open(cache_file, 'rb') as f:
                         value = pickle.load(f)
                         self._memory_cache[key] = (value, time.time())
                         return value
-                except (pickle.PickleError, EOFError):
+                except (pickle.PickleError, EOFError, OSError):
                     cache_file.unlink(missing_ok=True)
         
         return None
@@ -47,9 +56,9 @@ class CacheManager:
         cache_file = self.cache_dir / f"{cache_key}.cache"
         
         try:
-            with open(cache_file, 'wb') as f:
-                pickle.dump(value, f)
-        except (pickle.PickleError, OSError):
+            with open(cache_file, 'w', encoding='utf-8') as f:
+                json.dump(value, f, ensure_ascii=False, default=str)
+        except (OSError, TypeError):
             pass
     
     def delete(self, key: str) -> None:

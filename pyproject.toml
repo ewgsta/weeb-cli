@@ -8,7 +8,7 @@ version = "2.9.1"
 description = "Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi."
 readme = "README.md"
 authors = [{ name = "ewgsta", email = "ewgst@proton.me" }]
-license = "CC-BY-NC-ND-4.0"
+license = "GPL-3.0-only"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",

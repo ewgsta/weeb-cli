@@ -1,4 +1,5 @@
 import questionary
+import time
 from rich.console import Console
 import sys
 from .header import show_header
@@ -36,89 +37,85 @@ def _handle_exit():
     else:
         console.print(f"[yellow] {i18n.t('common.success')}...[/yellow]")
         sys.exit(0)
-    
-    return True
 
 def show_main_menu():
-    console.clear()
-    show_header("Weeb CLI", show_version=True, show_source=True)
-    
-    shortcuts = shortcut_manager.get_shortcuts()
-    shortcuts_enabled = shortcut_manager.is_enabled()
-    
-    opt_search = i18n.t("menu.options.search")
-    opt_downloads = i18n.t("menu.options.downloads")
-    opt_watchlist = i18n.t("menu.options.watchlist")
-    opt_library = i18n.t("menu.options.library")
-    opt_settings = i18n.t("menu.options.settings")
-    
-    if shortcuts_enabled:
-        choices = [
-            questionary.Choice(opt_search, shortcut_key=shortcuts.get('search')),
-            questionary.Choice(opt_downloads, shortcut_key=shortcuts.get('downloads')),
-            questionary.Choice(opt_watchlist, shortcut_key=shortcuts.get('watchlist')),
-            questionary.Choice(opt_library, shortcut_key=shortcuts.get('library')),
-        ]
-    else:
-        choices = [
-            opt_search,
-            opt_downloads,
-            opt_watchlist,
-            opt_library,
-        ]
-    
-    active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
-    opt_active = None
-    if active_queue or queue_manager.queue:
-        is_running = queue_manager.is_running()
-        status = i18n.t("downloads.queue_running") if is_running else i18n.t("downloads.queue_stopped")
-        opt_active = f"{i18n.t('downloads.active_downloads')} ({len(active_queue)}) - {status}"
-        if shortcuts_enabled:
-            choices.append(questionary.Choice(opt_active))
-        else:
-            choices.append(opt_active)
-    
-    if shortcuts_enabled:
-        choices.append(questionary.Choice(opt_settings, shortcut_key=shortcuts.get('settings')))
-    else:
-        choices.append(opt_settings)
-    
-    try:
-        selected = questionary.select(
-            i18n.t("menu.prompt"),
-            choices=choices,
-            pointer=">",
-            use_shortcuts=shortcuts_enabled,
-            style=questionary.Style([
-                ('pointer', 'fg:cyan bold'),
-                ('highlighted', 'fg:cyan'),
-                ('selected', 'fg:cyan bold'),
-            ])
-        ).ask()
-        
+    while True:
         console.clear()
-        
-        if selected == opt_search:
-            search_anime()
-        elif selected == opt_watchlist:
-            show_watchlist()
-        elif selected == opt_library:
-            from weeb_cli.commands.library import show_library_menu
-            show_library_menu()
-        elif selected == opt_downloads:
-            show_downloads()
-        elif opt_active and selected == opt_active:
-            show_active_downloads_menu()
-        elif selected == opt_settings:
-            open_settings()
-        elif selected is None:
+        show_header("Weeb CLI", show_version=True, show_source=True)
+
+        shortcuts = shortcut_manager.get_shortcuts()
+        shortcuts_enabled = shortcut_manager.is_enabled()
+
+        opt_search = i18n.t("menu.options.search")
+        opt_downloads = i18n.t("menu.options.downloads")
+        opt_watchlist = i18n.t("menu.options.watchlist")
+        opt_library = i18n.t("menu.options.library")
+        opt_settings = i18n.t("menu.options.settings")
+
+        if shortcuts_enabled:
+            choices = [
+                questionary.Choice(opt_search, shortcut_key=shortcuts.get('search')),
+                questionary.Choice(opt_downloads, shortcut_key=shortcuts.get('downloads')),
+                questionary.Choice(opt_watchlist, shortcut_key=shortcuts.get('watchlist')),
+                questionary.Choice(opt_library, shortcut_key=shortcuts.get('library')),
+            ]
+        else:
+            choices = [
+                opt_search,
+                opt_downloads,
+                opt_watchlist,
+                opt_library,
+            ]
+
+        active_queue = [i for i in queue_manager.queue if i["status"] in ["pending", "processing"]]
+        opt_active = None
+        if active_queue or queue_manager.queue:
+            is_running = queue_manager.is_running()
+            status = i18n.t("downloads.queue_running") if is_running else i18n.t("downloads.queue_stopped")
+            opt_active = f"{i18n.t('downloads.active_downloads')} ({len(active_queue)}) - {status}"
+            if shortcuts_enabled:
+                choices.append(questionary.Choice(opt_active))
+            else:
+                choices.append(opt_active)
+
+        if shortcuts_enabled:
+            choices.append(questionary.Choice(opt_settings, shortcut_key=shortcuts.get('settings')))
+        else:
+            choices.append(opt_settings)
+
+        try:
+            selected = questionary.select(
+                i18n.t("menu.prompt"),
+                choices=choices,
+                pointer=">",
+                use_shortcuts=shortcuts_enabled,
+                style=questionary.Style([
+                    ('pointer', 'fg:cyan bold'),
+                    ('highlighted', 'fg:cyan'),
+                    ('selected', 'fg:cyan bold'),
+                ])
+            ).ask()
+
+            console.clear()
+
+            if selected == opt_search:
+                search_anime()
+            elif selected == opt_watchlist:
+                show_watchlist()
+            elif selected == opt_library:
+                from weeb_cli.commands.library import show_library_menu
+                show_library_menu()
+            elif selected == opt_downloads:
+                show_downloads()
+            elif opt_active and selected == opt_active:
+                show_active_downloads_menu()
+            elif selected == opt_settings:
+                open_settings()
+            elif selected is None:
+                _handle_exit()
+
+        except KeyboardInterrupt:
             _handle_exit()
-            
-        show_main_menu()
-        
-    except KeyboardInterrupt:
-        if not _handle_exit():
-            show_main_menu()
 
 def show_active_downloads_menu():
     while True:
@@ -153,7 +150,6 @@ def show_active_downloads_menu():
         choices.append(opt_clear)
         
         try:
-            import time
             action = questionary.select(
                 i18n.t("downloads.action_prompt"),
                 choices=choices,

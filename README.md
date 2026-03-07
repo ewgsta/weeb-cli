@@ -10,7 +10,6 @@
 
 <p align="center">
   <a href="https://github.com/ewgsta/weeb-cli/releases"><img src="https://img.shields.io/github/v/release/ewgsta/weeb-cli?style=flat-square" alt="Release"></a>
-  <a 
   <a href="https://github.com/ewgsta/weeb-cli/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-blue?style=flat-square" alt="License"></a>
   <a href="https://github.com/ewgsta/weeb-cli/stargazers"><img src="https://img.shields.io/github/stars/ewgsta/weeb-cli?style=flat-square" alt="Stars"></a>
   <a href="https://github.com/ewgsta/weeb-cli/actions"><img src="https://img.shields.io/github/actions/workflow/status/ewgsta/weeb-cli/tests.yml?style=flat-square" alt="Tests"></a>
@@ -349,7 +348,7 @@ weeb-cli/
 ## Tech Stack
 
 ### Core Technologies
-- **Python 3.8+** - Main programming language
+- **Python 3.12+** - Main programming language
 - **Typer** - CLI framework with rich terminal support
 - **Rich** - Terminal formatting and styling
 - **Questionary** - Interactive prompts and menus
