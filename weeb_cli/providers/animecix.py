@@ -1,4 +1,5 @@
 import json
+import re
 import time
 import urllib.request
 from urllib.parse import urlparse, parse_qs, quote, urlsplit, urlunsplit
@@ -222,7 +223,15 @@ class AnimeCixProvider(BaseProvider):
                         quality=label or "auto",
                         server="tau-video"
                     ))
-            
+
+            def _quality_sort_key(stream):
+                quality = stream.quality.lower().replace('p', '')
+                try:
+                    return -int(quality)
+                except ValueError:
+                    return 0
+
+            streams.sort(key=_quality_sort_key)
             return streams
             
         except Exception:
@@ -260,7 +269,6 @@ class AnimeCixProvider(BaseProvider):
         return "series"
     
     def _parse_episode_number(self, name: str, fallback: int) -> int:
-        import re
         patterns = [
             r'(?:bölüm|episode|ep)\s*(\d+)',
             r'(\d+)\.\s*(?:bölüm|episode)',

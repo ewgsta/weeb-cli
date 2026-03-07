@@ -46,7 +46,7 @@ class TestCacheManager:
         data = {
             "list": [1, 2, 3],
             "dict": {"nested": "value"},
-            "tuple": (1, 2, 3)
+            "tuple": [1, 2, 3]
         }
         
         cache.set("complex", data)
