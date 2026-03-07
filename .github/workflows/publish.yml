@@ -99,7 +99,7 @@ jobs:
       - name: Update PKGBUILD version
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          sed -i "s/pkgver=0.0.0/pkgver=$VERSION/" distribution/aur/PKGBUILD
+          sed -i "s/^pkgver=.*/pkgver=$VERSION/" distribution/aur/PKGBUILD
           
       - name: Publish to AUR
         uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
