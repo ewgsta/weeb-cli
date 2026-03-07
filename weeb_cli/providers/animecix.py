@@ -229,7 +229,7 @@ class AnimeCixProvider(BaseProvider):
                 try:
                     return -int(quality)
                 except ValueError:
-                    return 0
+                    return 1
 
             streams.sort(key=_quality_sort_key)
             return streams

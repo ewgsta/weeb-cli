@@ -39,19 +39,17 @@ serve_app = typer.Typer(
 
 # -- Helpers ------------------------------------------------------------------
 
-def _sanitize_for_release(name: str) -> str:
-    name = re.sub(r'[<>:"/\\|?*]', "", name)
-    name = re.sub(r"[\s]+", ".", name).strip(".")
-    return name
-
-
 def _quality_score(q: str) -> int:
     q = (q or "").lower()
+    if "4k" in q or "2160" in q:
+        return 5
     if "1080" in q:
-        return 3
+        return 4
     if "720" in q:
-        return 2
+        return 3
     if "480" in q:
+        return 2
+    if "360" in q:
         return 1
     return 0
 

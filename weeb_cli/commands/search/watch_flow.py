@@ -7,6 +7,7 @@ from weeb_cli.services.watch import get_streams
 from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.scraper import scraper
+from weeb_cli.services.logger import error as log_error
 from .episode_utils import get_episodes_safe, group_episodes_by_season, make_season_episode_id
 from .stream_utils import sort_streams, extract_streams_from_response
 
@@ -249,7 +250,8 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         
         completed_ids.add(season_ep_id)
         return True
-    except Exception:
+    except Exception as e:
+        log_error(f"Failed to mark episode as watched: {e}")
         return False
 
 def _update_trackers(details, slug):
