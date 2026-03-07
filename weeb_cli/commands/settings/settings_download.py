@@ -106,7 +106,12 @@ def _change_max_retries(curr_retries):
 def _change_retry_delay(curr_delay):
     val = questionary.text(i18n.t("settings.enter_retry_delay"), default=str(curr_delay)).ask()
     if val and val.isdigit():
-        config.set("download_retry_delay", int(val))
+        n = int(val)
+        if 0 <= n <= 300:
+            config.set("download_retry_delay", n)
+        else:
+            console.print("[red]Retry delay must be between 0 and 300 seconds.[/red]")
+            time.sleep(1.5)
 
 def aria2_settings_menu():
     while True:

@@ -44,8 +44,11 @@ def open_settings():
 
 def _build_settings_menu():
     lang = config.get("language")
-    source = config.get("scraping_source", "local")
-    display_source = "weeb" if source == "local" else source
+    source = config.get("scraping_source")
+    if not source:
+        from weeb_cli.providers.registry import get_default_provider
+        source = get_default_provider(lang or "tr") or "animecix"
+    display_source = source
 
     aria2_state = i18n.t("common.enabled") if config.get("aria2_enabled") else i18n.t("common.disabled")
     ytdlp_state = i18n.t("common.enabled") if config.get("ytdlp_enabled") else i18n.t("common.disabled")

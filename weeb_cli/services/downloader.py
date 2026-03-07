@@ -267,6 +267,17 @@ class QueueManager:
             
             debug(f"Found {len(valid_links)}/{len(links)} valid streams, trying each one...")
             
+            def _link_quality_score(link):
+                q = (link.get("quality") or "").lower()
+                if "4k" in q or "2160" in q: return 5
+                if "1080" in q: return 4
+                if "720" in q: return 3
+                if "480" in q: return 2
+                if "360" in q: return 1
+                return 0
+
+            valid_links.sort(key=_link_quality_score, reverse=True)
+
             last_error = None
             for idx, link in enumerate(valid_links):
                 stream_url = link.get("url")
