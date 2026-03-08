@@ -3,7 +3,7 @@ import questionary
 from rich.console import Console
 from weeb_cli.i18n import i18n
 from weeb_cli.services.downloader import queue_manager
-from .episode_utils import get_episodes_safe
+from .episode_utils import get_episodes_safe, group_episodes_by_season
 
 console = Console()
 
@@ -14,8 +14,23 @@ def handle_download_flow(slug, details):
         time.sleep(1.5)
         return
 
+    seasons = group_episodes_by_season(episodes)
+    season_numbers = sorted(seasons.keys())
+
     try:
-        selected_eps = _select_episodes_to_download(episodes)
+        if len(season_numbers) > 1:
+            selected_season = _select_season_for_download(seasons, season_numbers)
+            if selected_season is None:
+                return
+            
+            if selected_season == "all":
+                target_episodes = episodes
+            else:
+                target_episodes = seasons[selected_season]
+        else:
+            target_episodes = episodes
+
+        selected_eps = _select_episodes_to_download(target_episodes)
         if not selected_eps:
             return
         
@@ -23,6 +38,26 @@ def handle_download_flow(slug, details):
         
     except KeyboardInterrupt:
         return
+
+def _select_season_for_download(seasons, season_numbers):
+    season_choices = []
+    
+    all_label = i18n.t("details.all_seasons", "Tüm Sezonlar")
+    season_choices.append(questionary.Choice(all_label, value="all"))
+    
+    for s_num in season_numbers:
+        ep_count = len(seasons[s_num])
+        label = f"{i18n.t('details.season', 'Sezon')} {s_num} ({ep_count} {i18n.t('details.episode', 'Bölüm')})"
+        season_choices.append(questionary.Choice(label, value=s_num))
+    
+    selected = questionary.select(
+        i18n.t("details.select_season", "Sezon Seçin") + ":",
+        choices=season_choices,
+        pointer=">",
+        use_shortcuts=False
+    ).ask()
+    
+    return selected
 
 def _select_episodes_to_download(episodes):
     opt_all = i18n.t("details.download_options.all")
