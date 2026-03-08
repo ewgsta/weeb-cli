@@ -19,7 +19,8 @@
         "updating_pip": "Updating via pip",
         "no_asset": "Download file not found",
         "download_url": "Download URL",
-        "manual_update": "Manual update required"
+        "manual_update": "Manual update required",
+        "pip_command": "pip install --upgrade weeb-cli"
     },
     "menu": {
         "title": "Main Menu",
@@ -78,6 +79,22 @@
         "confirm_remove": "Are you sure you want to remove this drive?",
         "drive_renamed": "Drive renamed.",
         "drive_removed": "Drive removed.",
+        "current_dir": "Current: {dir}",
+        "retry_delay_error": "Retry delay must be between 0 and 300 seconds.",
+        "cache": {
+            "title": "Cache Management",
+            "memory_entries": "Memory entries",
+            "file_entries": "File entries",
+            "total_size": "Total size",
+            "clear_all": "Clear all cache",
+            "clear_provider": "Clear current provider cache",
+            "cleanup_old": "Cleanup old cache (>24h)",
+            "cleared": "Cache cleared",
+            "provider_cleared": "Provider cache cleared",
+            "cleaned": "Cleaned",
+            "prompt": "Select action",
+            "confirm_clear_all": "Clear all cache?"
+        },
         "anilist": "AniList",
         "anilist_connected": "Connected: {user}",
         "anilist_not_connected": "Connect your AniList account to sync your watch history.",
@@ -229,6 +246,9 @@
         "removed_from_library": "Removed from library.",
         "mark_watched": "Mark as watched?",
         "marked_watched": "Marked as watched",
+        "validating_streams": "Validating streams...",
+        "no_valid_streams": "No valid streams found.",
+        "streams_valid": "streams valid",
         "sync_to_trackers": "Sync to trackers as well?",
         "action_prompt": "Select Action",
         "download_options": {

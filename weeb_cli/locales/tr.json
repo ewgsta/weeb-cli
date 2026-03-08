@@ -19,7 +19,8 @@
         "updating_pip": "pip ile güncelleniyor",
         "no_asset": "İndirme dosyası bulunamadı",
         "download_url": "İndirme URL'si",
-        "manual_update": "Manuel güncelleme gerekli"
+        "manual_update": "Manuel güncelleme gerekli",
+        "pip_command": "pip install --upgrade weeb-cli"
     },
     "menu": {
         "title": "Ana Menü",
@@ -78,6 +79,22 @@
         "confirm_remove": "Bu diski kaldırmak istediğinize emin misiniz?",
         "drive_renamed": "Disk ismi değiştirildi.",
         "drive_removed": "Disk kaldırıldı.",
+        "current_dir": "Mevcut: {dir}",
+        "retry_delay_error": "Yeniden deneme aralığı 0 ile 300 saniye arasında olmalıdır.",
+        "cache": {
+            "title": "Önbellek Yönetimi",
+            "memory_entries": "Bellek kayıtları",
+            "file_entries": "Dosya kayıtları",
+            "total_size": "Toplam boyut",
+            "clear_all": "Tüm önbelleği temizle",
+            "clear_provider": "Mevcut kaynak önbelleğini temizle",
+            "cleanup_old": "Eski önbelleği temizle (>24s)",
+            "cleared": "Önbellek temizlendi",
+            "provider_cleared": "Kaynak önbelleği temizlendi",
+            "cleaned": "Temizlendi",
+            "prompt": "İşlem seçin",
+            "confirm_clear_all": "Tüm önbellek temizlensin mi?"
+        },
         "anilist": "AniList",
         "anilist_connected": "Bağlı: {user}",
         "anilist_not_connected": "AniList hesabınıza bağlanarak izleme geçmişinizi senkronize edebilirsiniz.",
@@ -229,6 +246,9 @@
         "removed_from_library": "Kütüphaneden çıkarıldı.",
         "mark_watched": "İzlendi olarak işaretlensin mi?",
         "marked_watched": "İzlendi olarak işaretlendi",
+        "validating_streams": "Yayınlar doğrulanıyor...",
+        "no_valid_streams": "Geçerli yayın bulunamadı.",
+        "streams_valid": "yayın geçerli",
         "sync_to_trackers": "Tracker'lara da eklensin mi?",
         "action_prompt": "İşlem Seçin",
         "download_options": {

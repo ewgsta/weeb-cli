@@ -205,4 +205,4 @@ def update_prompt():
                 console.print(f"[blue]{asset_url}[/blue]")
         else:
             console.print(f"[yellow]{i18n.t('update.manual_update')}[/yellow]")
-            console.print("[blue]pip install --upgrade weeb-cli[/blue]")
+            console.print(f"[blue]{i18n.t('update.pip_command')}[/blue]")

@@ -166,22 +166,21 @@ def _play_episode(slug, selected_ep, details, season, episodes):
         return False
     
     from weeb_cli.services.stream_validator import stream_validator
-    
-    console.print(f"[dim]{i18n.t('details.validating_streams', 'Validating streams')}...[/dim]")
+
+    console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
     valid_streams = []
     for stream in streams_list:
         is_valid, error = stream_validator.validate_url(stream.get("url"), timeout=3)
         if is_valid:
             valid_streams.append(stream)
-    
+
     if not valid_streams:
-        console.print(f"[red]{i18n.t('details.no_valid_streams', 'No valid streams found')}[/red]")
+        console.print(f"[red]{i18n.t('details.no_valid_streams')}[/red]")
         time.sleep(1.5)
         return False
-    
+
     if len(valid_streams) < len(streams_list):
-        console.print(f"[dim]{len(valid_streams)}/{len(streams_list)} {i18n.t('details.streams_valid', 'streams valid')}[/dim]")
-    
+        console.print(f"[dim]{len(valid_streams)}/{len(streams_list)} {i18n.t('details.streams_valid')}[/dim]")    
     streams_list = sort_streams(valid_streams)
     
     selected_stream = _select_stream(streams_list)

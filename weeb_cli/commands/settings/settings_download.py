@@ -40,7 +40,7 @@ def download_settings_menu():
         show_header(i18n.t("settings.download_settings"))
         
         curr_dir = config.get("download_dir")
-        console.print(f"[dim]Current: {curr_dir}[/dim]\n", justify="left")
+        console.print(f"[dim]{i18n.t('settings.current_dir', dir=curr_dir)}[/dim]\n", justify="left")
         
         curr_concurrent = config.get("max_concurrent_downloads", 3)
         curr_retries = config.get("download_max_retries", 3)
@@ -110,7 +110,7 @@ def _change_retry_delay(curr_delay):
         if 0 <= n <= 300:
             config.set("download_retry_delay", n)
         else:
-            console.print("[red]Retry delay must be between 0 and 300 seconds.[/red]")
+            console.print(f"[red]{i18n.t('settings.retry_delay_error')}[/red]")
             time.sleep(1.5)
 
 def aria2_settings_menu():

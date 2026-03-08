@@ -32,6 +32,8 @@ jobs:
         
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: false
 
   build_binaries:
     name: Build Binaries
@@ -75,8 +77,32 @@ jobs:
           pip install . pyinstaller
           
       - name: Build with PyInstaller
+        shell: bash
         run: |
-          pyinstaller --name weeb-cli --onefile --clean --noconfirm --icon weeb_landing/logo/favicon.ico weeb_cli/__main__.py --collect-all weeb_cli --collect-all rich --collect-all questionary --collect-all typer
+          # Use ; as separator for Windows and : for Unix
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            SEP=";"
+          else
+            SEP=":"
+          fi
+          pyinstaller --name weeb-cli --onefile --clean --noconfirm \
+            --icon weeb_landing/logo/favicon.ico \
+            --add-data "weeb_cli/locales${SEP}weeb_cli/locales" \
+            --add-data "weeb_cli/templates${SEP}weeb_cli/templates" \
+            --collect-all rich \
+            --collect-all questionary \
+            --collect-all typer \
+            --collect-all certifi \
+            --collect-all curl_cffi \
+            --hidden-import weeb_cli.commands.api \
+            --hidden-import weeb_cli.commands.downloads \
+            --hidden-import weeb_cli.commands.library \
+            --hidden-import weeb_cli.commands.search \
+            --hidden-import weeb_cli.commands.serve \
+            --hidden-import weeb_cli.commands.settings \
+            --hidden-import weeb_cli.commands.setup \
+            --hidden-import weeb_cli.commands.watchlist \
+            weeb_cli/__main__.py
         
       - name: Rename Binary
         shell: bash
