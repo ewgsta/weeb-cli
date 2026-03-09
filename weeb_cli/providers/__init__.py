@@ -12,6 +12,7 @@ from weeb_cli.providers import anizle
 from weeb_cli.providers import turkanime
 from weeb_cli.providers import hianime
 from weeb_cli.providers import allanime
+from weeb_cli.providers import weeb
 
 __all__ = [
     "BaseProvider",

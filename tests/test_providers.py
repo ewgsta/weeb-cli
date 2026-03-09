@@ -5,7 +5,9 @@ from weeb_cli.providers.turkanime import TurkAnimeProvider
 from weeb_cli.providers.anizle import AnizleProvider
 from weeb_cli.providers.hianime import HiAnimeProvider
 from weeb_cli.providers.allanime import AllAnimeProvider
+from weeb_cli.providers.weeb import WeebProvider
 from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink
+import json
 
 
 class TestAnimeCixProvider:
@@ -331,3 +333,95 @@ class TestAllAnimeProvider:
             if episodes:
                 assert isinstance(episodes[0], Episode)
                 assert episodes[0].number == 1
+
+
+class TestWeebProvider:
+    
+    @pytest.fixture
+    def provider(self):
+        return WeebProvider()
+    
+    def test_search(self, provider):
+        with patch.object(WeebProvider, '_request') as mock_request:
+            mock_request.return_value = {
+                "data": [
+                    {
+                        "id": "1",
+                        "name": "Ubel Blatt",
+                        "slug": "ubel-blatt",
+                        "first_image": "https://test.com/image.jpg"
+                    }
+                ]
+            }
+            
+            results = provider.search("Ubel Blatt")
+            
+            assert len(results) == 1
+            assert isinstance(results[0], AnimeResult)
+            assert results[0].title == "Ubel Blatt"
+            assert results[0].id == "ubel-blatt"
+            assert results[0].cover == "https://test.com/image.jpg"
+    
+    def test_get_details(self, provider):
+        with patch.object(WeebProvider, '_request') as mock_request:
+            mock_request.return_value = {
+                "data": {
+                    "id": "1",
+                    "name": "Ubel Blatt",
+                    "slug": "ubel-blatt",
+                    "description": "Test description",
+                    "categories": ["Aksiyon", "Macera"],
+                    "season_number": 1,
+                    "episodes": [
+                        {
+                            "episode_number": 1,
+                            "sources": [
+                                {"label": "Primary", "watch_url": "/watch/token1"}
+                            ]
+                        }
+                    ]
+                }
+            }
+            
+            details = provider.get_details("ubel-blatt")
+            
+            assert details is not None
+            assert isinstance(details, AnimeDetails)
+            assert details.title == "Ubel Blatt"
+            assert len(details.episodes) == 1
+            assert details.episodes[0].number == 1
+            
+            sources = json.loads(details.episodes[0].id)
+            assert sources[0]["label"] == "Primary"
+
+    def test_get_streams_from_json_id(self, provider):
+        sources = [{"label": "Primary", "watch_url": "/watch/token1"}]
+        episode_id = json.dumps(sources)
+        
+        streams = provider.get_streams("ubel-blatt", episode_id)
+        
+        assert len(streams) == 1
+        assert isinstance(streams[0], StreamLink)
+        assert streams[0].url == "https://anime-api.ewgsta.workers.dev/watch/token1"
+        assert streams[0].server == "Primary"
+
+    def test_get_streams_fallback(self, provider):
+        with patch.object(WeebProvider, '_request') as mock_request:
+            mock_request.return_value = {
+                "data": {
+                    "episodes": [
+                        {
+                            "episode_number": 1,
+                            "sources": [
+                                {"label": "Primary", "watch_url": "/watch/token1"}
+                            ]
+                        }
+                    ]
+                }
+            }
+            
+            streams = provider.get_streams("ubel-blatt", "1")
+            
+            assert len(streams) == 1
+            assert streams[0].url == "https://anime-api.ewgsta.workers.dev/watch/token1"
+
