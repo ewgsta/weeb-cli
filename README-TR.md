@@ -178,6 +178,7 @@ CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "
 | Animecix | Türkçe |
 | Turkanime | Türkçe |
 | Anizle | Türkçe |
+| Weeb | Türkçe |
 | HiAnime | İngilizce |
 | AllAnime | İngilizce |
 
@@ -360,7 +361,7 @@ weeb-cli/
 ## Teknoloji Yığını
 
 ### Temel Teknolojiler
-- **Python 3.8+** - Ana programlama dili
+- **Python 3.12+** - Ana programlama dili
 - **Typer** - Zengin terminal desteği ile CLI framework
 - **Rich** - Terminal formatlama ve stil
 - **Questionary** - İnteraktif promptlar ve menüler
@@ -401,6 +402,13 @@ weeb-cli/
 - **Decorator Pattern** - Önbellekleme decorator
 - **Observer Pattern** - İlerleme takibi
 - **Strategy Pattern** - Çoklu indirme stratejileri
+
+---
+
+## Ekosistem
+
+- [weeb-gui](https://github.com/ewgsta/weeb-gui) - Weeb CLI için Grafik Kullanıcı Arayüzü (GUI)
+- [weeb-api](https://github.com/ewgsta/weeb-api) - Weeb CLI için REST API
 
 ---
 

@@ -178,6 +178,7 @@ CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "
 | Animecix | Turkish |
 | Turkanime | Turkish |
 | Anizle | Turkish |
+| Weeb | Turkish |
 | HiAnime | English |
 | AllAnime | English |
 
@@ -389,6 +390,13 @@ weeb-cli/
 - **Decorator Pattern** - Caching decorator
 - **Observer Pattern** - Progress tracking
 - **Strategy Pattern** - Multiple download strategies
+
+---
+
+## Ecosystem
+
+- [weeb-gui](https://github.com/ewgsta/weeb-gui) - Graphical User Interface for Weeb CLI
+- [weeb-api](https://github.com/ewgsta/weeb-api) - REST API backend for Weeb CLI
 
 ---
 
