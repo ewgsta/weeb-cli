@@ -393,13 +393,6 @@ weeb-cli/
 
 ---
 
-## Ecosystem
-
-- [weeb-gui](https://github.com/ewgsta/weeb-gui) - Graphical User Interface for Weeb CLI
-- [weeb-api](https://github.com/ewgsta/weeb-api) - REST API backend for Weeb CLI
-
----
-
 ## License
 
 This project is licensed under the **GNU General Public License v3.0**.  

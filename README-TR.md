@@ -405,13 +405,6 @@ weeb-cli/
 
 ---
 
-## Ekosistem
-
-- [weeb-gui](https://github.com/ewgsta/weeb-gui) - Weeb CLI için Grafik Kullanıcı Arayüzü (GUI)
-- [weeb-api](https://github.com/ewgsta/weeb-api) - Weeb CLI için REST API
-
----
-
 ## Lisans
 
 Bu proje **GNU Genel Kamu Lisansı v3.0** altında lisanslanmıştır.  
