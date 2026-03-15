@@ -38,7 +38,8 @@ def check_network():
 def run_setup():
     langs = {
         "Türkçe": "tr",
-        "English": "en"
+        "English": "en",
+        "Deutsch": "de"
     }
     
     choices = [(k, v) for k, v in langs.items()]
