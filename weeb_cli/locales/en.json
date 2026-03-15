@@ -226,7 +226,7 @@
         "results": "Search Results",
         "cancel": "Cancel",
         "error": "Search failed.",
-        "recent": "Recent searches"
+        "recent": "Recent Searches"
     },
     "details": {
         "error_slug": "Error: Invalid anime ID.",

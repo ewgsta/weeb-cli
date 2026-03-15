@@ -98,7 +98,7 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             if selected_ep is None:
                 return
 
-            success = _play_episode(slug, selected_ep, details, season, episodes)
+            success = _play_episode(slug, selected_ep, details, season, episodes, completed_ids)
             
             if success:
                 ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
@@ -148,7 +148,7 @@ def _build_episode_choices(episodes, season, completed_ids, next_ep_num):
     
     return ep_choices
 
-def _play_episode(slug, selected_ep, details, season, episodes):
+def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
     ep_id = selected_ep.get("id")
     ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
     
@@ -184,8 +184,6 @@ def _play_episode(slug, selected_ep, details, season, episodes):
         time.sleep(1.5)
         return False
 
-    if len(valid_streams) < len(streams_list):
-        console.print(f"[dim]{len(valid_streams)}/{len(streams_list)} {i18n.t('details.streams_valid')}[/dim]")    
     streams_list = sort_streams(valid_streams)
     
     selected_stream = _select_stream(streams_list)
