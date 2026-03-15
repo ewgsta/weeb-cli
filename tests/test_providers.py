@@ -1,11 +1,11 @@
 import pytest
 from unittest.mock import Mock, patch
-from weeb_cli.providers.animecix import AnimeCixProvider
-from weeb_cli.providers.turkanime import TurkAnimeProvider
-from weeb_cli.providers.anizle import AnizleProvider
-from weeb_cli.providers.hianime import HiAnimeProvider
-from weeb_cli.providers.allanime import AllAnimeProvider
-from weeb_cli.providers.weeb import WeebProvider
+from weeb_cli.providers.tr.animecix import AnimeCixProvider
+from weeb_cli.providers.tr.turkanime import TurkAnimeProvider
+from weeb_cli.providers.tr.anizle import AnizleProvider
+from weeb_cli.providers.en.hianime import HiAnimeProvider
+from weeb_cli.providers.en.allanime import AllAnimeProvider
+from weeb_cli.providers.tr.weeb import WeebProvider
 from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink
 import json
 
@@ -17,7 +17,7 @@ class TestAnimeCixProvider:
         return AnimeCixProvider()
     
     def test_search_angel_beats(self, provider):
-        with patch('weeb_cli.providers.animecix._get_json') as mock_get:
+        with patch('weeb_cli.providers.tr.animecix._get_json') as mock_get:
             mock_get.return_value = {
                 "results": [
                     {
@@ -35,7 +35,7 @@ class TestAnimeCixProvider:
             assert "angel beats" in results[0].title.lower()
     
     def test_get_details_angel_beats(self, provider):
-        with patch('weeb_cli.providers.animecix._get_json') as mock_get:
+        with patch('weeb_cli.providers.tr.animecix._get_json') as mock_get:
             mock_get.return_value = {
                 "videos": [
                     {
@@ -57,7 +57,7 @@ class TestAnimeCixProvider:
             assert details.title == "Angel Beats!"
     
     def test_get_episodes_angel_beats(self, provider):
-        with patch('weeb_cli.providers.animecix._get_json') as mock_get:
+        with patch('weeb_cli.providers.tr.animecix._get_json') as mock_get:
             mock_get.side_effect = [
                 {"videos": [{"title": {"seasons": [1]}}]},
                 {
@@ -82,7 +82,7 @@ class TestTurkAnimeProvider:
         return TurkAnimeProvider()
     
     def test_search_angel_beats(self, provider):
-        with patch('weeb_cli.providers.turkanime._fetch') as mock_fetch:
+        with patch('weeb_cli.providers.tr.turkanime._fetch') as mock_fetch:
             mock_fetch.return_value = '''
                 <a href="/anime/angel-beats"><div class="animeAdi">Angel Beats!</div></a>
             '''
@@ -94,7 +94,7 @@ class TestTurkAnimeProvider:
             assert "angel beats" in results[0].title.lower()
     
     def test_get_details_angel_beats(self, provider):
-        with patch('weeb_cli.providers.turkanime._fetch') as mock_fetch:
+        with patch('weeb_cli.providers.tr.turkanime._fetch') as mock_fetch:
             mock_fetch.return_value = '''
                 <title>Angel Beats!</title>
                 <meta property="twitter:image" content="test.jpg">
@@ -113,7 +113,7 @@ class TestTurkAnimeProvider:
             assert "angel beats" in details.title.lower()
     
     def test_get_episodes_angel_beats(self, provider):
-        with patch('weeb_cli.providers.turkanime._fetch') as mock_fetch:
+        with patch('weeb_cli.providers.tr.turkanime._fetch') as mock_fetch:
             mock_fetch.side_effect = [
                 '<img src="/uploads/serilerb/12345.jpg">',
                 r'<a href=\"/video/angel-beats-1-bolum\" title=\"1. Bölüm\">'
@@ -133,7 +133,7 @@ class TestAnizleProvider:
         return AnizleProvider()
     
     def test_search_angel_beats(self, provider):
-        with patch('weeb_cli.providers.anizle._load_database') as mock_db:
+        with patch('weeb_cli.providers.tr.anizle._load_database') as mock_db:
             mock_db.return_value = [
                 {
                     "info_slug": "angel-beats",
@@ -152,8 +152,8 @@ class TestAnizleProvider:
             assert "angel beats" in results[0].title.lower()
     
     def test_get_details_angel_beats(self, provider):
-        with patch('weeb_cli.providers.anizle._load_database') as mock_db, \
-             patch('weeb_cli.providers.anizle._http_get') as mock_http:
+        with patch('weeb_cli.providers.tr.anizle._load_database') as mock_db, \
+             patch('weeb_cli.providers.tr.anizle._http_get') as mock_http:
             
             mock_db.return_value = [
                 {
@@ -178,7 +178,7 @@ class TestAnizleProvider:
             assert details.title == "Angel Beats!"
     
     def test_get_episodes_angel_beats(self, provider):
-        with patch('weeb_cli.providers.anizle._http_get') as mock_http:
+        with patch('weeb_cli.providers.tr.anizle._http_get') as mock_http:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.text = '''
@@ -201,7 +201,7 @@ class TestHiAnimeProvider:
         return HiAnimeProvider()
     
     def test_search_angel_beats(self, provider):
-        with patch('weeb_cli.providers.hianime._get_html') as mock_html:
+        with patch('weeb_cli.providers.en.hianime._get_html') as mock_html:
             mock_html.return_value = '''
                 <div class="flw-item">
                     <div class="film-poster">
@@ -222,8 +222,8 @@ class TestHiAnimeProvider:
             assert "angel beats" in results[0].title.lower()
     
     def test_get_details_angel_beats(self, provider):
-        with patch('weeb_cli.providers.hianime._get_html') as mock_html, \
-             patch('weeb_cli.providers.hianime._get_json') as mock_json:
+        with patch('weeb_cli.providers.en.hianime._get_html') as mock_html, \
+             patch('weeb_cli.providers.en.hianime._get_json') as mock_json:
             
             mock_html.return_value = '''
                 <div class="anisc-detail">
@@ -249,7 +249,7 @@ class TestHiAnimeProvider:
             assert "angel beats" in details.title.lower()
     
     def test_get_episodes_angel_beats(self, provider):
-        with patch('weeb_cli.providers.hianime._get_json') as mock_json:
+        with patch('weeb_cli.providers.en.hianime._get_json') as mock_json:
             mock_json.return_value = {
                 "html": '''
                     <a class="ssl-item ep-item" href="/watch/angel-beats-123?ep=1" title="Episode 1"></a>
@@ -271,7 +271,7 @@ class TestAllAnimeProvider:
         return AllAnimeProvider()
     
     def test_search_angel_beats(self, provider):
-        with patch('weeb_cli.providers.allanime._graphql_request') as mock_gql:
+        with patch('weeb_cli.providers.en.allanime._graphql_request') as mock_gql:
             mock_gql.return_value = {
                 "data": {
                     "shows": {
@@ -293,7 +293,7 @@ class TestAllAnimeProvider:
             assert "angel beats" in results[0].title.lower()
     
     def test_get_details_angel_beats(self, provider):
-        with patch('weeb_cli.providers.allanime._graphql_request') as mock_gql:
+        with patch('weeb_cli.providers.en.allanime._graphql_request') as mock_gql:
             mock_gql.return_value = {
                 "data": {
                     "show": {
@@ -315,7 +315,7 @@ class TestAllAnimeProvider:
             assert details.title == "Angel Beats!"
     
     def test_get_episodes_angel_beats(self, provider):
-        with patch('weeb_cli.providers.allanime._graphql_request') as mock_gql:
+        with patch('weeb_cli.providers.en.allanime._graphql_request') as mock_gql:
             mock_gql.return_value = {
                 "data": {
                     "show": {
