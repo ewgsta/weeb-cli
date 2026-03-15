@@ -346,50 +346,7 @@ weeb-cli/
 
 ---
 
-## Tech Stack
-
-### Core Technologies
-- **Python 3.12+** - Main programming language
-- **Typer** - CLI framework with rich terminal support
-- **Rich** - Terminal formatting and styling
-- **Questionary** - Interactive prompts and menus
-- **SQLite** - Local database (WAL mode)
-
-### Web & Networking
-- **requests** - HTTP client
-- **curl_cffi** - Advanced HTTP with browser impersonation
-- **BeautifulSoup4** - HTML parsing
-- **lxml** - Fast XML/HTML processing
-
-### Media & Download
-- **FFmpeg** - Video processing and conversion
-- **MPV** - High-quality video player
-- **Aria2** - Multi-connection downloader
-- **yt-dlp** - Complex stream downloader (HLS, DASH)
-
-### Encryption & Security
-- **pycryptodome** - Encryption/decryption (Turkanime)
-
-### Additional Features
-- **pypresence** - Discord Rich Presence
-- **py7zr** - 7z archive handling
-- **winotify** - Windows notifications
-- **pyfiglet** - ASCII art headers
-- **packaging** - Version comparison
-
-### Development & Testing
-- **pytest** - Testing framework
-- **pyinstaller** - Executable builder
-- **build** - Python package builder
-
-### Architecture Patterns
-- **Provider Pattern** - Pluggable anime sources
-- **Registry Pattern** - Dynamic provider registration
-- **Service Locator** - Lazy-loaded services
-- **Queue Pattern** - Thread-safe download queue
-- **Decorator Pattern** - Caching decorator
-- **Observer Pattern** - Progress tracking
-- **Strategy Pattern** - Multiple download strategies
+[![Star History Chart](https://api.star-history.com/image?repos=ewgsta/weeb-cli&type=date&legend=top-left)](https://www.star-history.com/?repos=ewgsta%2Fweeb-cli&type=date&legend=top-left)
 
 ---
 

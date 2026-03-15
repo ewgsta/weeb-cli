@@ -358,50 +358,7 @@ weeb-cli/
 
 ---
 
-## Teknoloji Yığını
-
-### Temel Teknolojiler
-- **Python 3.12+** - Ana programlama dili
-- **Typer** - Zengin terminal desteği ile CLI framework
-- **Rich** - Terminal formatlama ve stil
-- **Questionary** - İnteraktif promptlar ve menüler
-- **SQLite** - Yerel veritabanı (WAL modu)
-
-### Web & Ağ
-- **requests** - HTTP istemcisi
-- **curl_cffi** - Tarayıcı taklit özellikli gelişmiş HTTP
-- **BeautifulSoup4** - HTML ayrıştırma
-- **lxml** - Hızlı XML/HTML işleme
-
-### Medya & İndirme
-- **FFmpeg** - Video işleme ve dönüştürme
-- **MPV** - Yüksek kaliteli video oynatıcı
-- **Aria2** - Çoklu bağlantılı indirici
-- **yt-dlp** - Karmaşık stream indirici (HLS, DASH)
-
-### Şifreleme & Güvenlik
-- **pycryptodome** - Şifreleme/şifre çözme (Turkanime)
-
-### Ek Özellikler
-- **pypresence** - Discord Rich Presence
-- **py7zr** - 7z arşiv işleme
-- **winotify** - Windows bildirimleri
-- **pyfiglet** - ASCII art başlıklar
-- **packaging** - Versiyon karşılaştırma
-
-### Geliştirme & Test
-- **pytest** - Test framework
-- **pyinstaller** - Çalıştırılabilir dosya oluşturucu
-- **build** - Python paket oluşturucu
-
-### Mimari Desenler
-- **Provider Pattern** - Takılabilir anime kaynakları
-- **Registry Pattern** - Dinamik sağlayıcı kaydı
-- **Service Locator** - Lazy-loaded servisler
-- **Queue Pattern** - Thread-safe indirme kuyruğu
-- **Decorator Pattern** - Önbellekleme decorator
-- **Observer Pattern** - İlerleme takibi
-- **Strategy Pattern** - Çoklu indirme stratejileri
+[![Star History Chart](https://api.star-history.com/image?repos=ewgsta/weeb-cli&type=date&legend=top-left)](https://www.star-history.com/?repos=ewgsta%2Fweeb-cli&type=date&legend=top-left)
 
 ---
 
