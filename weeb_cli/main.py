@@ -19,16 +19,21 @@ console = Console()
 
 def check_network():
     import requests
+    urls = ["https://1.1.1.1", "https://google.com", "https://api.github.com"]
+    connected = False
+    
     with console.status(f"[dim]{i18n.t('common.ctrl_c_hint')}[/dim]", spinner="dots"):
-        try:
-            requests.get("https://api.github.com", timeout=5)
-        except requests.ConnectionError:
+        for url in urls:
+            try:
+                requests.get(url, timeout=3)
+                connected = True
+                break
+            except Exception:
+                continue
+                
+        if not connected:
             console.print(f"[red]{i18n.t('errors.network', 'Network connection error. Please check your internet connection.')}[/red]")
             sys.exit(1)
-        except requests.Timeout:
-            console.print(f"[yellow]{i18n.t('errors.network_timeout', 'Network timeout. Continuing anyway...')}[/yellow]")
-        except Exception:
-            pass
 
 def run_setup():
     langs = {

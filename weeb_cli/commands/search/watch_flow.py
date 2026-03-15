@@ -102,7 +102,12 @@ def _handle_single_season_watch(slug, details, episodes, season=1):
             
             if success:
                 ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
-                if _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids):
+                # Reload progress to see if it was auto-watched
+                prog_data = progress_tracker.get_anime_progress(slug)
+                completed_ids = set(prog_data.get("completed", []))
+                
+                ep_id = make_season_episode_id(season, int(ep_num))
+                if ep_id in completed_ids:
                     next_ep_num = int(ep_num) + 1
             
         except KeyboardInterrupt:
@@ -200,14 +205,40 @@ def _play_episode(slug, selected_ep, details, season, episodes):
     if details.get("source") == "hianime":
         headers["Referer"] = "https://hianime.to"
     
-    return player.play(
+    # Track if auto-watched was triggered
+    auto_watched = {"triggered": False}
+    
+    def on_watched_callback():
+        if not auto_watched["triggered"]:
+            total_eps = details.get("total_episodes") or len(episodes)
+            n = int(ep_num)
+            season_ep_id = make_season_episode_id(season, n)
+            
+            progress_tracker.mark_watched(
+                slug,
+                season_ep_id,
+                title=details.get("title"),
+                total_episodes=total_eps
+            )
+            _update_trackers(details, slug)
+            auto_watched["triggered"] = True
+
+    play_success = player.play(
         stream_url,
         title=title,
         headers=headers,
         anime_title=details.get('title', 'Anime'),
         episode_number=int(ep_num) if ep_num else None,
-        total_episodes=details.get("total_episodes") or len(episodes)
+        total_episodes=details.get("total_episodes") or len(episodes),
+        slug=slug,
+        on_watched=on_watched_callback
     )
+
+    if play_success and not auto_watched["triggered"]:
+        if _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids):
+            return True
+    
+    return play_success
 
 def _select_stream(streams_list):
     if len(streams_list) == 1:
@@ -255,25 +286,43 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
 
 def _update_trackers(details, slug):
     from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
+    from concurrent.futures import ThreadPoolExecutor
     
     updated_prog = progress_tracker.get_anime_progress(slug)
     total_watched = len(updated_prog.get("completed", []))
     total_eps = details.get("total_episodes", 0)
     
+    trackers = [
+        ("AniList", anilist_tracker),
+        ("MAL", mal_tracker),
+        ("Kitsu", kitsu_tracker)
+    ]
+    
     updated = []
     pending = []
-    
-    for name, tracker in [("AniList", anilist_tracker), ("MAL", mal_tracker), ("Kitsu", kitsu_tracker)]:
+
+    def update_tracker(tracker_info):
+        name, tracker = tracker_info
         if tracker.is_authenticated():
-            result = tracker.update_progress(
-                details.get("title"),
-                total_watched,
-                total_eps
-            )
-            if result:
-                updated.append(name)
-            else:
-                pending.append(name)
+            try:
+                result = tracker.update_progress(
+                    details.get("title"),
+                    total_watched,
+                    total_eps
+                )
+                return name, result
+            except Exception:
+                return name, False
+        return name, None
+
+    with ThreadPoolExecutor(max_workers=len(trackers)) as executor:
+        results = list(executor.map(update_tracker, trackers))
+
+    for name, result in results:
+        if result is True:
+            updated.append(name)
+        elif result is False:
+            pending.append(name)
     
     # Show combined message
     if updated:

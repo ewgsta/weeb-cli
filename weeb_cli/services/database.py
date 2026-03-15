@@ -84,7 +84,9 @@ class Database:
                     last_watched INTEGER DEFAULT 0,
                     total_episodes INTEGER DEFAULT 0,
                     completed TEXT DEFAULT '[]',
-                    last_watched_at TEXT
+                    last_watched_at TEXT,
+                    current_time REAL DEFAULT 0,
+                    duration REAL DEFAULT 0
                 );
                 
                 CREATE TABLE IF NOT EXISTS search_history (
@@ -160,6 +162,12 @@ class Database:
                 conn.execute('SELECT speed FROM download_queue LIMIT 1')
             except Exception:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN speed TEXT')
+            
+            try:
+                conn.execute('SELECT current_time FROM progress LIMIT 1')
+            except Exception:
+                conn.execute('ALTER TABLE progress ADD COLUMN current_time REAL DEFAULT 0')
+                conn.execute('ALTER TABLE progress ADD COLUMN duration REAL DEFAULT 0')
             
             conn.commit()
     
@@ -246,13 +254,13 @@ class Database:
                     result[row['key']] = row['value']
             return result
     
-    def save_progress(self, slug, title, last_watched, total_episodes, completed, last_watched_at=None):
+    def save_progress(self, slug, title, last_watched, total_episodes, completed, last_watched_at=None, current_time=0, duration=0):
         with self._conn() as conn:
             conn.execute('''
                 INSERT OR REPLACE INTO progress 
-                (slug, title, last_watched, total_episodes, completed, last_watched_at)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (slug, title, last_watched, total_episodes, json.dumps(completed), last_watched_at))
+                (slug, title, last_watched, total_episodes, completed, last_watched_at, current_time, duration)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (slug, title, last_watched, total_episodes, json.dumps(completed), last_watched_at, current_time, duration))
     
     def get_progress(self, slug):
         with self._conn() as conn:
@@ -264,9 +272,11 @@ class Database:
                     "last_watched": row['last_watched'],
                     "total_episodes": row['total_episodes'],
                     "completed": json.loads(row['completed'] or '[]'),
-                    "last_watched_at": row['last_watched_at']
+                    "last_watched_at": row['last_watched_at'],
+                    "current_time": row['current_time'] if 'current_time' in row.keys() else 0,
+                    "duration": row['duration'] if 'duration' in row.keys() else 0
                 }
-            return {"last_watched": 0, "completed": [], "title": "", "total_episodes": 0, "last_watched_at": None}
+            return {"last_watched": 0, "completed": [], "title": "", "total_episodes": 0, "last_watched_at": None, "current_time": 0, "duration": 0}
     
     def get_all_progress(self):
         with self._conn() as conn:

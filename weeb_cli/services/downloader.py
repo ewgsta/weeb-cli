@@ -18,6 +18,7 @@ class QueueManager:
         self.lock = threading.Lock()
         self.running = False
         self.worker_thread = None
+        self._active_processes = {}  # episode_id: subprocess.Popen
     
     @property
     def db(self):
@@ -39,7 +40,17 @@ class QueueManager:
             self.worker_thread.start()
 
     def stop_queue(self):
+        from weeb_cli.services.logger import debug as log_debug
         self.running = False
+        with self.lock:
+            for ep_id, process in list(self._active_processes.items()):
+                try:
+                    process.terminate()
+                    process.wait(timeout=2)
+                    log_debug(f"[Downloader] Terminated process for {ep_id}")
+                except Exception as e:
+                    log_debug(f"[Downloader] Failed to terminate process for {ep_id}: {e}")
+            self._active_processes.clear()
 
     def is_running(self):
         return self.running and self.worker_thread is not None and self.worker_thread.is_alive()
@@ -441,29 +452,37 @@ class QueueManager:
         
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace')
         
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None:
-                break
-            if line:
-                if "ETA:" in line:
-                    try:
-                        parts = line.split("ETA:")
-                        eta_part = parts[1].split("]")[0]
-                        
-                        match = re.search(r'\((\d+)%\)', line)
-                        progress = int(match.group(1)) if match else None
-                        
-                        speed = None
-                        speed_match = re.search(r'DL:([\d.]+[KMG]?i?B)', line)
-                        if speed_match:
-                            speed = speed_match.group(1) + "/s"
-                        
-                        self._update_progress(item, progress=progress, eta=eta_part.strip(), speed=speed)
-                    except Exception:
-                        pass
+        with self.lock:
+            self._active_processes[item["episode_id"]] = process
+            
+        try:
+            while True:
+                line = process.stdout.readline()
+                if not line and process.poll() is not None:
+                    break
+                if line:
+                    if "ETA:" in line:
+                        try:
+                            parts = line.split("ETA:")
+                            eta_part = parts[1].split("]")[0]
+                            
+                            match = re.search(r'\((\d+)%\)', line)
+                            progress = int(match.group(1)) if match else None
+                            
+                            speed = None
+                            speed_match = re.search(r'DL:([\d.]+[KMG]?i?B)', line)
+                            if speed_match:
+                                speed = speed_match.group(1) + "/s"
+                            
+                            self._update_progress(item, progress=progress, eta=eta_part.strip(), speed=speed)
+                        except Exception:
+                            pass
+        finally:
+            with self.lock:
+                if item["episode_id"] in self._active_processes:
+                    del self._active_processes[item["episode_id"]]
         
-        if process.returncode != 0:
+        if process.returncode != 0 and self.running:
             raise DownloadError("Aria2 download failed", code="ARIA2_FAILED")
 
     def _download_ytdlp(self, url, path, item):
@@ -478,40 +497,83 @@ class QueueManager:
             url
         ]
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, encoding='utf-8', errors='replace')
-        while True:
-            line = process.stdout.readline()
-            if not line and process.poll() is not None:
-                break
-            if line:
-                if "[download]" in line and "%" in line:
-                    try:
-                        p_str = line.split("%")[0].split()[-1]
-                        progress = float(p_str)
-                        eta = line.split("ETA")[-1].strip() if "ETA" in line else None
-                        
-                        speed = None
-                        speed_match = re.search(r'at\s+([\d.]+[KMG]?i?B/s)', line)
-                        if speed_match:
-                            speed = speed_match.group(1)
-                        
-                        self._update_progress(item, progress=progress, eta=eta, speed=speed)
-                    except Exception:
-                        pass
-        if process.returncode != 0:
+        
+        with self.lock:
+            self._active_processes[item["episode_id"]] = process
+            
+        try:
+            while True:
+                line = process.stdout.readline()
+                if not line and process.poll() is not None:
+                    break
+                if line:
+                    if "[download]" in line and "%" in line:
+                        try:
+                            p_str = line.split("%")[0].split()[-1]
+                            progress = float(p_str)
+                            eta = line.split("ETA")[-1].strip() if "ETA" in line else None
+                            
+                            speed = None
+                            speed_match = re.search(r'at\s+([\d.]+[KMG]?i?B/s)', line)
+                            if speed_match:
+                                speed = speed_match.group(1)
+                            
+                            self._update_progress(item, progress=progress, eta=eta, speed=speed)
+                        except Exception:
+                            pass
+        finally:
+            with self.lock:
+                if item["episode_id"] in self._active_processes:
+                    del self._active_processes[item["episode_id"]]
+                    
+        if process.returncode != 0 and self.running:
             raise DownloadError("yt-dlp download failed", code="YTDLP_FAILED")
 
     def _download_ffmpeg(self, url, path, item):
-        self._update_progress(item, eta="")
+        self._update_progress(item, eta="...")
         ffmpeg = dependency_manager.check_dependency("ffmpeg")
+        
+        # We use -progress pipe:1 to get machine-readable progress
         cmd = [
             ffmpeg,
             "-i", url,
             "-c", "copy",
             "-bsf:a", "aac_adtstoasc",
-            str(path),
-            "-y"
+            "-y",
+            "-progress", "pipe:1",
+            str(path)
         ]
-        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        
+        process = subprocess.Popen(
+            cmd, 
+            stdout=subprocess.PIPE, 
+            stderr=subprocess.DEVNULL, 
+            text=True, 
+            encoding='utf-8', 
+            errors='replace'
+        )
+        
+        with self.lock:
+            self._active_processes[item["episode_id"]] = process
+            
+        try:
+            # For HLS, we often don't know total duration easily via FFmpeg pipe
+            # but we can show the current downloaded time
+            while True:
+                line = process.stdout.readline()
+                if not line and process.poll() is not None:
+                    break
+                if line and "out_time=" in line:
+                    time_str = line.split("out_time=")[1].strip()
+                    # time_str is usually HH:MM:SS.mmmmmm
+                    self._update_progress(item, eta=f"At {time_str[:8]}")
+        finally:
+            with self.lock:
+                if item["episode_id"] in self._active_processes:
+                    del self._active_processes[item["episode_id"]]
+                    
+        if process.returncode != 0 and self.running:
+            raise DownloadError("FFmpeg download failed", code="FFMPEG_FAILED")
 
     def _download_generic(self, url, path, item):
         import requests
