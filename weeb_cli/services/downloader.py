@@ -566,7 +566,7 @@ class QueueManager:
                 if line and "out_time=" in line:
                     time_str = line.split("out_time=")[1].strip()
                     # time_str is usually HH:MM:SS.mmmmmm
-                    self._update_progress(item, eta=f"At {time_str[:8]}")
+                    self._update_progress(item, eta=i18n.t("downloads.ffmpeg_progress", time=time_str[:8]))
         finally:
             with self.lock:
                 if item["episode_id"] in self._active_processes:

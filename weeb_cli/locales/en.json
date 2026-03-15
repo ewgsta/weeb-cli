@@ -246,6 +246,8 @@
         "removed_from_library": "Removed from library.",
         "mark_watched": "Mark as watched?",
         "marked_watched": "Marked as watched",
+        "watched_prefix": "✓  ",
+        "next_prefix": "●  ",
         "validating_streams": "Validating streams...",
         "no_valid_streams": "No valid streams found.",
         "streams_valid": "streams valid",
@@ -273,7 +275,9 @@
     "player": {
         "installing_mpv": "MPV not found. Installing...",
         "install_failed": "Failed to install MPV. Please install manually.",
-        "error": "Player error"
+        "error": "Player error",
+        "resuming": "Resuming from {time}s",
+        "auto_marked": "Reached 80%, auto-marked as watched."
     },
     "watchlist": {
         "total_anime": "Total Anime",
@@ -360,6 +364,7 @@
         "disk_full": "Insufficient disk space!",
         "episode_short": "Ep",
         "retrying_status": "Retrying ({attempt}/{max})...",
+        "ffmpeg_progress": "At {time}",
         "stream_data_failed": "Failed to fetch stream data",
         "empty_stream_links": "Stream links are empty",
         "no_valid_streams_found": "No valid streams found"

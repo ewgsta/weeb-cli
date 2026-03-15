@@ -139,9 +139,9 @@ def _build_episode_choices(episodes, season, completed_ids, next_ep_num):
         
         prefix = "   "
         if ep_progress_id in completed_ids or (season == 1 and num in completed_ids):
-            prefix = "✓  "
+            prefix = i18n.t("details.watched_prefix", "✓  ")
         elif num == next_ep_num:
-            prefix = "●  "
+            prefix = i18n.t("details.next_prefix", "●  ")
         
         name = f"{prefix}{i18n.t('details.episode')} {num_val}"
         ep_choices.append(questionary.Choice(name, value=ep))
