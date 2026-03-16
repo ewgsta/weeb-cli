@@ -46,7 +46,7 @@ def run_setup():
     choices = [(k, v) for k, v in langs.items()]
     
     selected_code = prompt.select(
-        "Select Language / Dil Seçiniz",
+        "",
         choices
     )
     

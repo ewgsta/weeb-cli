@@ -41,10 +41,10 @@ def toggle_shortcuts():
 def change_language():
     from weeb_cli.services.scraper import scraper
     
-    langs = {"Türkçe": "tr", "English": "en", "Deutsch": "de"}
+    langs = {"Türkçe": "tr", "English": "en", "Deutsch": "de", "Polski": "pl"}
     try:
         selected = questionary.select(
-            "Select Language / Dil Seçiniz:",
+            "",
             choices=list(langs.keys()),
             pointer=">",
             use_shortcuts=False

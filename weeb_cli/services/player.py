@@ -187,10 +187,10 @@ class Player:
         
         cmd.append("--fs")
         cmd.append("--save-position-on-quit")
-        cmd.append("--really-quiet")
-        cmd.append("--no-terminal")
+        # cmd.append("--really-quiet")
+        # cmd.append("--no-terminal")
         
-        log_debug(f"[Player] MPV cmd: {' '.join(cmd[:5])}... ({len(cmd)} args)")
+        log_debug(f"[Player] MPV cmd: {' '.join(cmd)} ")
             
         try:
             if slug and platform.system() != "Windows":
@@ -201,14 +201,15 @@ class Player:
                 )
                 self._monitor_thread.start()
 
-            result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+            result = subprocess.run(cmd, capture_output=True, text=True)
             
             if self._monitor_thread:
                 self._stop_monitor.set()
                 self._monitor_thread.join(timeout=1)
 
-            if result.returncode != 0 and result.stderr:
-                console.print(f"[red]{i18n.t('player.error')}: {result.stderr.strip()}[/red]")
+            if result.returncode != 0:
+                log_debug(f"[Player] MPV Error (Code {result.returncode}): {result.stderr.strip()}")
+                console.print(f"[red]{i18n.t('player.error')}[/red]")
             return result.returncode == 0
         except FileNotFoundError as e:
             handle_error(e, "Player:MPV", f"{i18n.t('player.error')}: MPV not found at {self.mpv_path}")

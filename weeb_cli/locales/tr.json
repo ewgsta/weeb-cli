@@ -150,7 +150,7 @@
         "restore_confirm": "Mevcut veritabanı yedeğin üzerine yazılacak. Emin misiniz?",
         "restore_success": "Geri yükleme başarılı!",
         "restore_failed": "Geri yükleme başarısız.",
-        "cache": "Önbellek Yönetimi",
+        "cache_title": "Önbellek Yönetimi",
         "cache_title": "Önbellek Yönetimi",
         "cache_memory_entries": "Bellekteki girişler",
         "cache_file_entries": "Dosyadaki girişler",

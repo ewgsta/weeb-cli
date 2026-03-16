@@ -171,13 +171,17 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
         return False
     
     from weeb_cli.services.stream_validator import stream_validator
+    from weeb_cli.config import config
 
-    console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
     valid_streams = []
-    for stream in streams_list:
-        is_valid, error = stream_validator.validate_url(stream.get("url"), timeout=3)
-        if is_valid:
-            valid_streams.append(stream)
+    if config.get("scraping_source") == "docchi":
+        valid_streams = streams_list
+    else:
+        console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
+        for stream in streams_list:
+            is_valid, error = stream_validator.validate_url(stream.get("url"), timeout=3)
+            if is_valid:
+                valid_streams.append(stream)
 
     if not valid_streams:
         console.print(f"[red]{i18n.t('details.no_valid_streams')}[/red]")
