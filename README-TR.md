@@ -20,7 +20,9 @@
   <a href="#özellikler">Özellikler</a> •
   <a href="#kullanım">Kullanım</a> •
   <a href="#kaynaklar">Kaynaklar</a> •
-  <a href="README.md">English</a>
+  <a href="README.md">English</a> •
+  <a href="README-DE.md">Deutsch</a> •
+  <a href="README-PL.md">Polski</a>
 </p>
 
 ---
@@ -28,8 +30,10 @@
 ## Özellikler
 
 ### Çoklu Kaynak Desteği
-- **Türkçe**: Animecix, Turkanime, Anizle
+- **Türkçe**: Animecix, Turkanime, Anizle, Weeb
 - **İngilizce**: HiAnime, AllAnime
+- **Almanca**: AniWorld
+- **Lehçe**: Docchi
 
 ### Akıllı İzleme
 - MPV entegrasyonu ile yüksek kaliteli HLS/MP4 yayınları
@@ -181,6 +185,8 @@ CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "
 | Weeb | Türkçe |
 | HiAnime | İngilizce |
 | AllAnime | İngilizce |
+| AniWorld | Almanca |
+| Docchi | Lehçe |
 
 ---
 
@@ -192,7 +198,7 @@ Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
 
 | Ayar | Açıklama | Varsayılan | Tip |
 |------|----------|------------|-----|
-| `language` | Arayüz dili (tr/en) | `null` (ilk çalıştırmada sorar) | string |
+| `language` | Arayüz dili (tr/en/de/pl) | `null` (ilk çalıştırmada sorar) | string |
 | `scraping_source` | Aktif anime kaynağı | `animecix` | string |
 | `aria2_enabled` | İndirmeler için Aria2 kullan | `true` | boolean |
 | `aria2_max_connections` | İndirme başına max bağlantı | `16` | integer |
@@ -227,7 +233,7 @@ Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
 ## Yol Haritası
 
 ### Tamamlanan
-- [x] Çoklu kaynak desteği (TR/EN)
+- [x] Çoklu kaynak desteği (TR/EN/DE/PL)
 - [x] MPV ile izleme
 - [x] İzleme geçmişi ve ilerleme takibi
 - [x] Aria2/yt-dlp indirme entegrasyonu
@@ -322,7 +328,9 @@ weeb-cli/
 │   │   └── sanitizer.py         # Dosya adı/yol temizleme
 │   │
 │   ├── locales/                 # Çoklu dil desteği
+│   │   ├── de.json              # Almanca çeviriler
 │   │   ├── en.json              # İngilizce çeviriler
+│   │   ├── pl.json              # Lehçe çeviriler
 │   │   └── tr.json              # Türkçe çeviriler
 │   │
 │   ├── templates/               # HTML şablonları

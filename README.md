@@ -20,7 +20,9 @@
   <a href="#features">Features</a> •
   <a href="#usage">Usage</a> •
   <a href="#sources">Sources</a> •
-  <a href="README-TR.md">Türkçe</a>
+  <a href="README-TR.md">Türkçe</a> •
+  <a href="README-DE.md">Deutsch</a> •
+  <a href="README-PL.md">Polski</a>
 </p>
 
 ---
@@ -28,8 +30,10 @@
 ## Features
 
 ### Multiple Sources
-- **Turkish**: Animecix, Turkanime, Anizle
+- **Turkish**: Animecix, Turkanime, Anizle, Weeb
 - **English**: HiAnime, AllAnime
+- **German**: AniWorld
+- **Polish**: Docchi
 
 ### Smart Streaming
 - High-quality HLS/MP4 playback with MPV
@@ -181,6 +185,8 @@ CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "
 | Weeb | Turkish |
 | HiAnime | English |
 | AllAnime | English |
+| AniWorld | German |
+| Docchi | Polish |
 
 ---
 
@@ -192,7 +198,7 @@ Config location: `~/.weeb-cli/weeb.db` (SQLite)
 
 | Setting | Description | Default | Type |
 |---------|-------------|---------|------|
-| `language` | Interface language (tr/en) | `null` (asks on first run) | string |
+| `language` | Interface language (tr/en/de/pl) | `null` (asks on first run) | string |
 | `scraping_source` | Active anime source | `animecix` | string |
 | `aria2_enabled` | Use Aria2 for downloads | `true` | boolean |
 | `aria2_max_connections` | Max connections per download | `16` | integer |
@@ -227,7 +233,7 @@ All settings can be modified through the interactive Settings menu.
 ## Roadmap
 
 ### Completed
-- [x] Multiple source support (TR/EN)
+- [x] Multiple source support (TR/EN/DE/PL)
 - [x] MPV streaming
 - [x] Watch history and progress tracking
 - [x] Aria2/yt-dlp download integration
@@ -310,7 +316,9 @@ weeb-cli/
 │   │   └── sanitizer.py         # Filename/path sanitization
 │   │
 │   ├── locales/                 # Internationalization
+│   │   ├── de.json              # German translations
 │   │   ├── en.json              # English translations
+│   │   ├── pl.json              # Polish translations
 │   │   └── tr.json              # Turkish translations
 │   │
 │   ├── templates/               # HTML templates
