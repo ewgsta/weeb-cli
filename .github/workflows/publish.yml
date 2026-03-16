@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
           
       - name: Install dependencies
         run: |
@@ -40,6 +40,7 @@ jobs:
     needs: pypi_publish 
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
@@ -54,11 +55,11 @@ jobs:
             arch: x86
             artifact_name: weeb-cli-Windows-x86.exe
             binary_name: weeb-cli.exe
-          - os: macos-15 # Intel 
+          - os: macos-13
             arch: x64
             artifact_name: weeb-cli-macOS-x86_64
             binary_name: weeb-cli
-          - os: macos-latest # ARM 
+          - os: macos-latest
             arch: arm64
             artifact_name: weeb-cli-macOS-arm64
             binary_name: weeb-cli
@@ -68,32 +69,32 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           architecture: ${{ matrix.arch }} 
           
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install . pyinstaller
+          pip install pyinstaller
+          pip install -e .
+          
+      - name: Ensure data directories exist
+        shell: bash
+        run: |
+          mkdir -p weeb_cli/locales
+          mkdir -p weeb_cli/templates
           
       - name: Build with PyInstaller
         shell: bash
         run: |
-          # Use ; as separator for Windows and : for Unix
           if [ "${{ runner.os }}" = "Windows" ]; then
             SEP=";"
           else
             SEP=":"
           fi
           pyinstaller --name weeb-cli --onefile --clean --noconfirm \
-            --icon weeb_landing/logo/favicon.ico \
             --add-data "weeb_cli/locales${SEP}weeb_cli/locales" \
             --add-data "weeb_cli/templates${SEP}weeb_cli/templates" \
-            --collect-all rich \
-            --collect-all questionary \
-            --collect-all typer \
-            --collect-all certifi \
-            --collect-all curl_cffi \
             --hidden-import weeb_cli.commands.api \
             --hidden-import weeb_cli.commands.downloads \
             --hidden-import weeb_cli.commands.library \
@@ -102,6 +103,16 @@ jobs:
             --hidden-import weeb_cli.commands.settings \
             --hidden-import weeb_cli.commands.setup \
             --hidden-import weeb_cli.commands.watchlist \
+            --hidden-import weeb_cli.providers.tr.animecix \
+            --hidden-import weeb_cli.providers.tr.turkanime \
+            --hidden-import weeb_cli.providers.tr.anizle \
+            --hidden-import weeb_cli.providers.tr.weeb \
+            --hidden-import weeb_cli.providers.en.hianime \
+            --hidden-import weeb_cli.providers.en.allanime \
+            --hidden-import weeb_cli.providers.de.aniworld \
+            --copy-metadata typer \
+            --copy-metadata rich \
+            --copy-metadata questionary \
             weeb_cli/__main__.py
         
       - name: Rename Binary
@@ -115,42 +126,41 @@ jobs:
           name: binary-${{ matrix.artifact_name }}
           path: dist/${{ matrix.artifact_name }}
 
-  # AppImage build for Linux (portable)
   build_appimage:
     name: Build AppImage
     needs: pypi_publish
-    runs-on: ubuntu-20.04  # Use older Ubuntu for better compatibility
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
       
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: '3.12'
           
       - name: Install dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y fuse libfuse2
           python -m pip install --upgrade pip
-          pip install . pyinstaller
+          pip install pyinstaller
+          pip install -e .
           
       - name: Download AppImage tools
         run: |
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
           
+      - name: Ensure data directories exist
+        run: |
+          mkdir -p weeb_cli/locales
+          mkdir -p weeb_cli/templates
+
       - name: Build with PyInstaller
         run: |
           pyinstaller --name weeb-cli --onefile --clean --noconfirm \
-            --icon weeb_landing/logo/favicon.ico \
             --add-data "weeb_cli/locales:weeb_cli/locales" \
             --add-data "weeb_cli/templates:weeb_cli/templates" \
-            --collect-all rich \
-            --collect-all questionary \
-            --collect-all typer \
-            --collect-all certifi \
-            --collect-all curl_cffi \
             --hidden-import weeb_cli.commands.api \
             --hidden-import weeb_cli.commands.downloads \
             --hidden-import weeb_cli.commands.library \
@@ -159,6 +169,16 @@ jobs:
             --hidden-import weeb_cli.commands.settings \
             --hidden-import weeb_cli.commands.setup \
             --hidden-import weeb_cli.commands.watchlist \
+            --hidden-import weeb_cli.providers.tr.animecix \
+            --hidden-import weeb_cli.providers.tr.turkanime \
+            --hidden-import weeb_cli.providers.tr.anizle \
+            --hidden-import weeb_cli.providers.tr.weeb \
+            --hidden-import weeb_cli.providers.en.hianime \
+            --hidden-import weeb_cli.providers.en.allanime \
+            --hidden-import weeb_cli.providers.de.aniworld \
+            --copy-metadata typer \
+            --copy-metadata rich \
+            --copy-metadata questionary \
             weeb_cli/__main__.py
             
       - name: Create AppDir structure
@@ -166,12 +186,9 @@ jobs:
           mkdir -p AppDir/usr/bin
           mkdir -p AppDir/usr/share/applications
           mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
-          
-          # Copy binary
           cp dist/weeb-cli AppDir/usr/bin/
           
-          # Create desktop file
-          cat > AppDir/usr/share/applications/weeb-cli.desktop << EOF
+          cat > AppDir/usr/share/applications/weeb-cli.desktop << 'EOF'
           [Desktop Entry]
           Name=Weeb CLI
           Exec=weeb-cli
@@ -181,10 +198,6 @@ jobs:
           Terminal=true
           EOF
           
-          # Copy icon (convert ico to png if needed)
-          cp weeb_landing/logo/favicon.ico AppDir/usr/share/icons/hicolor/256x256/apps/weeb-cli.png || true
-          
-          # Create AppRun
           cat > AppDir/AppRun << 'EOF'
           #!/bin/bash
           SELF=$(readlink -f "$0")
@@ -205,7 +218,6 @@ jobs:
           name: binary-weeb-cli-x86_64.AppImage
           path: weeb-cli-x86_64.AppImage
 
-  # Snap package for Linux
   build_snap:
     name: Build Snap Package
     needs: pypi_publish
@@ -216,10 +228,10 @@ jobs:
       - name: Create snapcraft.yaml
         run: |
           mkdir -p snap
-          cat > snap/snapcraft.yaml << EOF
+          cat > snap/snapcraft.yaml << 'EOF'
           name: weeb-cli
           base: core22
-          version: '${GITHUB_REF_NAME#v}'
+          version: 'VERSION_PLACEHOLDER'
           summary: Terminal-based anime streaming and downloading
           description: |
             Weeb CLI is a powerful terminal application for streaming and downloading anime.
@@ -243,9 +255,9 @@ jobs:
               python-packages:
                 - .
               stage-packages:
-                - libffi7
-                - libssl3
+                - libffi8
           EOF
+          sed -i "s/VERSION_PLACEHOLDER/${GITHUB_REF_NAME#v}/g" snap/snapcraft.yaml
           
       - name: Build Snap
         uses: snapcore/action-build@v1
@@ -257,22 +269,19 @@ jobs:
           name: snap-weeb-cli
           path: ${{ steps.build.outputs.snap }}
 
-  # Flatpak for Linux
   build_flatpak:
     name: Build Flatpak
     needs: pypi_publish
     runs-on: ubuntu-latest
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:freedesktop-23.08
+      options: --privileged
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install Flatpak and flatpak-builder
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder
-          
       - name: Create Flatpak manifest
         run: |
-          cat > io.github.ewgsta.weeb-cli.yml << EOF
+          cat > io.github.ewgsta.weeb-cli.yml << 'EOF'
           app-id: io.github.ewgsta.weeb-cli
           runtime: org.freedesktop.Platform
           runtime-version: '23.08'
@@ -287,16 +296,20 @@ jobs:
             - --filesystem=home
           
           modules:
-            - name: python3-pip
+            - name: weeb-cli
               buildsystem: simple
               build-commands:
-                - pip3 install --prefix=/app weeb-cli==${GITHUB_REF_NAME#v}
+                - pip3 install --prefix=/app --no-deps .
+              sources:
+                - type: dir
+                  path: .
           EOF
           
       - name: Build Flatpak
-        run: |
-          flatpak-builder --repo=repo --force-clean build-dir io.github.ewgsta.weeb-cli.yml
-          flatpak build-bundle repo weeb-cli.flatpak io.github.ewgsta.weeb-cli
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          bundle: weeb-cli.flatpak
+          manifest-path: io.github.ewgsta.weeb-cli.yml
           
       - name: Upload Flatpak
         uses: actions/upload-artifact@v4
@@ -304,145 +317,66 @@ jobs:
           name: flatpak-weeb-cli
           path: weeb-cli.flatpak
 
-  # Homebrew formula update
-  homebrew_publish:
-    name: Update Homebrew Formula
-    needs: pypi_publish
+  update_manifests:
+    name: Update Package Manifests
+    needs: build_binaries
     runs-on: ubuntu-latest
-    if: github.repository == 'ewgsta/weeb-cli'  # Only run on main repo
+    if: github.repository == 'ewgsta/weeb-cli'
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Create Homebrew Formula
+      - name: Create distribution manifests
         run: |
           VERSION=${GITHUB_REF_NAME#v}
           
-          # Download source tarball to calculate SHA256
-          wget https://github.com/ewgsta/weeb-cli/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz
-          SHA256=$(sha256sum ${GITHUB_REF_NAME}.tar.gz | awk '{print $1}')
-          
           mkdir -p distribution/homebrew
-          cat > distribution/homebrew/weeb-cli.rb << EOF
+          cat > distribution/homebrew/weeb-cli.rb << 'FORMULA'
           class WeebCli < Formula
             desc "Terminal-based anime streaming and downloading"
             homepage "https://github.com/ewgsta/weeb-cli"
-            url "https://github.com/ewgsta/weeb-cli/archive/refs/tags/${GITHUB_REF_NAME}.tar.gz"
-            sha256 "${SHA256}"
+            url "https://files.pythonhosted.org/packages/source/w/weeb-cli/weeb-cli-VERSION.tar.gz"
+            sha256 "SHA256_PLACEHOLDER"
             license "GPL-3.0"
           
             depends_on "python@3.12"
-            depends_on "mpv"
           
             def install
               virtualenv_install_with_resources
             end
           
             test do
-              system "#{bin}/weeb-cli", "--version"
+              system bin/"weeb-cli", "--version"
             end
           end
-          EOF
-          
-      - name: Commit and push formula
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add distribution/homebrew/weeb-cli.rb
-          git commit -m "Update Homebrew formula to ${GITHUB_REF_NAME}" || true
-          git push || true
-
-  # Scoop manifest for Windows
-  scoop_publish:
-    name: Update Scoop Manifest
-    needs: build_binaries
-    runs-on: ubuntu-latest
-    if: github.repository == 'ewgsta/weeb-cli'
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Download Windows binary
-        uses: actions/download-artifact@v4
-        with:
-          name: binary-weeb-cli-Windows-x86_64.exe
-          path: artifacts
-          
-      - name: Create Scoop Manifest
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          URL="https://github.com/ewgsta/weeb-cli/releases/download/${GITHUB_REF_NAME}/weeb-cli-Windows-x86_64.exe"
-          
-          # Calculate hash
-          HASH=$(sha256sum artifacts/weeb-cli-Windows-x86_64.exe | awk '{print $1}')
+          FORMULA
+          sed -i "s/VERSION/${VERSION}/g" distribution/homebrew/weeb-cli.rb
           
           mkdir -p distribution/scoop
-          cat > distribution/scoop/weeb-cli.json << EOF
+          cat > distribution/scoop/weeb-cli.json << 'SCOOP'
           {
-            "version": "${VERSION}",
+            "version": "VERSION",
             "description": "Terminal-based anime streaming and downloading",
             "homepage": "https://github.com/ewgsta/weeb-cli",
             "license": "GPL-3.0",
-            "url": "${URL}",
-            "hash": "${HASH}",
+            "url": "https://github.com/ewgsta/weeb-cli/releases/download/vVERSION/weeb-cli-Windows-x86_64.exe",
+            "hash": "HASH_PLACEHOLDER",
             "bin": "weeb-cli-Windows-x86_64.exe",
-            "shortcuts": [
-              ["weeb-cli-Windows-x86_64.exe", "Weeb CLI"]
-            ],
             "checkver": {
               "github": "https://github.com/ewgsta/weeb-cli"
-            },
-            "autoupdate": {
-              "url": "https://github.com/ewgsta/weeb-cli/releases/download/v\$version/weeb-cli-Windows-x86_64.exe"
             }
           }
-          EOF
+          SCOOP
+          sed -i "s/VERSION/${VERSION}/g" distribution/scoop/weeb-cli.json
           
-      - name: Commit and push manifest
+      - name: Commit manifests
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add distribution/scoop/weeb-cli.json
-          git commit -m "Update Scoop manifest to ${GITHUB_REF_NAME}" || true
-          git push || true
-
-  # Winget manifest for Windows
-  winget_publish:
-    name: Update Winget Manifest
-    needs: build_binaries
-    runs-on: ubuntu-latest
-    if: github.repository == 'ewgsta/weeb-cli'
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Create Winget Manifest
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          
-          mkdir -p distribution/winget
-          cat > distribution/winget/ewgsta.weeb-cli.yaml << EOF
-          PackageIdentifier: ewgsta.weeb-cli
-          PackageVersion: ${VERSION}
-          PackageName: Weeb CLI
-          Publisher: ewgsta
-          License: GPL-3.0
-          LicenseUrl: https://github.com/ewgsta/weeb-cli/blob/main/LICENSE
-          ShortDescription: Terminal-based anime streaming and downloading
-          PackageUrl: https://github.com/ewgsta/weeb-cli
-          Installers:
-            - Architecture: x64
-              InstallerType: exe
-              InstallerUrl: https://github.com/ewgsta/weeb-cli/releases/download/${GITHUB_REF_NAME}/weeb-cli-Windows-x86_64.exe
-              InstallerSha256: TO_BE_CALCULATED
-          ManifestType: singleton
-          ManifestVersion: 1.0.0
-          EOF
-          
-      - name: Commit manifest
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add distribution/winget/
-          git commit -m "Update Winget manifest to ${GITHUB_REF_NAME}" || true
-          git push || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add distribution/
+          git diff --staged --quiet || git commit -m "chore: update package manifests for ${GITHUB_REF_NAME}"
+          git push || echo "No changes to push"
 
   aur_publish:
     name: Publish to AUR
@@ -498,28 +432,5 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            artifacts/*
+          files: artifacts/*
           generate_release_notes: true
-          body: |
-            ## Installation Methods
-            
-            ### Package Managers
-            - **PyPI**: `pip install weeb-cli`
-            - **AUR** (Arch Linux): `yay -S weeb-cli`
-            - **Homebrew** (macOS): `brew install ewgsta/tap/weeb-cli`
-            - **Scoop** (Windows): `scoop bucket add ewgsta https://github.com/ewgsta/scoop-bucket && scoop install weeb-cli`
-            - **Snap** (Linux): `snap install weeb-cli`
-            - **Flatpak** (Linux): Download `.flatpak` file and run `flatpak install weeb-cli.flatpak`
-            
-            ### Portable Binaries
-            - **Linux**: Download `weeb-cli-Linux-x86_64` or `weeb-cli-x86_64.AppImage`
-            - **Windows**: Download `weeb-cli-Windows-x86_64.exe`
-            - **macOS**: Download `weeb-cli-macOS-x86_64` (Intel) or `weeb-cli-macOS-arm64` (Apple Silicon)
-            
-            ### From Source
-            ```bash
-            git clone https://github.com/ewgsta/weeb-cli
-            cd weeb-cli
-            pip install .
-            ```
