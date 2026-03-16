@@ -243,9 +243,6 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
     return play_success
 
 def _select_stream(streams_list):
-    if len(streams_list) == 1:
-        return streams_list[0]
-    
     stream_choices = []
     for s in streams_list:
         server = s.get("server", "Unknown")
@@ -253,6 +250,9 @@ def _select_stream(streams_list):
         label = f"{server} ({quality})"
         stream_choices.append(questionary.Choice(label, value=s))
     
+    if not stream_choices:
+        return None
+        
     return questionary.select(
         i18n.t("details.select_source"),
         choices=stream_choices,

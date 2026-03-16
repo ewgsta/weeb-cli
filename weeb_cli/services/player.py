@@ -201,16 +201,26 @@ class Player:
                 )
                 self._monitor_thread.start()
 
-            result = subprocess.run(cmd, capture_output=True, text=True)
+            # Using Popen for more flexible process management, similar to doccli
+            process = subprocess.Popen(
+                cmd,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                stdin=subprocess.DEVNULL,
+                shell=False
+            )
+            
+            # Wait for the process to exit
+            exit_code = process.wait()
             
             if self._monitor_thread:
                 self._stop_monitor.set()
                 self._monitor_thread.join(timeout=1)
 
-            if result.returncode != 0:
-                log_debug(f"[Player] MPV Error (Code {result.returncode}): {result.stderr.strip()}")
-                console.print(f"[red]{i18n.t('player.error')}[/red]")
-            return result.returncode == 0
+            if exit_code != 0:
+                log_debug(f"[Player] MPV exited with code: {exit_code}")
+                # Don't show error if exit_code is 0 (normal exit)
+            return exit_code == 0
         except FileNotFoundError as e:
             handle_error(e, "Player:MPV", f"{i18n.t('player.error')}: MPV not found at {self.mpv_path}")
             return False
