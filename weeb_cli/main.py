@@ -39,7 +39,8 @@ def run_setup():
     langs = {
         "Türkçe": "tr",
         "English": "en",
-        "Deutsch": "de"
+        "Deutsch": "de",
+        "Polski": "pl"
     }
     
     choices = [(k, v) for k, v in langs.items()]
