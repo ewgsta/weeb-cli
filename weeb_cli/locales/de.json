@@ -150,7 +150,7 @@
         "restore_confirm": "Die aktuelle Datenbank wird überschrieben. Sind Sie sicher?",
         "restore_success": "Wiederherstellung erfolgreich!",
         "restore_failed": "Wiederherstellung fehlgeschlagen.",
-        "cache": "Cache-Verwaltung",
+        "cache_title": "Cache-Verwaltung",
         "cache_title": "Cache-Verwaltung",
         "cache_memory_entries": "Speichereinträge",
         "cache_file_entries": "Dateieinträge",
