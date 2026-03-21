@@ -1,0 +1,275 @@
+[33m32f6027[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: add plugin system for custom source providers
+[33mc1f05d7[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #20 from ewgsta/docs/update-readme
+[33m37d552f[m Bu yolculuk, insanın sonunda ölümü bile üç gün sonra duyulan birinin, ya da gökyüzündeki tek bir yıldızın yalnızlığı kadar büyük bir ıssızlığa iter kişiyi. Çünkü ego, ancak tam bir ümitsizlik noktasına gelince teslim olur. Bu teslimiyet acı vericidir; insan kendini yutacak dipsiz bir uçurumun ağzında hisseder. Ölüm gibi gelir bu his.
+[33md79cee5[m[33m ([m[1;33mtag: [m[1;33mv2.12.0[m[33m)[m release: v2.12.0
+[33m6cc20cc[m Merge pull request #18 from ewgsta/fix/source-logic-and-mpv-stability
+[33mef830f5[m resolve single source loop and mpv hang issues (closes #16, closes #17)
+[33mcef4cd8[m Merge pull request #15 from ewgsta/polish-language-support
+[33md29fee1[m docchi provider
+[33m57c61dc[m polish language support
+[33m6a9d4b8[m pl locale
+[33m8eecdb6[m[33m ([m[1;33mtag: [m[1;33mv2.11.1[m[33m)[m release: v2.11.1
+[33m48f88a1[m publish.yml
+[33m7cd4628[m[33m ([m[1;33mtag: [m[1;33mv2.11.0[m[33m)[m release: v2.11.0
+[33m27c55d6[m publish workflows
+[33mc923fe9[m de locale
+[33m38e7040[m aniworld için ufak iyileştirmeler
+[33m05d1d07[m de-aniworld provider
+[33m82f8387[m provider bla bla amk
+[33m434732b[m locale de
+[33m540dd43[m i18n
+[33m8cbdfc1[m ağ kontrolü, paralel izleyici ve mpv/indirme yönetiminde iyileştirmeler
+[33m055d2e1[m readme
+[33mfec1133[m readme
+[33m7715835[m readme
+[33m16937d4[m[33m ([m[1;33mtag: [m[1;33mv2.10.0[m[33m)[m release: v2.10.0
+[33mbee1f9e[m 'weeb' kaynağı eklendi (TR)
+[33me9935ab[m[33m ([m[1;33mtag: [m[1;33mv2.9.4[m[33m)[m release: v2.9.4
+[33m4f943a2[m i18n & publish workflow
+[33mb944276[m[33m ([m[1;33mtag: [m[1;33mv2.9.3[m[33m)[m issue #14: patched
+[33mbfbf7f1[m indirme akışı bölüm sezon isimlendirme sorunu
+[33m7436c34[m[33m ([m[1;33mtag: [m[1;33mv2.9.2[m[33m)[m release: v2.9.2
+[33m3bbcc82[m genel performans & güvenlik iyileştirmeleri
+[33m5d6a440[m Merge pull request #13 from ewgsta/copilot/fix-startup-crash-issues
+[33mb4e4b37[m Fix 6 bugs: startup crash, security regression, quality sorting, input validation, and error logging
+[33mcdae83d[m Initial plan
+[33mc6d044e[m Merge pull request #12 from ewgsta/copilot/fix-none-type-crash-header
+[33madd2180[m Fix all bugs: NoneType crash, license, recursion, broken HTML, pickle security, dead code, unused imports, import style, stream sorting
+[33mf8b7b73[m Initial plan
+[33m0b57a46[m[33m ([m[1;33mtag: [m[1;33mv2.9.1[m[33m)[m release: v2.9.1
+[33m0d0e774[m gitignore
+[33mcf47192[m issue #9: pkgver güncelleme mantığı düzeltildi ve actions  eklendi
+[33md72b964[m[33m ([m[1;33mtag: [m[1;33mv2.9.0[m[33m)[m release: v2.9.0
+[33mb5d50de[m en azından bugün, bugünde son bahardayım
+[33m1a95f56[m Merge pull request #8 from peyloride/fix/fallback-season-filter
+[33m955e8aa[m kritik hataların düzeltilmesi, iyileştirmeler ve güvenlik güncellemeleri
+[33maf0c952[m fix: filter fallback episodes by season in serve mode
+[33m8800eff[m[33m ([m[1;33mtag: [m[1;33mv2.8.3[m[33m)[m release: v2.8.3
+[33m528a620[m gitignor
+[33mdbba4f7[m takipçiler için iyileştirme ve refaktör
+[33m4a72e5f[m[33m ([m[1;33mtag: [m[1;33mv2.8.2[m[33m)[m chore: bump version to 2.8.2
+[33mc5d02b9[m animeyi indirmeden kütüphaneye eklemece
+[33mdfe1adb[m offline izleme tracker sync ve birleşik mesajlar
+[33mdffd6d1[m[33m ([m[1;33mtag: [m[1;33mv2.8.1[m[33m)[m chore: bump version to 2.8.1
+[33m18c1611[m yeni testler
+[33m5c3e1b9[m Kitsu entegrasyonu
+[33m8cf77e7[m dümenden favicon
+[33me41e984[m[33m ([m[1;33mtag: [m[1;33mv2.8.0[m[33m)[m chore: bump version to 2.8.0
+[33m090a498[m yorumsuz
+[33md2ebd67[m .
+[33m416a778[m mpvnn kafasına vurdum sessizleşti.
+[33md4aaad7[m Cache sorunu giderildi player sorunu sanırım (:D) giderildi?
+[33m1197a55[m Merge pull request #7 from ewgsta/copilot/add-readme-files
+[33m1b207c7[m Move promotional content to separate files in .github/md/{en,tr}/
+[33m84d8640[m Add social media promotional content sections to README.md and README-TR.md
+[33m4a32485[m Initial plan
+[33m3ea7316[m Update README-TR.md
+[33m8cb74a4[m Update license badge in README-TR.md
+[33m3b6cf18[m Remove license section from README-TR.md
+[33mf0488ab[m Remove License section from README
+[33m22b7d96[m Merge pull request #5 from peyloride/feat/api-and-serve
+[33m80068b5[m Merge pull request #6 from ewgsta/copilot/translate-english-readme-to-turkish
+[33m63c109a[m Add missing English README content to Turkish README
+[33m53a8f26[m Initial plan
+[33m355adcb[m Remove Support & Sponsorship section from README
+[33m208882e[m Change license to GPL-3.0 and add support section
+[33m7c737e4[m Update README with licensing and copyright details
+[33md92d990[m Add GNU General Public License v3
+[33mcea2813[m Delete LICENSE
+[33m0ca4cc1[m Update license information in README.md
+[33ma5640df[m feat: add non-interactive API commands and Torznab serve mode
+[33m39e6cfd[m[33m ([m[1;33mtag: [m[1;33mv2.7.1[m[33m)[m chore: bump version to 2.7.1
+[33m0a0e4ee[m search ve settings refaktör etti
+[33m92adb55[m kaynaklar için testler eklendi
+[33m8ce2d76[m varsayılan ayarları ufaktan değiştirdim.
+[33md12de8a[m readme
+[33md2dad7c[m ölmek bile seçenek değil ise ne yapmalıyız bu boğucu dünyada
+[33me7b7cf4[m kurulum menüsü iyileştirildi
+[33m15b48a0[m package manager kontrolü iyileştirildi, gereksiz loglar kaldırıldı
+[33md922899[m docs: add VHS demo tapes and documentation
+[33m8b2dae9[m[33m ([m[1;33mtag: [m[1;33mv2.7.0[m[33m)[m chore: bump version to 2.7.0
+[33m6c47a0a[m düzeltme: i18n.get() -> i18n.t() bi kalıba soktum
+[33m3ac511c[m düzeltme: pyproject
+[33ma166f30[m düzeltme: html tamplateleri ayırdım
+[33mab6454e[m refaktör: kaynaklar
+[33m01f4284[m düzeltme: bağımlılıklar'ım
+[33m38ccf8d[m düzeltme: birden fazla import
+[33m7ea8989[m[33m ([m[1;33mtag: [m[1;33mv2.6.2[m[33m)[m ....
+[33m334f7d5[m SEVGİLİM BUNU BANA NEDEN YAPIYORSUN
+[33m4293661[m SEVGİLİM ÖLÜYORSUN
+[33mc3cdd4b[m[33m ([m[1;33mtag: [m[1;33mv2.6.1[m[33m)[m chore: bump version to 2.6.1
+[33m37cfa2e[m düzeltme: allanime dosya adı ve indirme sorunu çözüldü
+[33m737e058[m[33m ([m[1;33mtag: [m[1;33mv2.6.0[m[33m)[m chore: bump version to 2.6.0
+[33mf4e7301[m altyapı iyileştirmeleri, güvenlik katmanı ve önbellekleme sistemi
+[33m7b3f9d2[m[33m ([m[1;33mtag: [m[1;33mv2.5.0[m[33m)[m chore: bump version to 2.5.0
+[33me2f292a[m yine ben evet projeyi bırakmadım ölmedimde
+[33mebe4650[m[33m ([m[1;33mtag: [m[1;33mv2.4.2[m[33m)[m chore: bump version to 2.4.2
+[33mef01881[m yalancılar onlar onlar yalancılar onlar
+[33mc07acb7[m[33m ([m[1;33mtag: [m[1;33mv2.4.1[m[33m)[m chore: bump version to 2.4.1
+[33md7a049a[m özellik: klavye kısayolları eklendi
+[33m67a5a13[m özellik: veritabanı yedekleme ve geri yükleme eklendi
+[33mcb17250[m son bir kez daha görmek için seni rüyalarımdan uyanmak istemedim bugün
+[33m81e2d8a[m özellik: discord rpc entegrasyonu eklendi
+[33med226e9[m[33m ([m[1;33mtag: [m[1;33mv2.3.2[m[33m)[m chore: bump version to 2.3.2
+[33m53ff72f[m düzeltme: ana menü hatası giderildi, ayarlar kısımına yeniden deneme seçenekleri eklendi
+[33m65eeff8[m[33m ([m[1;33mtag: [m[1;33mv2.3.1[m[33m)[m chore: bump version to 2.3.1
+[33m98fd24c[m[33m ([m[1;33mtag: [m[1;33mv2.3.0[m[33m)[m chore: bump version to 2.3.0
+[33me97d046[m düzeltme: en.json eksik çeviriler eklendi
+[33mafad1da[m özellik: indirme öncesi disk alanı kontrolü ve log rotasyonu eklendi
+[33meabb579[m özellik: indirme hatası otomatik tekrar deneme, başarısızları tekrar deneme ve çıkış onayı eklendi
+[33m901d0da[m[33m ([m[1;33mtag: [m[1;33mv2.2.0[m[33m)[m chore: bump version to 2.2.0
+[33m99b19f8[m .
+[33md66fd11[m özellik: toast bildirimleri, hız göstergesi, paralel indekseme
+[33m69ea427[m .
+[33m3da07b4[m özellik: aktif indirmeler ana menüye taşındı
+[33m77dc3fc[m düzeltme: i18n.get değer desteği eklendi
+[33m586e4da[m düzeltme: genel iyileştirmeler
+[33m9b298c5[m[33m ([m[1;33mtag: [m[1;33mv2.1.6[m[33m)[m chore: bump version to 2.1.6
+[33m7c336a9[m düzeltme: workflow macos runner
+[33m0eeabd6[m düzeltme: eksik bağımlılıkları eklendi ve aur kaynak düzeltildi
+[33mabd2baf[m[33m ([m[1;33mtag: [m[1;33mv2.1.5[m[33m)[m chore: bump version to 2.1.5
+[33m864c0e8[m 2.1.4 ver.
+[33m74899a1[m[33m ([m[1;33mtag: [m[1;33mv2.1.4[m[33m)[m workflowu guncelledim
+[33m2582f8b[m[33m ([m[1;33mtag: [m[1;33mv2.1.3[m[33m)[m chore: bump version to 2.1.3
+[33mae0ea22[m ekleme: tanıtım taslakları
+[33m58b074d[m[33m ([m[1;33mtag: [m[1;33mv2.1.2[m[33m)[m chore: bump version to 2.1.2
+[33m2fde9a1[m chore: bump version to 2.1.1
+[33m6617927[m fix: prompt_toolkit sürüm uyumsuzluğu giderildi
+[33me3941bc[m[33m ([m[1;33mtag: [m[1;33mv2.1.0[m[33m)[m chore: bump version to 2.1.0
+[33m6dfc8e4[m callback sayfalarindan metinler kaldirildi
+[33m16cd880[m MAL entegrasyonu tamamlandi, tracker menusu birlesti
+[33mb8184c4[m AniList implicit grant flow tamamlandi
+[33m0ce0885[m OAuth callback socket-based yaklasima gecildi
+[33mb145724[m AniList auth flow duzeltildi - code grant destegi
+[33m14461f6[m mal entegrasyonu ve anilist code flow duzeltmesi
+[33ma665157[m tracker logger import hatasi duzeltildi
+[33me67744b[m anilist otomatik token yakalama eklendi
+[33m36e8bd8[m anilist entegrasyonu eklendi
+[33m6f77281[m watchlist import hatasi duzeltildi
+[33m01c8218[m watchlist yerel kutuphane animelerini destekliyor
+[33m8b9e398[m Merge branch 'main' of https://github.com/ewgsta/weeb-cli
+[33m7757ec8[m landing kaynaklar düzenlendi
+[33mccd02ce[m Update README-EN.md
+[33mb017375[m Update README.md
+[33m5597c3e[m Update README.md
+[33mcf53484[m[33m ([m[1;33mtag: [m[1;33mv2.0.0[m[33m)[m chore: bump version to 2.0.0
+[33m6eee0e9[m chocolatey kaldirildi, onay bekliyor
+[33mc3679e2[m readme kurulum secenekleri guncellendi
+[33me1ee6cd[m landing page guncellendi, coklu kaynak ozelligi eklendi
+[33m3e700cc[m hianime megacloud parser eklendi - gercek stream url destegi
+[33mcff8f7b[m hianime ve allanime ingilizce kaynaklari eklendi
+[33m8851a37[m ep kisaltmasi i18n destegi
+[33m8df65b6[m menu sirasi ve disk arama iyilestirmesi
+[33mf9c981b[m menu: sıralamada minnak değişiklik
+[33m1d8c227[m autocomplete stil duzeltmesi - siyah uzerine beyaz
+[33mc013dc2[m autocomplete callable hatasi duzeltildi
+[33m6759c09[m database ve autocomplete hatalari duzeltildi
+[33mb8814e1[m indirmeler: otomatik smart indexleme, reindex butonu kaldirildi
+[33m317cfc2[m fix: database.py indentation hatasi
+[33m0da60ac[m indirmeler: anime indexleme, tum dizinlerde arama, cevrimdisi gosterim
+[33mdd5dcec[m ui: questionary renk duzeltmesi, nokta ikonlari
+[33m1db5f0e[m indirmeler: fuzzy search ile canli onizleme
+[33m8d90fb1[m sqlite database, harici disk destegi
+[33mba7bc58[m[33m ([m[1;33mtag: [m[1;33mv1.1.2[m[33m)[m chore: bump version to 1.1.2
+[33m7387998[m indirme: en yuksek kalite secimi
+[33m4a2bf6a[m indirmeler: arama ve gorunum duzeltmesi
+[33m8127125[m marmoris
+[33m81c9af2[m[33m ([m[1;33mtag: [m[1;33mv1.1.1[m[33m)[m chore: bump version to 1.1.1
+[33mbb42154[m Merge branch 'main' of https://github.com/ewgsta/weeb-cli
+[33m234306b[m Delete publish.py
+[33m8fb235c[m[33m ([m[1;33mtag: [m[1;33mv1.1.0[m[33m)[m chore: bump version to 1.1.0
+[33m44a6c66[m Update README-EN.md
+[33mb937cd4[m Update README.md
+[33m28fe63f[m indirmeler: yerel kutuphane, bildirimler, debug modu
+[33m47eaecf[m[33m ([m[1;33mtag: [m[1;33mv1.0.0[m[33m)[m chore: bump version to 1.0.0
+[33m09bfe6d[m kuyruk sistemi: hemen indir/kuyruğa ekle, manuel başlat/durdur
+[33m713854b[m sessiz indirme, kaldığı yerden devam, indirme kontrolleri eklendi
+[33mc2fe65d[m indirmeler ekranı düzenlendi
+[33m7146952[m watchlist, arama geçmişi, ilerleme gösterimi, hata yönetimi, indirme sistemi güncellendi
+[33m97c7d2f[m açıklama toggle ayarlara taşındı
+[33m7f8d432[m import hatası düzeltildi
+[33mee535aa[m anizle episode id düzeltmesi, açıklama toggle eklendi
+[33m9cd7238[m turkanime açıklama meta tag'den alınıyor
+[33m6c7359a[m debug log kaldırıldı
+[33m48c1919[m stream öncelik sıralaması eklendi
+[33m8456a4d[m i18n.get parametre düzeltmesi
+[33m9d1bece[m çoklu kaynak seçimi eklendi
+[33m0da7730[m turkanime açıklama regex düzeltmesi, debug log eklendi
+[33ma4d258b[m anizle html temizleme, turkanime url düzeltmesi
+[33m576db0c[m animecix film stream url parse düzeltmesi
+[33m38ef61c[m animecix film fallback düzeltmesi
+[33me7b2d59[m animecix film desteği
+[33m7e1b6c7[m animecix detay endpoint düzeltmesi
+[33m24ac9f7[m fix: provider stream URL akışları düzeltildi
+[33md025275[m fix: get_default_provider export düzeltildi
+[33mbb32fb7[m feat: tam CF bypass ve AES decryption desteği
+[33m82e87f3[m feat: anizle ve turkanime kaynakları eklendi
+[33mb8a318b[m Bırak öleyim
+[33mb0e566e[m refactor: uzak API kaldırıldı, modüler provider sistemi eklendi
+[33m4175e02[m feat: paket yöneticisi bazlı akıllı güncelleme (pip/brew/aur/scoop/choco)
+[33m5762677[m feat: akıllı güncelleme sistemi - platform bazlı otomatik indirme
+[33m16bc59c[m chore: bump version to 0.2.0
+[33mf0742cb[m Merge branch 'main' of https://github.com/ewgsta/weeb-cli
+[33m65c2307[m fix: api v1 ->  v2 taşındı
+[33me6e288d[m Update README-EN.md
+[33m323a1d5[m Update source list with local resource note
+[33mc2ced20[m chore: bump version to 0.1.4
+[33m1b1fa48[m feat: custom prompt (WASD destekli) eklendi ve setup ekranı güncellendi
+[33m6caae4e[m chore: bump version to 0.1.3
+[33m14959bf[m feat: otomatik güncelleme kontrolü ve exe ikonu eklendi
+[33m0a13a02[m fix: pyproject.toml paket keşfi ve veri dosyaları yapılandırması düzeltildi
+[33m1dec211[m chore: bump version to 0.1.2
+[33mb967e2c[m fix: import hataları düzeltildi (ui init ve watchlist fonksiyon ismi)
+[33mbbafb0f[m feat: api url
+[33m42cd28c[m chore: gitignore güncellend
+[33m21e0f59[m chore: bump version to 0.1.1
+[33mebb7e18[m fix: pyinstaller exe çalıştırma sorunu ve i18n dosya yolu düzeltmesi
+[33m5d7e697[m docs: ingilizce dokümantasyon ve lisans eklendi
+[33m51043bd[m chore: bump version to 0.1.0
+[33m67202bc[m feat: eşzamanlı indirme ve canlı ilerleme (ETA) ekranı eklendi
+[33mcba6fb3[m feat: indirme yöneticisi (downloader) ve kuyruk sistemi eklendi
+[33m030ea52[m feat: otomatik dependency yönetimi iyileştirildi (mpv, aria2, ytdlp, ffmpeg) ve kontroller eklendi
+[33m3122ab4[m fix: oynatıcı çıktıları gizlendi
+[33mfc9d386[m feat: oynatıcı tam ekran başlatma eklendi
+[33m8a0d0de[m fix: hianime header sorunu ve veri kaybı düzeltildi (referer & source)
+[33m924532f[m fix: yayın url ayrıştırma mantığı links anahtarını destekleyecek şekilde güncellendi
+[33m1a070b9[m fix: yayın url ayıklama hatası giderildi, iptal seçenekleri kaldırıldı ve i18n düzeltmeleri yapıldı
+[33m03a0b34[m feat: indirme akış seçenekleri (tümü, manuel, aralık) eklendi ve detay sayfası düzeltildi
+[33me9906c5[m feat: izleme akışı eklendi (mpv entegrasyonu, ilerleme takibi, ayarlar güncellemesi)
+[33m90ebd04[m fix: detay verisi ayrıştırma düzeltildi, data->details yapısı desteklendi
+[33mc71ea4a[m fix: bölüm listesi ayrıştırma iyileştirildi, recursive data unwrap
+[33m681895d[m feat: ayarlarda alt menüler eklendi (aria2, ytdlp) ve i18n desteği sağlandı
+[33m3739fdb[m fix: anime detay veri çekme düzeltildi, metinler i18n ile güncellendi
+[33m548955d[m feat: anime detay ve bölüm listeleme eklendi
+[33m03c17e6[m fix: api yanıtında iç içe geçmiş veri yapısı eklendi
+[33m3505764[m fix: işleme mantığı iyileştirildi
+[33m5fd5e42[m fix: api hata ayıklama
+[33mcba1c09[m refactor: header güncellendi, yeni servis yapısı(search modülü)
+[33m6538b9c[m feat: arama fonksiyonu ve api servisi eklendi
+[33m3f499bf[m Merge branch 'main' of https://github.com/ewgsta/weeb-cli
+[33m0bf58f8[m Update issue templates
+[33mbe778a2[m fix: dil değişince kaynak otomatik ayarlanıyor, kaynak listeleri düzeltildi
+[33m8e981e8[m fix: header versiyonu dinamikleştirildi
+[33m45d9d55[m fix: header crash düzeltildi ve spinner düzenlendi
+[33m66dbc18[m fix: spinner tipi düzeltildi (square -> dots)
+[33m4edafd4[m chore: ufak düzeltmeler
+[33mc46ed39[m fix: ağ kontrolü iyileştirildi, fallback eklendi ve timeout artırıldı
+[33mf861b33[m fix: i18n metinleri güncellendi, geri dön butonu kaldırıldı ve ctrl+c navigasyonu eklendi
+[33m06862c5[m fix: ağ kontrolü eklendi, header paneli düzeltildi ve ekran temizleme iyileştirildi
+[33ma967f6f[m fix: header görünümü, panel kaldırıldı ve versiyon bilgisi eklendi
+[33m178eb02[m fix: header stili güncellendi, badge tarzı tasarım ve dinamik başlıklar eklendi
+[33m3ab4503[m fix: header görünümü, menü okları ve ayarlar geliştirildi
+[33mc469df0[m feat: ayarlar menüsü geliştirildi, kaynak seçimi ve indirme anahtarları eklendi
+[33m1a7052d[m feat: otomatik kurulum sihirbazı ve paket yöneticisi entegrasyonu
+[33mb674ec2[m duzeltme: installer siralamasi ve bayraklar guncellendi
+[33m2352bb3[m duzeltme: paket yoneticileri yukari tasindi ve bayrak ikonlari guncellendi
+[33m9748203[m ekleme: landing sayfası için çoklu dil desteği
+[33md8a0de0[m[33m ([m[1;33mtag: [m[1;33mv0.0.2[m[33m)[m chore: bump version to 0.0.2
+[33m95ee17e[m düzenleme: landing sayfasında bazı metinler düzenlendi
+[33m4ff346e[m ekleme: pyproject.toml yeni keywordlar eklendi
+[33m2826348[m ekleme: proje için logo eklendi
+[33m2d4846b[m düzeltme: pyinstaller paketleme hatası giderildi
+[33md443720[m özellik: i18n altyapısı ve dil seçimi eklendi
+[33mc01cf0c[m ekleme: landing sayfası güncellendi
+[33m028d5bc[m[33m ([m[1;33mtag: [m[1;33mv0.0.1[m[33m)[m düzelte: requirements.txt eklendi
+[33m84266c6[m ilk: proje pythona taşındı ve temel yapı kuruldu

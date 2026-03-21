@@ -1,0 +1,16 @@
+{
+    "name": "example-source",
+    "display_name": "Example Source",
+    "version": "1.0.0",
+    "author": "weeb-cli",
+    "description": "An example plugin to demonstrate how to create a custom anime source provider.",
+    "lang": "tr",
+    "region": "TR",
+    "min_weeb_version": "2.12.0",
+    "entry_point": "provider.py",
+    "entry_class": "ExampleProvider",
+    "permissions": [
+        "http"
+    ],
+    "homepage": "https://github.com/ewgsta/weeb-cli"
+}

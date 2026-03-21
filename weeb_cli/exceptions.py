@@ -31,3 +31,7 @@ class ValidationError(WeebCLIError):
 
 class DependencyError(WeebCLIError):
     pass
+
+
+class PluginError(WeebCLIError):
+    pass

@@ -46,6 +46,14 @@ def _discover_providers():
                     except Exception as e:
                         debug(f"[Registry] Error loading provider {lang}/{name}: {e}")
     
+    # Discover and load plugins
+    try:
+        from weeb_cli.plugins.manager import plugin_manager
+        plugin_manager.initialize()
+        debug(f"[Registry] Plugin discovery completed")
+    except Exception as e:
+        debug(f"[Registry] Plugin discovery error: {e}")
+    
     _initialized = True
 
 def get_provider(name: str) -> Optional[BaseProvider]:

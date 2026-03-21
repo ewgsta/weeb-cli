@@ -145,6 +145,21 @@ class Database:
                 CREATE INDEX IF NOT EXISTS idx_anime_source ON anime_index(source_path);
                 CREATE INDEX IF NOT EXISTS idx_virtual_library_title ON virtual_library(anime_title);
                 CREATE INDEX IF NOT EXISTS idx_virtual_library_provider ON virtual_library(provider_name);
+                
+                CREATE TABLE IF NOT EXISTS plugins (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT UNIQUE,
+                    display_name TEXT,
+                    version TEXT,
+                    author TEXT,
+                    lang TEXT DEFAULT 'tr',
+                    description TEXT,
+                    enabled INTEGER DEFAULT 1,
+                    installed_at TEXT
+                );
+                
+                CREATE INDEX IF NOT EXISTS idx_plugins_name ON plugins(name);
+                CREATE INDEX IF NOT EXISTS idx_plugins_lang ON plugins(lang);
             ''')
             conn.commit()
             
@@ -476,6 +491,49 @@ class Database:
                 (anime_id, provider_name)
             ).fetchone()
             return row is not None
+    
+    # ---- Plugin Methods ----
+    
+    def register_plugin(self, name: str, version: str, author: str = "",
+                        lang: str = "tr", display_name: str = "",
+                        description: str = "") -> None:
+        with self._conn() as conn:
+            conn.execute('''
+                INSERT OR REPLACE INTO plugins 
+                (name, display_name, version, author, lang, description, enabled, installed_at)
+                VALUES (?, ?, ?, ?, ?, ?, 1, ?)
+            ''', (name, display_name or name, version, author, lang, description,
+                  datetime.now().isoformat()))
+    
+    def unregister_plugin(self, name: str) -> None:
+        with self._conn() as conn:
+            conn.execute('DELETE FROM plugins WHERE name = ?', (name,))
+    
+    def get_plugin(self, name: str) -> Optional[Dict[str, Any]]:
+        with self._conn() as conn:
+            row = conn.execute('SELECT * FROM plugins WHERE name = ?', (name,)).fetchone()
+            if row:
+                result = dict(row)
+                result['enabled'] = bool(result.get('enabled', 1))
+                return result
+            return None
+    
+    def get_all_plugins(self) -> List[Dict[str, Any]]:
+        with self._conn() as conn:
+            rows = conn.execute('SELECT * FROM plugins ORDER BY name').fetchall()
+            results = []
+            for row in rows:
+                d = dict(row)
+                d['enabled'] = bool(d.get('enabled', 1))
+                results.append(d)
+            return results
+    
+    def set_plugin_enabled(self, name: str, enabled: bool) -> None:
+        with self._conn() as conn:
+            conn.execute(
+                'UPDATE plugins SET enabled = ? WHERE name = ?',
+                (1 if enabled else 0, name)
+            )
     
     def __del__(self) -> None:
         self.close()
