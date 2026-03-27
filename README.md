@@ -20,6 +20,7 @@
   <a href="#features">Features</a> •
   <a href="#usage">Usage</a> •
   <a href="#sources">Sources</a> •
+  <a href="https://ewgsta.github.io/weeb-cli/">Documentation</a> •
   <a href="README-TR.md">Türkçe</a> •
   <a href="README-DE.md">Deutsch</a> •
   <a href="README-PL.md">Polski</a>

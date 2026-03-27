@@ -1,0 +1,186 @@
+site_name: Weeb CLI Documentation
+site_description: Terminal-based anime streaming and downloading application
+site_author: ewgsta
+site_url: https://ewgsta.github.io/weeb-cli/
+
+repo_name: ewgsta/weeb-cli
+repo_url: https://github.com/ewgsta/weeb-cli
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search:
+      lang:
+        - en
+        - tr
+        - de
+        - pl
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          default: true
+          name: English
+          build: true
+        - locale: tr
+          name: Türkçe
+          build: true
+          nav_translations:
+            Home: Ana Sayfa
+            Getting Started: Başlangıç
+            Installation: Kurulum
+            Quick Start: Hızlı Başlangıç
+            Configuration: Yapılandırma
+            User Guide: Kullanım Kılavuzu
+            API Reference: API Referansı
+            Development: Geliştirme
+            CLI Reference: CLI Referansı
+        - locale: de
+          name: Deutsch
+          build: true
+          nav_translations:
+            Home: Startseite
+            Getting Started: Erste Schritte
+            Installation: Installation
+            Quick Start: Schnellstart
+            Configuration: Konfiguration
+            User Guide: Benutzerhandbuch
+            API Reference: API-Referenz
+            Development: Entwicklung
+            CLI Reference: CLI-Referenz
+        - locale: pl
+          name: Polski
+          build: true
+          nav_translations:
+            Home: Strona główna
+            Getting Started: Rozpoczęcie
+            Installation: Instalacja
+            Quick Start: Szybki start
+            Configuration: Konfiguracja
+            User Guide: Przewodnik użytkownika
+            API Reference: Dokumentacja API
+            Development: Rozwój
+            CLI Reference: Dokumentacja CLI
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            group_by_category: true
+            show_signature_annotations: true
+            separate_signature: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quickstart.md
+      - Configuration: getting-started/configuration.md
+  - User Guide:
+      - Searching Anime: user-guide/searching.md
+      - Streaming: user-guide/streaming.md
+      - Downloading: user-guide/downloading.md
+      - Local Library: user-guide/library.md
+      - Tracker Integration: user-guide/trackers.md
+      - Settings: user-guide/settings.md
+  - API Reference:
+      - Overview: api/overview.md
+      - Core:
+          - Config: api/core/config.md
+          - I18n: api/core/i18n.md
+          - Exceptions: api/core/exceptions.md
+      - Providers:
+          - Base Provider: api/providers/base.md
+          - Registry: api/providers/registry.md
+          - Turkish Providers: api/providers/turkish.md
+          - English Providers: api/providers/english.md
+          - German Providers: api/providers/german.md
+          - Polish Providers: api/providers/polish.md
+      - Services:
+          - Database: api/services/database.md
+          - Downloader: api/services/downloader.md
+          - Tracker: api/services/tracker.md
+          - Player: api/services/player.md
+          - Cache: api/services/cache.md
+          - Local Library: api/services/local_library.md
+      - Commands:
+          - API Commands: api/commands/api.md
+          - Search: api/commands/search.md
+          - Downloads: api/commands/downloads.md
+          - Watchlist: api/commands/watchlist.md
+      - UI:
+          - Menu: api/ui/menu.md
+          - Prompt: api/ui/prompt.md
+          - Header: api/ui/header.md
+  - Development:
+      - Contributing: development/contributing.md
+      - Architecture: development/architecture.md
+      - Adding Providers: development/adding-providers.md
+      - Testing: development/testing.md
+  - CLI Reference:
+      - Commands: cli/commands.md
+      - API Mode: cli/api-mode.md
+      - Serve Mode: cli/serve-mode.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/ewgsta/weeb-cli
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/weeb-cli/
