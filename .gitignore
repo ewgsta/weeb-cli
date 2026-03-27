@@ -12,6 +12,7 @@ eggs/
 .eggs/
 lib/
 lib64/
+publish.sh
 parts/
 sdist/
 var/
@@ -19,37 +20,34 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
-MANIFEST
 
-# Virtual Environment
+# Virtual environments
 venv/
 ENV/
 env/
-.venv
 
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
-*.cover
-.hypothesis/
 .tox/
 
+# Documentation
+site/
+.mkdocs_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
 # Weeb CLI specific
+.weeb-cli/
 weeb-downloads/
 *.log
-*.db
-*.cache
-.weeb-cli/
-
-# Distribution
-*.spec
-publish.sh
