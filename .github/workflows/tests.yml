@@ -33,7 +33,7 @@ jobs:
         pytest tests/ --cov=weeb_cli --cov-report=xml --cov-report=term
     
     - name: Upload coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v6
       with:
         file: ./coverage.xml
         flags: unittests
