@@ -17,7 +17,10 @@ Each module handles a specific category of settings with dedicated
 UI and validation logic.
 """
 
+from .settings_menu import open_settings
+
 __all__ = [
+    "open_settings",
     "settings_menu",
     "settings_config",
     "settings_download",

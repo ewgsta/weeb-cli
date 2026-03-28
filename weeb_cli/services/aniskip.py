@@ -22,7 +22,7 @@ Example:
 import requests
 from typing import Optional, Dict, Tuple
 from weeb_cli.services.logger import debug as log_debug, error as log_error
-from weeb_cli.services.cache import cache
+from weeb_cli.services.cache import get_cache
 
 
 class AniSkipService:
@@ -64,6 +64,7 @@ class AniSkipService:
         Returns:
             MAL ID if found, None otherwise.
         """
+        cache = get_cache()
         cache_key = f"mal_id:{anime_name}"
         cached = cache.get(cache_key)
         if cached:
@@ -116,6 +117,7 @@ class AniSkipService:
         if not self._enabled:
             return None
         
+        cache = get_cache()
         cache_key = f"skip_times:{anime_name}:{episode}"
         cached = cache.get(cache_key)
         if cached:

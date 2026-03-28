@@ -15,7 +15,10 @@ The search command is the primary entry point for discovering and
 accessing anime content across all providers.
 """
 
+from .search_handlers import search_anime
+
 __all__ = [
+    "search_anime",
     "anime_details",
     "download_flow",
     "episode_utils",
