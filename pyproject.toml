@@ -27,7 +27,7 @@ dependencies = [
     "pycryptodome",
     "curl_cffi",
     "appdirs",
-    "prompt_toolkit>=3.0.36,<3.0.50",
+    "prompt_toolkit>=3.0.36,<3.0.53",
     "pyfiglet",
     "py7zr",
     "pypresence",
