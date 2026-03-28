@@ -44,6 +44,7 @@
         "ytdlp": "Wsparcie yt-dlp",
         "show_description": "Pokaż Opis",
         "discord_rpc": "Discord RPC",
+        "aniskip": "Auto Pomijanie (OP/ED)",
         "aria2_config": "Ustawienia Aria2",
         "ytdlp_config": "Ustawienia yt-dlp",
         "max_conn": "Maks. Połączeń",

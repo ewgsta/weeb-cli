@@ -46,7 +46,7 @@ def toggle_aniskip():
     aniskip_service.set_enabled(new_val)
     
     msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
-    console.print(f"[green]{i18n.t(msg_key, tool='AniSkip')}[/green]")
+    console.print(f"[green]{i18n.t(msg_key, tool=i18n.t('settings.aniskip'))}[/green]")
     time.sleep(0.5)
 
 def change_language():

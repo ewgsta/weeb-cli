@@ -64,7 +64,7 @@ def _build_settings_menu():
         i18n.t("settings.external_drives"),
         f"{i18n.t('settings.show_description')} [{desc_state}]",
         f"{i18n.t('settings.discord_rpc')} [{discord_rpc_state}]",
-        f"AniSkip (Auto Skip OP/ED) [{aniskip_state}]",
+        f"{i18n.t('settings.aniskip')} [{aniskip_state}]",
         f"{i18n.t('settings.shortcuts')} [{shortcuts_state}]",
     ]
     
@@ -105,7 +105,7 @@ def _handle_settings_action(answer):
         toggle_description()
     elif answer.startswith(i18n.t('settings.discord_rpc')):
         toggle_discord_rpc()
-    elif answer.startswith("AniSkip"):
+    elif answer.startswith(i18n.t('settings.aniskip')):
         toggle_aniskip()
     elif answer.startswith(i18n.t('settings.shortcuts')) and not answer.startswith("  ↳"):
         toggle_shortcuts()

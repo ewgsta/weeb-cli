@@ -44,6 +44,7 @@
         "ytdlp": "yt-dlp Unterstützung",
         "show_description": "Beschreibung anzeigen",
         "discord_rpc": "Discord RPC",
+        "aniskip": "Auto-Überspringen (OP/ED)",
         "aria2_config": "Aria2 Einstellungen",
         "ytdlp_config": "yt-dlp Einstellungen",
         "max_conn": "Max. Verbindungen",
