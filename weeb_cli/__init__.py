@@ -22,4 +22,4 @@ Attributes:
     __version__ (str): Current version of Weeb CLI.
 """
 
-__version__ = "2.13.1"
+__version__ = "2.13.2"
