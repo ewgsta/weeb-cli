@@ -39,7 +39,7 @@ Jeśli lubisz anime, przydatne narzędzia i terminal, jesteś we właściwym mie
 - Ograniczaj swoje Pull Requesty do pojedynczej zmiany, nowej funkcji lub poprawki błędu. Ułatwi to i przyspieszy proces ich weryfikacji.
 - Podlinkuj powiązane zgłoszenia (issues) do PR-a, aby ułatwić zarządzającym zrozumienie kontekstu.
 - Stosuj się do aktualnego stylu kodowania (używaj Black/Flake8 w komponentach Python).
-- Aktualizuj dokumentację (`README.md`, `README-TR.md`, itp.), jeśli edytowany kod modyfikuje działanie aplikacji i ma to wpływ na użytkowników.
+- Aktualizuj dokumentację (`README.md`, `md/tr/README.md`, itp.), jeśli edytowany kod modyfikuje działanie aplikacji i ma to wpływ na użytkowników.
 
 ## Problemy (Issues)
 

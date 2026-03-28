@@ -39,7 +39,7 @@ Wenn du Anime, Tools und das Terminal magst, bist du hier genau richtig.
 - Beschränke deine Pull Requests auf eine einzige Änderung, Funktion oder Fehlerbehebung. Dies macht den Überprüfungsprozess reibungsloser.
 - Verlinke zugehörige Issues in deinem PR, damit die Maintainer den Kontext verstehen.
 - Halte dich an den bestehenden Code-Stil (verwende Black/Flake8 für Python-Komponenten).
-- Aktualisiere die Dokumentation (`README.md`, `README-TR.md` usw.), falls deine Änderungen das externe Verhalten beeinflussen.
+- Aktualisiere die Dokumentation (`README.md`, `md/tr/README.md` usw.), falls deine Änderungen das externe Verhalten beeinflussen.
 
 ## Issues
 

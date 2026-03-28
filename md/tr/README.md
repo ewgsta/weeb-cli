@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="../../README.md">English</a> | <a href="README.md">Türkçe</a> | <a href="../de/README.md">Deutsch</a> | <a href="../pl/README.md">Polski</a>
+</div>
+
+<br>
+
 <p align="center">
   <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" width="120">
 </p>
@@ -19,10 +25,7 @@
   <a href="#kurulum">Kurulum</a> •
   <a href="#özellikler">Özellikler</a> •
   <a href="#kullanım">Kullanım</a> •
-  <a href="#kaynaklar">Kaynaklar</a> •
-  <a href="README.md">English</a> •
-  <a href="README-DE.md">Deutsch</a> •
-  <a href="README-PL.md">Polski</a>
+  <a href="#kaynaklar">Kaynaklar</a>
 </p>
 
 ---

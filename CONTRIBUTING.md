@@ -39,7 +39,7 @@ If you enjoy anime, tools, and the terminal, you are in the right place.
 - Keep your pull requests focused on a single change, feature, or bugfix. This makes the review process smoother.
 - Link any related issues to your PR so maintainers have context.
 - Adhere to the existing code style (use Black/Flake8 for Python components).
-- Update the documentation (`README.md`, `README-TR.md`, etc.) if your changes affect external behavior.
+- Update the documentation (`README.md`, `md/tr/README.md`, etc.) if your changes affect external behavior.
 
 ## Issues
 
@@ -50,8 +50,8 @@ If you find a bug or have a suggestion, feel free to open an issue:
 
 ## Translations & i18n
 
-Since Weeb CLI supports Turkish and English (`tr` and `en`):
-- Features adding texts to the user interface should modify both `locales/en.json` and `locales/tr.json`.
+Since Weeb CLI supports multiple languages (`en`, `tr`, `de`, `pl`, etc.):
+- Features adding texts to the user interface should modify the corresponding JSON files in the `locales/` directory (`en.json`, `tr.json`, `de.json`, `pl.json`, etc.).
 
 ---
 

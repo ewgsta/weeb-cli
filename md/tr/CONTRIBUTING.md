@@ -39,7 +39,7 @@ Eğer anime izlemeyi, terminali ve pratik araçları seviyorsanız, doğru yerde
 - Pull Request'lerinizi tek bir özelliğe, değişikliğe ya da hata düzeltmesine odaklı tutmaya çalışın. Bu, inceleme sürecini kolaylaştırır.
 - Eğer ilgili bir `issue` (problem bildiriminiz) varsa, bakımcılara bağlam sağlamak için içeriğe ekleyin.
 - Mevcut kod stiline uyun (Python kısımları için Black/Flake8).
-- Eğer değişiklikleriniz uygulamanın dış davranışını etkiliyorsa, dökümantasyonları güncellediğinizden emin olun (`README.md`, `README-TR.md` vb.).
+- Eğer değişiklikleriniz uygulamanın dış davranışını etkiliyorsa, dökümantasyonları güncellediğinizden emin olun (`README.md`, `md/tr/README.md` vb.).
 
 ## Sorunlar (Issues)
 
@@ -50,8 +50,8 @@ Bir hata bulursanız veya bir öneriniz varsa, lütfen issue açmaktan çekinmey
 
 ## Çeviriler ve Çoklu Dil Desteği (i18n)
 
-Weeb CLI hem Türkçe hem de İngilizce (`tr` ve `en`) desteği barındırır:
-- Kullanıcı arayüzüne yeni bir metin ekleyen özelliklerin, `locales/en.json` ve `locales/tr.json` dosyalarına da eklemeler yapması gerekir.
+Weeb CLI çoklu dil desteği barındırır (`en`, `tr`, `de`, `pl` vb.):
+- Kullanıcı arayüzüne yeni bir metin ekleyen özelliklerin, `locales/` klasöründe bulunan tüm JSON dosyalarına (`en.json`, `tr.json`, `de.json`, `pl.json` vb.) eklemeler yapması gerekir.
 
 ---
 

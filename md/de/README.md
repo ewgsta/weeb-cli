@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="../../README.md">English</a> | <a href="../tr/README.md">Türkçe</a> | <a href="README.md">Deutsch</a> | <a href="../pl/README.md">Polski</a>
+</div>
+
+<br>
+
 <p align="center">
   <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" width="120">
 </p>
@@ -19,10 +25,7 @@
   <a href="#installation">Installation</a> •
   <a href="#features">Funktionen</a> •
   <a href="#nutzung">Nutzung</a> •
-  <a href="#quellen">Quellen</a> •
-  <a href="README.md">English</a> •
-  <a href="README-TR.md">Türkçe</a> •
-  <a href="README-PL.md">Polski</a>
+  <a href="#quellen">Quellen</a>
 </p>
 
 ---

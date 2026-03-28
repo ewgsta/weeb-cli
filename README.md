@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="README.md">English</a> | <a href="md/tr/README.md">Türkçe</a> | <a href="md/de/README.md">Deutsch</a> | <a href="md/pl/README.md">Polski</a>
+</div>
+
+<br>
+
 <p align="center">
   <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" width="120">
 </p>
@@ -20,10 +26,7 @@
   <a href="#features">Features</a> •
   <a href="#usage">Usage</a> •
   <a href="#sources">Sources</a> •
-  <a href="https://ewgsta.github.io/weeb-cli/">Documentation</a> •
-  <a href="README-TR.md">Türkçe</a> •
-  <a href="README-DE.md">Deutsch</a> •
-  <a href="README-PL.md">Polski</a>
+  <a href="https://ewgsta.github.io/weeb-cli/">Documentation</a>
 </p>
 
 ---
