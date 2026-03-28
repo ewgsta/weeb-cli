@@ -69,6 +69,7 @@ DEFAULT_CONFIG = {
     "download_retry_delay": 10,
     "discord_rpc_enabled": True,
     "shortcuts_enabled": False,
+    "aniskip_enabled": False,
 }
 
 
