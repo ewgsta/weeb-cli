@@ -45,7 +45,7 @@ jobs:
             binary_name: weeb-cli
             
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -119,7 +119,7 @@ jobs:
     name: Build AppImage (Linux)
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -220,7 +220,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       
       - name: Download All Artifacts
         uses: actions/download-artifact@v8
