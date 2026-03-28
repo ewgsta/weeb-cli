@@ -1,6 +1,9 @@
 # Weeb CLI'a Katkıda Bulunmak
 
-*English version is available [here](../../CONTRIBUTING.md).*
+<div align="center">
+  <a href="../../CONTRIBUTING.md">English</a> | <a href="CONTRIBUTING.md">Türkçe</a> | <a href="../de/CONTRIBUTING.md">Deutsch</a> | <a href="../pl/CONTRIBUTING.md">Polski</a>
+</div>
+<br>
 
 Öncelikle, Weeb CLI'a katkıda bulunmayı düşündüğünüz için teşekkür ederiz! Yardımınız çok değerlidir.
 

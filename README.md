@@ -1,9 +1,3 @@
-<div align="center">
-  <a href="README.md">English</a> | <a href="md/tr/README.md">Türkçe</a> | <a href="md/de/README.md">Deutsch</a> | <a href="md/pl/README.md">Polski</a>
-</div>
-
-<br>
-
 <p align="center">
   <img src="https://8upload.com/image/a6cdd79fc5a25c99/wl-512x512.jpg" alt="Weeb CLI Logo" width="120">
 </p>
@@ -13,6 +7,11 @@
 <p align="center">
   <strong>No browser, no ads, no distractions. Just you and an unparalleled anime viewing experience.</strong>
 </p>
+
+<div align="center">
+  <a href="README.md">English</a> | <a href="md/tr/README.md">Türkçe</a> | <a href="md/de/README.md">Deutsch</a> | <a href="md/pl/README.md">Polski</a>
+</div>
+<br>
 
 <p align="center">
   <a href="https://github.com/ewgsta/weeb-cli/releases"><img src="https://img.shields.io/github/v/release/ewgsta/weeb-cli?style=flat-square" alt="Release"></a>

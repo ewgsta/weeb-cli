@@ -1,6 +1,9 @@
 # Beitragen zu Weeb CLI
 
-*Suchst du die englische Version? [Hier klicken für Englisch](../../CONTRIBUTING.md).*
+<div align="center">
+  <a href="../../CONTRIBUTING.md">English</a> | <a href="../tr/CONTRIBUTING.md">Türkçe</a> | <a href="CONTRIBUTING.md">Deutsch</a> | <a href="../pl/CONTRIBUTING.md">Polski</a>
+</div>
+<br>
 
 Zunächst einmal vielen Dank, dass du in Erwägung ziehst, zu Weeb CLI beizutragen! Deine Hilfe wird sehr geschätzt.
 

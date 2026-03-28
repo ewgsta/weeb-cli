@@ -1,6 +1,9 @@
 # Contributing to Weeb CLI
 
-*Looking for the Turkish version? [Türkçe için buraya tıklayın](md/tr/CONTRIBUTING.md).*
+<div align="center">
+  <a href="CONTRIBUTING.md">English</a> | <a href="md/tr/CONTRIBUTING.md">Türkçe</a> | <a href="md/de/CONTRIBUTING.md">Deutsch</a> | <a href="md/pl/CONTRIBUTING.md">Polski</a>
+</div>
+<br>
 
 First off, thank you for considering contributing to Weeb CLI! Your help is highly appreciated.
 
