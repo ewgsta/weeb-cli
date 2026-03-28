@@ -3,6 +3,7 @@ import questionary
 from rich.console import Console
 from weeb_cli.i18n import i18n
 from weeb_cli.config import config
+from weeb_cli.services.aniskip import aniskip_service
 
 console = Console()
 
@@ -36,6 +37,16 @@ def toggle_shortcuts():
     
     msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
     console.print(f"[green]{i18n.t(msg_key, tool=i18n.t('settings.shortcuts'))}[/green]")
+    time.sleep(0.5)
+
+def toggle_aniskip():
+    current = config.get("aniskip_enabled", False)
+    new_val = not current
+    config.set("aniskip_enabled", new_val)
+    aniskip_service.set_enabled(new_val)
+    
+    msg_key = "settings.toggle_on" if new_val else "settings.toggle_off"
+    console.print(f"[green]{i18n.t(msg_key, tool='AniSkip')}[/green]")
     time.sleep(0.5)
 
 def change_language():

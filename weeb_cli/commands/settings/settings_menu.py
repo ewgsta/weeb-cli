@@ -3,7 +3,7 @@ from rich.console import Console
 from weeb_cli.i18n import i18n
 from weeb_cli.ui.header import show_header
 from weeb_cli.config import config
-from .settings_config import change_language, change_source, toggle_description, toggle_discord_rpc, toggle_shortcuts
+from .settings_config import change_language, change_source, toggle_description, toggle_discord_rpc, toggle_shortcuts, toggle_aniskip
 from .settings_download import download_settings_menu, aria2_settings_menu, ytdlp_settings_menu, toggle_config
 from .settings_drives import external_drives_menu
 from .settings_trackers import trackers_menu
@@ -55,6 +55,7 @@ def _build_settings_menu():
     desc_state = i18n.t("common.enabled") if config.get("show_description", True) else i18n.t("common.disabled")
     discord_rpc_state = i18n.t("common.enabled") if config.get("discord_rpc_enabled", False) else i18n.t("common.disabled")
     shortcuts_state = i18n.t("common.enabled") if config.get("shortcuts_enabled", True) else i18n.t("common.disabled")
+    aniskip_state = i18n.t("common.enabled") if config.get("aniskip_enabled", False) else i18n.t("common.disabled")
     
     choices = [
         i18n.t("settings.language"),
@@ -63,6 +64,7 @@ def _build_settings_menu():
         i18n.t("settings.external_drives"),
         f"{i18n.t('settings.show_description')} [{desc_state}]",
         f"{i18n.t('settings.discord_rpc')} [{discord_rpc_state}]",
+        f"AniSkip (Auto Skip OP/ED) [{aniskip_state}]",
         f"{i18n.t('settings.shortcuts')} [{shortcuts_state}]",
     ]
     
@@ -103,6 +105,8 @@ def _handle_settings_action(answer):
         toggle_description()
     elif answer.startswith(i18n.t('settings.discord_rpc')):
         toggle_discord_rpc()
+    elif answer.startswith("AniSkip"):
+        toggle_aniskip()
     elif answer.startswith(i18n.t('settings.shortcuts')) and not answer.startswith("  ↳"):
         toggle_shortcuts()
     elif answer == f"  ↳ {i18n.t('settings.shortcuts_config')}":

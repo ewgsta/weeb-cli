@@ -65,6 +65,11 @@ def start():
     if not config.get("language"):
         run_setup()
 
+    # Initialize AniSkip service with config
+    from weeb_cli.services.aniskip import aniskip_service
+    aniskip_enabled = config.get("aniskip_enabled", False)
+    aniskip_service.set_enabled(aniskip_enabled)
+
     update_prompt()
     check_incomplete_downloads()
 

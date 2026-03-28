@@ -6,6 +6,7 @@ import json
 import os
 import platform
 import tempfile
+from datetime import datetime
 from typing import Optional, Dict, Callable
 from rich.console import Console
 from weeb_cli.services.logger import debug as log_debug, error as log_error
@@ -13,6 +14,7 @@ from weeb_cli.services.logger import debug as log_debug, error as log_error
 from weeb_cli.services.dependency_manager import dependency_manager
 from weeb_cli.services.error_handler import handle_error
 from weeb_cli.i18n import i18n
+from weeb_cli.services.aniskip import aniskip_service
 
 console = Console()
 
@@ -23,6 +25,8 @@ class Player:
         self._monitor_thread: Optional[threading.Thread] = None
         self._stop_monitor = threading.Event()
         self._current_anime_data: Dict = {}
+        self._skip_times: Optional[Dict] = None
+        self._skipped_segments: set = set()
     
     def is_installed(self) -> bool:
         return self.mpv_path is not None
@@ -50,6 +54,24 @@ class Player:
         except Exception:
             pass
         return None
+    
+    def _check_and_skip(self, sock: socket.socket, curr_pos: float) -> None:
+        """Check if current position is in OP/ED range and skip if needed."""
+        if not self._skip_times:
+            return
+        
+        for skip_type, (start, end) in self._skip_times.items():
+            # Check if we're in the skip range and haven't skipped this segment yet
+            if start <= curr_pos < end and skip_type not in self._skipped_segments:
+                # Seek to end of segment
+                self._send_ipc_command(sock, ["seek", end, "absolute"])
+                self._skipped_segments.add(skip_type)
+                
+                # Show OSD message
+                skip_label = skip_type.upper()
+                self._send_ipc_command(sock, ["show-text", f"Skipped {skip_label}", 2000])
+                log_debug(f"[AniSkip] Skipped {skip_label}: {start:.1f}s -> {end:.1f}s")
+                console.print(f"[cyan]⏩ Skipped {skip_label}[/cyan]")
 
     def _monitor_mpv(self, ipc_path: str, slug: str, anime_title: str, on_watched: Optional[Callable]):
         log_debug(f"[Player] Monitor started for {slug}")
@@ -86,6 +108,10 @@ class Player:
                     
                     if duration > 0:
                         progress = (curr_pos / duration) * 100
+                        
+                        # AniSkip: Check if we should skip OP/ED
+                        if self._skip_times and aniskip_service.is_enabled():
+                            self._check_and_skip(sock, curr_pos)
                         
                         # Auto-mark as watched at 80%
                         if progress >= 80 and not watched_triggered:
@@ -159,6 +185,16 @@ class Player:
             "episode_number": episode_number,
             "total_episodes": total_episodes
         }
+        
+        # Fetch skip times if AniSkip is enabled
+        self._skip_times = None
+        self._skipped_segments = set()
+        if aniskip_service.is_enabled() and anime_title and episode_number:
+            self._skip_times = aniskip_service.get_skip_times(anime_title, episode_number)
+            if self._skip_times:
+                log_debug(f"[AniSkip] Loaded skip times: {self._skip_times}")
+            else:
+                log_debug(f"[AniSkip] No skip times available for {anime_title} EP{episode_number}")
 
         ipc_path = self._get_ipc_path()
         cmd = [self.mpv_path, url]
