@@ -66,9 +66,48 @@ plugins:
             Quick Start: Hızlı Başlangıç
             Configuration: Yapılandırma
             User Guide: Kullanım Kılavuzu
+            Searching Anime: Anime Arama
+            Streaming: Yayın
+            Downloading: İndirme
+            Local Library: Yerel Kütüphane
+            Tracker Integration: İzleyici Entegrasyonu
+            Settings: Ayarlar
             API Reference: API Referansı
+            Overview: Genel Bakış
+            Core: Çekirdek
+            Config: Yapılandırma
+            I18n: Uluslararasılaştırma
+            Exceptions: İstisnalar
+            Providers: Sağlayıcılar
+            Base Provider: Temel Sağlayıcı
+            Registry: Kayıt
+            Turkish Providers: Türkçe Sağlayıcılar
+            English Providers: İngilizce Sağlayıcılar
+            German Providers: Almanca Sağlayıcılar
+            Polish Providers: Lehçe Sağlayıcılar
+            Services: Servisler
+            Database: Veritabanı
+            Downloader: İndirici
+            Tracker: İzleyici
+            Player: Oynatıcı
+            Cache: Önbellek
+            Commands: Komutlar
+            API Commands: API Komutları
+            Search: Arama
+            Downloads: İndirmeler
+            Watchlist: İzleme Listesi
+            UI: Arayüz
+            Menu: Menü
+            Prompt: İstem
+            Header: Başlık
             Development: Geliştirme
+            Contributing: Katkıda Bulunma
+            Architecture: Mimari
+            Adding Providers: Sağlayıcı Ekleme
+            Testing: Test
             CLI Reference: CLI Referansı
+            API Mode: API Modu
+            Serve Mode: Sunucu Modu
         - locale: de
           name: Deutsch
           build: true
@@ -79,9 +118,48 @@ plugins:
             Quick Start: Schnellstart
             Configuration: Konfiguration
             User Guide: Benutzerhandbuch
+            Searching Anime: Anime suchen
+            Streaming: Streaming
+            Downloading: Herunterladen
+            Local Library: Lokale Bibliothek
+            Tracker Integration: Tracker-Integration
+            Settings: Einstellungen
             API Reference: API-Referenz
+            Overview: Übersicht
+            Core: Kern
+            Config: Konfiguration
+            I18n: Internationalisierung
+            Exceptions: Ausnahmen
+            Providers: Anbieter
+            Base Provider: Basis-Anbieter
+            Registry: Registrierung
+            Turkish Providers: Türkische Anbieter
+            English Providers: Englische Anbieter
+            German Providers: Deutsche Anbieter
+            Polish Providers: Polnische Anbieter
+            Services: Dienste
+            Database: Datenbank
+            Downloader: Downloader
+            Tracker: Tracker
+            Player: Player
+            Cache: Cache
+            Commands: Befehle
+            API Commands: API-Befehle
+            Search: Suche
+            Downloads: Downloads
+            Watchlist: Watchlist
+            UI: Benutzeroberfläche
+            Menu: Menü
+            Prompt: Eingabeaufforderung
+            Header: Kopfzeile
             Development: Entwicklung
+            Contributing: Beitragen
+            Architecture: Architektur
+            Adding Providers: Anbieter hinzufügen
+            Testing: Testen
             CLI Reference: CLI-Referenz
+            API Mode: API-Modus
+            Serve Mode: Server-Modus
         - locale: pl
           name: Polski
           build: true
@@ -92,9 +170,48 @@ plugins:
             Quick Start: Szybki start
             Configuration: Konfiguracja
             User Guide: Przewodnik użytkownika
+            Searching Anime: Wyszukiwanie anime
+            Streaming: Streaming
+            Downloading: Pobieranie
+            Local Library: Lokalna biblioteka
+            Tracker Integration: Integracja trackerów
+            Settings: Ustawienia
             API Reference: Dokumentacja API
+            Overview: Przegląd
+            Core: Rdzeń
+            Config: Konfiguracja
+            I18n: Internacjonalizacja
+            Exceptions: Wyjątki
+            Providers: Dostawcy
+            Base Provider: Podstawowy dostawca
+            Registry: Rejestr
+            Turkish Providers: Dostawcy tureccy
+            English Providers: Dostawcy angielscy
+            German Providers: Dostawcy niemieccy
+            Polish Providers: Dostawcy polscy
+            Services: Usługi
+            Database: Baza danych
+            Downloader: Pobieracz
+            Tracker: Tracker
+            Player: Odtwarzacz
+            Cache: Pamięć podręczna
+            Commands: Polecenia
+            API Commands: Polecenia API
+            Search: Wyszukiwanie
+            Downloads: Pobierania
+            Watchlist: Lista obserwowanych
+            UI: Interfejs użytkownika
+            Menu: Menu
+            Prompt: Monit
+            Header: Nagłówek
             Development: Rozwój
+            Contributing: Wkład
+            Architecture: Architektura
+            Adding Providers: Dodawanie dostawców
+            Testing: Testowanie
             CLI Reference: Dokumentacja CLI
+            API Mode: Tryb API
+            Serve Mode: Tryb serwera
   - mkdocstrings:
       handlers:
         python:
