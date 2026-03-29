@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "weeb-cli"
 version = "2.13.2"
-description = "Tarayıcı yok, reklam yok, dikkat dağıtıcı unsur yok. Sadece siz ve eşsiz bir anime izleme deneyimi."
+description = "No browser, no ads, no distractions. Just you and an unparalleled anime viewing experience."
 readme = "README.md"
 authors = [{ name = "ewgsta", email = "ewgst@proton.me" }]
 license = "GPL-3.0-only"
@@ -14,7 +14,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Environment :: Console",
 ]
-keywords = ["anime", "weeb", "anime-download", "anizm", "anime-watch", "anime-watching", "anime-downloading", "anime-cli", "allanime", "animecix", "anime-indir", "anime-izle", "weeb-cli", "anime-izleme", "anime-indirme", "weebanime", "tranime"]
+keywords = ["terminal", "anime", "tui", "crossplatform", "anime-download", "turkanime", "anizm", "anime-watch", "aniwatch", "anime-cli", "ani-cli", "openanime", "allanime", "hianime", "anitr-cli", "animecix", "anime-indir", "anime-izle", "weeb-cli", "katsuanime"]
 requires-python = ">=3.12"
 dependencies = [
     "typer[all]",
