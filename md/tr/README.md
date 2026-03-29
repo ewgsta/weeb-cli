@@ -74,6 +74,7 @@
 - Otomatik güncelleme kontrolü
 - Scriptler ve yapay zeka ajanları için etkileşimsiz JSON API
 - Sonarr/*arr entegrasyonu için Torznab sunucu modu
+- Web/mobil uygulamalar için RESTful API sunucusu
 
 ---
 
@@ -148,6 +149,37 @@ weeb-cli serve --port 9876 \
   --sonarr-api-key ANAHTARINIZ \
   --providers animecix,anizle,turkanime
 ```
+
+Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
+
+### RESTful API Sunucusu
+
+Web/mobil uygulamalar ve özel entegrasyonlar için weeb-cli bir RESTful API sunucusu sağlar:
+
+```bash
+pip install weeb-cli[serve-restful]
+
+weeb-cli serve restful --port 8080 \
+  --providers animecix,hianime,aniworld,docchi \
+  --cors
+```
+
+**API Endpoint'leri:**
+- `GET /health` - Sağlık kontrolü
+- `GET /api/providers` - Mevcut provider'ları listele
+- `GET /api/search?q=naruto&provider=animecix` - Anime ara
+- `GET /api/anime/{id}?provider=animecix` - Anime detaylarını al
+- `GET /api/anime/{id}/episodes?season=1` - Bölümleri listele
+- `GET /api/anime/{id}/episodes/{ep_id}/streams` - Stream URL'lerini al
+
+**Docker Desteği:**
+```bash
+docker-compose -f docker-compose.restful.yml up -d
+```
+
+Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/restful-api.tr/)'na bakın.
+
+#### Docker (Torznab)
 
 Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
 

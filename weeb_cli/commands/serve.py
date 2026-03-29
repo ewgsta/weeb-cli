@@ -32,9 +32,16 @@ def _sanitize_for_release(name: str) -> str:
 
 serve_app = typer.Typer(
     name="serve",
-    help="Start a Torznab-compatible server for Sonarr/*arr integration.",
+    help="Start a Torznab-compatible server for Sonarr/*arr integration or RESTful API server.",
     add_completion=False,
 )
+
+# Import restful subcommand
+try:
+    from weeb_cli.commands.serve_restful import restful_app
+    serve_app.add_typer(restful_app, name="restful")
+except ImportError:
+    pass  # Flask not installed, restful mode unavailable
 
 
 # -- Helpers ------------------------------------------------------------------
