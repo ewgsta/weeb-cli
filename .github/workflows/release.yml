@@ -33,16 +33,18 @@ jobs:
             binary_name: weeb-cli.exe
             
           # macOS Intel
-          - os: macos-12
+          - os: macos-13
             arch: x64
             artifact_name: weeb-cli-macos-x86_64
             binary_name: weeb-cli
+            target_arch: x86_64
             
           # macOS Apple Silicon
-          - os: macos-latest
+          - os: macos-14
             arch: arm64
             artifact_name: weeb-cli-macos-arm64
             binary_name: weeb-cli
+            target_arch: arm64
             
     steps:
       - uses: actions/checkout@v6
@@ -51,7 +53,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          architecture: ${{ matrix.arch }}
+          architecture: ${{ matrix.os == 'windows-latest' && matrix.arch || 'x64' }}
           
       - name: Install dependencies
         run: |
@@ -72,6 +74,12 @@ jobs:
             SEP=";"
           else
             SEP=":"
+          fi
+          
+          # macOS için target architecture ayarla
+          if [ "${{ runner.os }}" = "macOS" ]; then
+            export ARCHFLAGS="-arch ${{ matrix.target_arch }}"
+            export _PYTHON_HOST_PLATFORM="macosx-10.9-${{ matrix.target_arch }}"
           fi
           
           pyinstaller --name weeb-cli \
@@ -101,6 +109,7 @@ jobs:
             --copy-metadata rich \
             --copy-metadata questionary \
             --copy-metadata curl_cffi \
+            ${{ runner.os == 'macOS' && format('--target-arch={0}', matrix.target_arch) || '' }} \
             weeb_cli/__main__.py
         
       - name: Rename Binary
@@ -118,8 +127,6 @@ jobs:
   build_appimage:
     name: Build AppImage (Linux)
     runs-on: ubuntu-22.04
-    needs: build_binaries
-    if: success()
     steps:
       - uses: actions/checkout@v6
       
@@ -215,32 +222,70 @@ jobs:
           path: weeb-cli-linux-x86_64.AppImage
           compression-level: 9
 
-  create_release:
-    name: Create GitHub Release
-    needs: [build_binaries, build_appimage]
+  upload_to_release:
+    name: Upload to Release (${{ matrix.artifact_name }})
+    needs: build_binaries
     runs-on: ubuntu-latest
+    if: always() && needs.build_binaries.result != 'cancelled'
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        artifact_name:
+          - weeb-cli-linux-x86_64
+          - weeb-cli-windows-x86_64.exe
+          - weeb-cli-windows-x86.exe
+          - weeb-cli-macos-x86_64
+          - weeb-cli-macos-arm64
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: artifact
+          
+      - name: Generate Checksum
+        if: hashFiles('artifact/*') != ''
+        run: |
+          cd artifact
+          sha256sum * > ${{ matrix.artifact_name }}.sha256
+          cat ${{ matrix.artifact_name }}.sha256
+          
+      - name: Upload to Release
+        if: hashFiles('artifact/*') != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifact/${{ matrix.artifact_name }}
+            artifact/${{ matrix.artifact_name }}.sha256
+          fail_on_unmatched_files: false
+
+  upload_appimage_to_release:
+    name: Upload AppImage to Release
+    needs: build_appimage
+    runs-on: ubuntu-latest
+    if: always() && needs.build_appimage.result == 'success'
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v6
-      
-      - name: Download All Artifacts
+      - name: Download AppImage
         uses: actions/download-artifact@v8
         with:
-          path: artifacts
-          merge-multiple: true
+          name: weeb-cli-linux-x86_64.AppImage
+          path: artifact
           
-      - name: Generate Checksums
+      - name: Generate Checksum
         run: |
-          cd artifacts
-          sha256sum * > SHA256SUMS.txt
-          cat SHA256SUMS.txt
+          cd artifact
+          sha256sum * > weeb-cli-linux-x86_64.AppImage.sha256
+          cat weeb-cli-linux-x86_64.AppImage.sha256
           
-      - name: Create Release
+      - name: Upload to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/*
-          generate_release_notes: true
-          draft: false
-          prerelease: false
-          fail_on_unmatched_files: true
+          files: |
+            artifact/weeb-cli-linux-x86_64.AppImage
+            artifact/weeb-cli-linux-x86_64.AppImage.sha256
+          fail_on_unmatched_files: false
