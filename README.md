@@ -75,6 +75,7 @@
 - Automatic update checks
 - Non-interactive JSON API for scripts and AI agents
 - Torznab server mode for Sonarr/*arr integration
+- RESTful API server for web/mobile applications
 
 ---
 
@@ -152,7 +153,34 @@ weeb-cli serve --port 9876 \
 
 Then add `http://weeb-cli-host:9876` as a Torznab indexer in Sonarr with category 5070 (TV/Anime). The server includes a blackhole download worker that automatically processes grabbed episodes.
 
-#### Docker
+### RESTful API Server
+
+For web/mobile applications and custom integrations, weeb-cli provides a RESTful API server:
+
+```bash
+pip install weeb-cli[serve-restful]
+
+weeb-cli serve restful --port 8080 --cors
+```
+
+**API Endpoints:**
+- `GET /health` - Health check
+- `GET /api/providers` - List available providers
+- `GET /api/search?q=naruto&provider=animecix` - Search anime
+- `GET /api/anime/{id}?provider=animecix` - Get anime details
+- `GET /api/anime/{id}/episodes?season=1` - List episodes
+- `GET /api/anime/{id}/episodes/{ep_id}/streams` - Get stream URLs
+
+All available providers are loaded automatically. Select which provider to use via the `provider` query parameter.
+
+**Docker Support:**
+```bash
+docker-compose -f docker-compose.restful.yml up -d
+```
+
+See [RESTful API Documentation](https://ewgsta.github.io/weeb-cli/cli/restful-api/) for full details.
+
+#### Docker (Torznab)
 
 ```dockerfile
 FROM python:3.13-slim
@@ -249,6 +277,7 @@ All settings can be modified through the interactive Settings menu.
 - [x] Keyboard shortcuts
 - [x] Non-interactive API mode (JSON output)
 - [x] Torznab server for Sonarr/*arr integration
+- [x] RESTful API server for web/mobile apps
 
 
 ### Planned
@@ -272,6 +301,7 @@ weeb-cli/
 │   │   ├── downloads.py         # Download management commands
 │   │   ├── search.py            # Anime search functionality
 │   │   ├── serve.py             # Torznab server for *arr integration
+│   │   ├── serve_restful.py     # RESTful API server
 │   │   ├── settings.py          # Settings menu and configuration
 │   │   ├── setup.py             # Initial setup wizard
 │   │   └── watchlist.py         # Watch history and progress

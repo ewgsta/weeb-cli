@@ -32,9 +32,29 @@ def _sanitize_for_release(name: str) -> str:
 
 serve_app = typer.Typer(
     name="serve",
-    help="Start a Torznab-compatible server for Sonarr/*arr integration.",
+    help="Start server modes: Torznab for Sonarr/*arr integration or RESTful API server.",
     add_completion=False,
+    invoke_without_command=True,
 )
+
+@serve_app.callback()
+def serve_callback(ctx: typer.Context):
+    """Server modes for weeb-cli.
+    
+    Available modes:
+    - torznab: Torznab-compatible server for Sonarr/*arr integration
+    - restful: RESTful API server for web/mobile applications
+    """
+    if ctx.invoked_subcommand is None:
+        typer.echo(ctx.get_help())
+        raise typer.Exit(0)
+
+# Import restful subcommand
+try:
+    from weeb_cli.commands.serve_restful import restful_app
+    serve_app.add_typer(restful_app, name="restful")
+except ImportError:
+    pass  # Flask not installed, restful mode unavailable
 
 
 # -- Helpers ------------------------------------------------------------------
@@ -206,10 +226,16 @@ def _get_fallback_streams(fallback_providers, sonarr_title, season, episode_num)
     return []
 
 
-# -- Main serve command -------------------------------------------------------
+# -- Torznab serve command ----------------------------------------------------
 
-@serve_app.callback(invoke_without_command=True)
-def serve(
+torznab_app = typer.Typer(
+    name="torznab",
+    help="Start Torznab-compatible server for Sonarr/*arr integration.",
+    add_completion=False,
+)
+
+@torznab_app.callback(invoke_without_command=True)
+def serve_torznab(
     ctx: typer.Context,
     port: int = typer.Option(9876, "--port", envvar="FLASK_PORT", help="HTTP port"),
     watch_dir: str = typer.Option("/downloads/weeb-cli/watch", "--watch-dir", envvar="WATCH_DIR", help="Blackhole watch directory"),
@@ -470,3 +496,7 @@ def serve(
     worker.start()
 
     flask_app.run(host="0.0.0.0", port=port, debug=False)
+
+
+# Register torznab subcommand
+serve_app.add_typer(torznab_app, name="torznab")

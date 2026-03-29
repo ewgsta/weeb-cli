@@ -47,7 +47,7 @@ def _get_html(url: str, headers: dict = None) -> str:
         return ""
 
 
-@register_provider("hianime", lang="en", region="US")
+@register_provider("hianime", lang="en", region="US", disabled=True)
 class HiAnimeProvider(BaseProvider):
     
     def __init__(self):

@@ -52,16 +52,17 @@ _provider_meta: Dict[str, dict] = {}
 _initialized: bool = False
 
 
-def register_provider(name: str, lang: str = "tr", region: str = "TR"):
+def register_provider(name: str, lang: str = "tr", region: str = "TR", disabled: bool = False):
     """Decorator for registering provider classes.
     
     Registers a provider class with metadata in the global registry.
-    Sets class attributes (name, lang, region) for easy access.
+    Sets class attributes (name, lang, region, disabled) for easy access.
     
     Args:
         name: Unique provider identifier (e.g., 'animecix', 'hianime').
         lang: Language code (e.g., 'en', 'tr', 'de', 'pl').
         region: Region code (e.g., 'US', 'TR', 'DE', 'PL').
+        disabled: If True, provider is registered but not available for use.
     
     Returns:
         Decorator function that registers the class.
@@ -70,18 +71,24 @@ def register_provider(name: str, lang: str = "tr", region: str = "TR"):
         >>> @register_provider("myprovider", lang="en", region="US")
         ... class MyProvider(BaseProvider):
         ...     pass
+        
+        >>> @register_provider("oldprovider", lang="en", region="US", disabled=True)
+        ... class OldProvider(BaseProvider):
+        ...     pass  # Registered but not usable
     """
     def decorator(cls: Type[BaseProvider]) -> Type[BaseProvider]:
         cls.name = name
         cls.lang = lang
         cls.region = region
+        cls.disabled = disabled
         
         _providers[name] = cls
         _provider_meta[name] = {
             "name": name,
             "lang": lang,
             "region": region,
-            "class": cls.__name__
+            "class": cls.__name__,
+            "disabled": disabled
         }
         
         return cls
@@ -124,13 +131,14 @@ def get_provider(name: str) -> Optional[BaseProvider]:
     """Get provider instance by name.
     
     Triggers provider discovery if not already done, then returns
-    a new instance of the requested provider.
+    a new instance of the requested provider. Returns None if provider
+    is disabled or not found.
     
     Args:
         name: Provider identifier (e.g., 'animecix', 'hianime').
     
     Returns:
-        Provider instance, or None if not found.
+        Provider instance, or None if not found or disabled.
     
     Example:
         >>> provider = get_provider("animecix")
@@ -139,6 +147,10 @@ def get_provider(name: str) -> Optional[BaseProvider]:
     """
     _discover_providers()
     if name in _providers:
+        # Check if provider is disabled
+        if _provider_meta.get(name, {}).get("disabled", False):
+            debug(f"[Registry] Provider '{name}' is disabled")
+            return None
         return _providers[name]()
     return None
 
