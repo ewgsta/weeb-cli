@@ -20,7 +20,7 @@ Sunucuyu varsayılan ayarlarla başlatın:
 weeb-cli serve restful
 ```
 
-Sunucu `http://0.0.0.0:8080` adresinde tüm mevcut provider'larla başlayacaktır.
+Sunucu `http://0.0.0.0:8080` adresinde başlayacak ve tüm mevcut provider'ları otomatik olarak yükleyecektir.
 
 ### Özel Yapılandırma
 
@@ -28,10 +28,11 @@ Sunucu `http://0.0.0.0:8080` adresinde tüm mevcut provider'larla başlayacaktı
 weeb-cli serve restful \
   --port 9000 \
   --host 127.0.0.1 \
-  --providers animecix,hianime \
   --no-cors \
   --debug
 ```
+
+Tüm mevcut provider'lar otomatik olarak yüklenir. API isteklerinde `provider` sorgu parametresi ile hangi provider'ı kullanacağınızı seçin.
 
 ### Komut Seçenekleri
 
@@ -39,9 +40,10 @@ weeb-cli serve restful \
 |---------|----------------|-----------|----------|
 | `--port` | `RESTFUL_PORT` | `8080` | Bağlanılacak HTTP portu |
 | `--host` | `RESTFUL_HOST` | `0.0.0.0` | Bağlanılacak host adresi |
-| `--providers` | `RESTFUL_PROVIDERS` | `animecix,hianime,aniworld,docchi` | Virgülle ayrılmış provider isimleri |
 | `--cors/--no-cors` | `RESTFUL_CORS` | `true` | CORS'u etkinleştir/devre dışı bırak |
 | `--debug` | `RESTFUL_DEBUG` | `false` | Debug modunu etkinleştir |
+
+**Not:** Tüm mevcut provider'lar otomatik olarak yüklenir. API isteklerinde `provider` sorgu parametresi ile hangi provider'ı kullanacağınızı seçin.
 
 ## API Endpoint'leri
 
@@ -234,13 +236,12 @@ Container'ı çalıştırın:
 docker run -d \
   --name weeb-cli-restful \
   -p 8080:8080 \
-  -e RESTFUL_PROVIDERS=animecix,hianime \
   weeb-cli-restful
 ```
 
 ### Ortam Değişkenleri
 
-Tüm komut seçenekleri ortam değişkenleri ile yapılandırılabilir:
+Sunucuyu ortam değişkenleri ile yapılandırın:
 
 ```bash
 docker run -d \
@@ -248,7 +249,6 @@ docker run -d \
   -p 9000:9000 \
   -e RESTFUL_PORT=9000 \
   -e RESTFUL_HOST=0.0.0.0 \
-  -e RESTFUL_PROVIDERS=animecix,hianime,aniworld \
   -e RESTFUL_CORS=true \
   -e RESTFUL_DEBUG=false \
   weeb-cli-restful
@@ -369,7 +369,6 @@ Type=simple
 User=weeb
 WorkingDirectory=/opt/weeb-cli
 Environment="RESTFUL_PORT=8080"
-Environment="RESTFUL_PROVIDERS=animecix,hianime"
 ExecStart=/usr/local/bin/weeb-cli serve restful
 Restart=always
 
@@ -408,14 +407,14 @@ weeb-cli serve restful --port 9000
 
 ### Provider Bulunamadı
 
-Provider adının doğru olduğundan emin olun:
+Provider adının doğru ve mevcut olduğundan emin olun:
 
 ```bash
 # Mevcut provider'ları listele
 weeb-cli api providers
 
-# Doğru provider adını kullan
-weeb-cli serve restful --providers animecix,hianime
+# API isteğinde doğru provider adını kullan
+curl "http://localhost:8080/api/search?q=naruto&provider=animecix"
 ```
 
 ### CORS Sorunları

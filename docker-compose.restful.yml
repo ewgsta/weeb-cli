@@ -11,7 +11,6 @@ services:
     environment:
       - RESTFUL_PORT=8080
       - RESTFUL_HOST=0.0.0.0
-      - RESTFUL_PROVIDERS=animecix,hianime,aniworld,docchi
       - RESTFUL_CORS=true
       - RESTFUL_DEBUG=false
     restart: unless-stopped

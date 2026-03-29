@@ -28,7 +28,6 @@ EXPOSE 8080
 # Environment variables
 ENV RESTFUL_PORT=8080
 ENV RESTFUL_HOST=0.0.0.0
-ENV RESTFUL_PROVIDERS=animecix,hianime,aniworld,docchi
 ENV RESTFUL_CORS=true
 ENV RESTFUL_DEBUG=false
 

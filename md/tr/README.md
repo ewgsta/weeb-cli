@@ -159,9 +159,7 @@ Web/mobil uygulamalar ve özel entegrasyonlar için weeb-cli bir RESTful API sun
 ```bash
 pip install weeb-cli[serve-restful]
 
-weeb-cli serve restful --port 8080 \
-  --providers animecix,hianime,aniworld,docchi \
-  --cors
+weeb-cli serve restful --port 8080 --cors
 ```
 
 **API Endpoint'leri:**
@@ -171,6 +169,8 @@ weeb-cli serve restful --port 8080 \
 - `GET /api/anime/{id}?provider=animecix` - Anime detaylarını al
 - `GET /api/anime/{id}/episodes?season=1` - Bölümleri listele
 - `GET /api/anime/{id}/episodes/{ep_id}/streams` - Stream URL'lerini al
+
+Tüm mevcut provider'lar otomatik olarak yüklenir. `provider` sorgu parametresi ile hangi provider'ı kullanacağınızı seçin.
 
 **Docker Desteği:**
 ```bash
