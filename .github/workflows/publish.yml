@@ -48,7 +48,7 @@ jobs:
           sed -i "s/^pkgver=.*/pkgver=$VERSION/" distribution/aur/PKGBUILD
           
       - name: Publish to AUR
-        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        uses: KSXGitHub/github-actions-deploy-aur@v4.1.1
         with:
           pkgname: weeb-cli
           pkgbuild: ./distribution/aur/PKGBUILD
