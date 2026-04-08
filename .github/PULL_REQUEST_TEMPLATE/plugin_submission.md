@@ -9,13 +9,15 @@
 - **Language**: 
 
 ## Checklist
-- [ ] Plugin follows the standard folder structure.
-- [ ] `manifest.json` is valid and contains all required fields.
-- [ ] `main.py` (or specified entry point) is present and functional.
-- [ ] `README.md` is provided with clear instructions.
-- [ ] At least one image/logo is provided in `assets/`.
-- [ ] No malicious code or unauthorized data collection.
-- [ ] Tested locally and works as expected.
+- [ ] Wtyczka znajduje się w osobnym folderze wewnątrz `data/`.
+- [ ] `manifest.json` jest poprawny i zawiera wszystkie wymagane pola (id, name, version, description, author, dependencies).
+- [ ] `plugin.weeb` jest obecny i funkcjonalny.
+- [ ] `README.md` zawiera szczegółowe instrukcje użytkowania.
+- [ ] W folderze `screenshots/` znajduje się co najmniej jedno zdjęcie.
+- [ ] W folderze `assets/` znajduje się ikona wtyczki (`icon.png`).
+- [ ] Brak złośliwego kodu lub nieautoryzowanego zbierania danych.
+- [ ] Wtyczka została przetestowana lokalnie i działa zgodnie z oczekiwaniami.
+- [ ] Testy wtyczki przechodzą poprawnie (min. 80% coverage).
 
 ## Screenshots / Demo
 (Optional but recommended)

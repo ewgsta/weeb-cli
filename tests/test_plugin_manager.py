@@ -26,7 +26,7 @@ class TestPluginManager(unittest.TestCase):
             "id": "test-plugin",
             "name": "Test Plugin",
             "version": "1.0.0",
-            "entry_point": "main.py"
+            "entry_point": "plugin.weeb"
         }
         manifest = PluginManifest(data)
         self.assertEqual(manifest.id, "test-plugin")
@@ -37,7 +37,7 @@ class TestPluginManager(unittest.TestCase):
             PluginManifest({"name": "No ID"})
 
     def test_install_plugin(self):
-        # Create a dummy plugin directory
+        # Create a dummy plugin directory structure
         plugin_src = self.test_dir / "src_plugin"
         plugin_src.mkdir()
         
@@ -45,22 +45,19 @@ class TestPluginManager(unittest.TestCase):
             "id": "my-plugin",
             "name": "My Plugin",
             "version": "1.0.0",
-            "entry_point": "main.py"
+            "entry_point": "plugin.weeb",
+            "description": "Test description",
+            "author": "Test Author",
+            "dependencies": []
         }
         with open(plugin_src / "manifest.json", "w") as f:
             json.dump(manifest_data, f)
             
-        with open(plugin_src / "main.py", "w") as f:
+        with open(plugin_src / "plugin.weeb", "w") as f:
             f.write("def register(): pass")
 
-        # Create .weeb file
-        self.weeb_file = Path("my-plugin.weeb")
-        with zipfile.ZipFile(self.weeb_file, 'w') as zipf:
-            zipf.write(plugin_src / "manifest.json", "manifest.json")
-            zipf.write(plugin_src / "main.py", "main.py")
-
         # Install plugin
-        plugin = self.manager.install_plugin(self.weeb_file)
+        plugin = self.manager.install_plugin(plugin_src)
         
         self.assertEqual(plugin.manifest.id, "my-plugin")
         self.assertTrue((self.manager.installed_dir / "my-plugin").exists())

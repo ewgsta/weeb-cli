@@ -1,56 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weeb CLI Plugin Gallery</title>
+    <title>Galeria Wtyczek Weeb CLI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" id="theme-link" href="css/themes/dark.css">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Weeb CLI Plugins</h1>
-            <nav>
-                <div class="lang-selector">
-                    <select id="lang-select">
-                        <option value="en">English</option>
-                        <option value="tr">Türkçe</option>
-                        <option value="de">Deutsch</option>
-                        <option value="pl">Polski</option>
-                    </select>
-                </div>
-                <div class="theme-selector">
-                    <button id="theme-toggle">🌓</button>
-                </div>
-            </nav>
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <i class="fas fa-puzzle-piece"></i> Weeb CLI Plugins
+            </div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Szukaj wtyczek...">
+            </div>
+            <div class="controls">
+                <button id="theme-toggle" class="icon-btn"><i class="fas fa-moon"></i></button>
+            </div>
         </div>
     </header>
 
     <main class="container">
-        <section id="hero">
-            <h2 data-i18n="hero-title">Discover and Extend</h2>
-            <p data-i18n="hero-desc">Custom providers and tools for Weeb CLI.</p>
+        <section class="hero">
+            <h1>Odkrywaj i Rozszerzaj</h1>
+            <p>Niestandardowi dostawcy i narzędzia dla Weeb CLI z bezpieczną piaskownicą.</p>
         </section>
 
-        <section id="plugins-grid">
-            <!-- Plugins will be rendered here -->
-            <div id="loader" class="loader"></div>
+        <section class="filters">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">Wszystkie</button>
+                <button class="filter-btn" data-filter="provider">Dostawcy</button>
+                <button class="filter-btn" data-filter="utility">Narzędzia</button>
+                <button class="filter-btn" data-filter="ui">Interfejs</button>
+            </div>
+            <div class="sort-group">
+                <select id="sort-select">
+                    <option value="downloads">Najczęściej pobierane</option>
+                    <option value="rating">Najwyżej oceniane</option>
+                    <option value="recent">Najnowsze</option>
+                </select>
+            </div>
+        </section>
+
+        <section id="plugins-grid" class="grid">
+            <!-- Plugins will be rendered here via JS -->
+            <div class="loader-container"><div class="loader"></div></div>
         </section>
     </main>
 
-    <div id="modal" class="modal">
+    <!-- Plugin Details Modal -->
+    <div id="plugin-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <button class="close-modal"><i class="fas fa-times"></i></button>
             <div id="modal-body"></div>
         </div>
     </div>
 
-    <footer>
-        <div class="container">
-            <p>&copy; 2024 Weeb CLI. Built with passion for the anime community.</p>
-        </div>
-    </footer>
+    <!-- Notification Toast -->
+    <div id="toast" class="toast"></div>
 
     <script src="js/gallery.js"></script>
 </body>

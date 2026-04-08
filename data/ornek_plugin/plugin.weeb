@@ -1,0 +1,24 @@
+def register():
+    """Örnek sağlayıcıyı Weeb CLI'ye kaydeder."""
+    from weeb_cli.providers.registry import register_provider
+    from weeb_cli.providers.base import BaseProvider
+    
+    @register_provider("ornek_plugin", lang="tr", region="TR")
+    class OrnekProvider(BaseProvider):
+        def __init__(self):
+            super().__init__()
+            self.name = "ornek_plugin"
+            
+        def search(self, query: str):
+            """Arama işlevi örneği."""
+            return [{"title": f"Örnek Sonuç: {query}", "id": "ornek-123"}]
+            
+        def get_episodes(self, anime_id: str):
+            """Bölüm getirme örneği."""
+            return [{"id": "bolum-1", "title": "1. Bölüm"}]
+            
+        def get_streams(self, ep_id: str):
+            """Video bağlantısı getirme örneği."""
+            return [{"url": "https://ornek.com/video.mp4", "quality": "1080p"}]
+
+    print("[Örnek Plugin] Başarıyla yüklendi ve kaydedildi!")

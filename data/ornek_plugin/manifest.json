@@ -1,0 +1,16 @@
+{
+    "id": "ornek-plugin",
+    "name": "Örnek Plugin",
+    "version": "1.0.0",
+    "description": "Weeb CLI için örnek bir sağlayıcı eklentisi.",
+    "author": "Geliştirici Adı",
+    "entry_point": "plugin.weeb",
+    "min_weeb_version": "1.0.0",
+    "dependencies": [],
+    "permissions": ["network"],
+    "tags": ["anime", "türkçe", "sağlayıcı"],
+    "icon": "assets/icon.png",
+    "homepage": "https://github.com/ewgsta/weeb-cli",
+    "repository_url": "https://github.com/ewgsta/weeb-cli",
+    "license": "GPL-3.0"
+}

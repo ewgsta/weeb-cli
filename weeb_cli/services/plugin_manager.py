@@ -40,10 +40,17 @@ class PluginManifest:
         self.version = data.get("version", "1.0.0")
         self.description = data.get("description", "")
         self.author = data.get("author", "Unknown")
-        self.entry_point = data.get("entry_point", "main.py")
+        self.entry_point = data.get("entry_point", "plugin.weeb")
         self.dependencies = data.get("dependencies", [])
         self.min_weeb_version = data.get("min_weeb_version", "1.0.0")
         self.permissions = data.get("permissions", [])
+        
+        # Optional fields
+        self.tags = data.get("tags", [])
+        self.icon = data.get("icon", "")
+        self.homepage = data.get("homepage", "")
+        self.repository_url = data.get("repository_url", "")
+        self.license = data.get("license", "")
         
         if not self.id or not self.name:
             raise PluginError("Plugin manifest must contain 'id' and 'name'")
@@ -114,34 +121,22 @@ class PluginManager:
                     except Exception as e:
                         error(f"[PluginManager] Failed to load plugin metadata at {plugin_path}: {e}")
 
-    def install_plugin(self, weeb_file_path: Path) -> Plugin:
-        """Install a plugin from a .weeb file.
+    def install_plugin(self, plugin_dir_path: Path) -> Plugin:
+        """Install a plugin from a directory structure (data/plugin_name).
         
         Steps:
-            1. Extract .weeb file to temp directory.
-            2. Validate manifest.json.
+            1. Validate directory and manifest.json.
+            2. Validate plugin.weeb file exists.
             3. Check dependencies.
             4. Move to installed directory.
             5. Load metadata.
         """
-        if not weeb_file_path.exists():
-            raise PluginError(f"Plugin file not found: {weeb_file_path}")
+        if not plugin_dir_path.exists() or not plugin_dir_path.is_dir():
+            raise PluginError(f"Plugin directory not found: {plugin_dir_path}")
             
-        # 1. Extract to temp
-        extract_path = self.temp_dir / weeb_file_path.stem
-        if extract_path.exists():
-            shutil.rmtree(extract_path)
-            
-        try:
-            with zipfile.ZipFile(weeb_file_path, 'r') as zip_ref:
-                zip_ref.extractall(extract_path)
-        except Exception as e:
-            raise PluginError(f"Failed to extract .weeb file: {e}")
-            
-        # 2. Validate manifest
-        manifest_path = extract_path / "manifest.json"
+        # 1. Validate manifest
+        manifest_path = plugin_dir_path / "manifest.json"
         if not manifest_path.exists():
-            shutil.rmtree(extract_path)
             raise PluginError("Plugin is missing manifest.json")
             
         try:
@@ -149,20 +144,25 @@ class PluginManager:
                 data = json.load(f)
                 manifest = PluginManifest(data)
         except Exception as e:
-            shutil.rmtree(extract_path)
             raise PluginError(f"Invalid manifest.json: {e}")
             
-        # 3. Check dependencies (basic check for now)
+        # 2. Validate entry point
+        entry_path = plugin_dir_path / manifest.entry_point
+        if not entry_path.exists():
+            raise PluginError(f"Entry point {manifest.entry_point} not found in plugin directory")
+            
+        # 3. Check dependencies
         for dep in manifest.dependencies:
             # We could use pip to install dependencies here if needed
-            # For now, just log them
             debug(f"[PluginManager] Plugin '{manifest.name}' requires dependency: {dep}")
             
         # 4. Move to installed
         final_path = self.installed_dir / manifest.id
         if final_path.exists():
             shutil.rmtree(final_path)
-        shutil.move(str(extract_path), str(final_path))
+            
+        # Copy directory structure to installed plugins
+        shutil.copytree(plugin_dir_path, final_path)
         
         # 5. Load metadata
         plugin = Plugin(final_path, manifest)

@@ -90,6 +90,13 @@
         "plugin_enabled": "Wtyczka włączona.",
         "plugin_disabled": "Wtyczka wyłączona.",
         "plugin_error": "Błąd wtyczki: {error}",
+        "check_updates": "Sprawdź aktualizacje",
+        "checking_updates": "Sprawdzanie aktualizacji wtyczek...",
+        "up_to_date": "Wszystkie wtyczki są aktualne!",
+        "updates_available": "Dostępne aktualizacje dla {count} wtyczek:",
+        "update_prompt": "Czy chcesz je zaktualizować teraz?",
+        "updating": "Pobieranie aktualizacji...",
+        "update_success": "Wtyczki zaktualizowane pomyślnie!",
         "cache": {
             "title": "Zarządzanie Cache",
             "memory_entries": "Wpisy w pamięci",
