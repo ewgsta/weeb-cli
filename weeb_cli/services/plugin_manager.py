@@ -223,7 +223,12 @@ class PluginManager:
 
     def _load_plugin_module(self, plugin: Plugin):
         """Load the plugin's entry point module in a restricted environment."""
-        entry_path = plugin.path / plugin.manifest.entry_point
+        entry_path = (plugin.path / plugin.manifest.entry_point).resolve()
+        
+        # Prevent path traversal
+        if not str(entry_path).startswith(str(plugin.path.resolve())):
+            raise PluginError(f"Entry point {plugin.manifest.entry_point} is outside the plugin directory")
+            
         if not entry_path.exists():
             raise PluginError(f"Entry point not found: {plugin.manifest.entry_point}")
             
