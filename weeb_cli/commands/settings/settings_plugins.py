@@ -62,7 +62,7 @@ def plugins_menu():
 def _load_plugin_flow():
     try:
         path_str = questionary.text(
-            i18n.t("settings.load_plugin") + " (URL or local path):"
+            i18n.t("settings.load_plugin_prompt")
         ).ask()
         
         if not path_str:
@@ -75,7 +75,7 @@ def _load_plugin_flow():
             return
             
         plugin = plugin_manager.install_plugin(path)
-        console.print(f"[green]Plugin installed: {plugin.manifest.name}[/green]")
+        console.print(f"[green]{i18n.t('settings.plugin_installed', name=plugin.manifest.name)}[/green]")
         time.sleep(1)
     except Exception as e:
         console.print(f"[red]{i18n.t('settings.plugin_error', error=str(e))}[/red]")
