@@ -52,7 +52,7 @@ def toggle_aniskip():
 def change_language():
     from weeb_cli.services.scraper import scraper
     
-    langs = {"Türkçe": "tr", "English": "en", "Deutsch": "de", "Polski": "pl"}
+    langs = {"Türkçe": "tr", "English": "en", "Deutsch": "de", "Polski": "pl", "Français": "fr"}
     try:
         selected = questionary.select(
             "",
