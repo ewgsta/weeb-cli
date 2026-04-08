@@ -54,6 +54,10 @@ class PluginManifest:
         
         if not self.id or not self.name:
             raise PluginError("Plugin manifest must contain 'id' and 'name'")
+            
+        import re
+        if not re.match(r"^[a-zA-Z0-9_-]+$", self.id):
+            raise PluginError("Plugin ID must contain only alphanumeric characters, underscores, and hyphens.")
 
 class Plugin:
     """Represents an installed and loaded plugin."""
