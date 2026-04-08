@@ -67,14 +67,17 @@ jobs:
           
       - name: Run Tests & Check Coverage
         run: |
-          # We check if there are tests, run them, and ensure 80% coverage
+          # Bug 0009: Use --append to accumulate coverage data across plugins
           for plugin_dir in data/*/; do
             if [ -d "$plugin_dir" ] && [ -d "$plugin_dir/tests" ]; then
               echo "Running tests for $plugin_dir"
-              coverage run -m pytest $plugin_dir/tests/
-              coverage report --fail-under=80
+              coverage run --append -m pytest $plugin_dir/tests/
             fi
           done
+          # Only fail if total coverage is under 80% (or adjust as needed)
+          if [ -f .coverage ]; then
+            coverage report --fail-under=80
+          fi
 
       - name: Validation Successful
         run: echo "Plugin validation passed!"

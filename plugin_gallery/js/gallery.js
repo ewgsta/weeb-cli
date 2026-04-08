@@ -246,13 +246,14 @@ function openDetails(id) {
     const htmlReadme = plugin.readme
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    // Bug 0002: Fixed 'p' variable error, using 'plugin'
         .replace(/^# (.*$)/gim, '<h1>$1</h1>')
         .replace(/^\- (.*$)/gim, '<li>$1</li>')
         .replace(/\n\n/g, '<br><br>');
 
     modalBody.innerHTML = `
         <div class="modal-header">
-            <img src="${p.image}" alt="${plugin.name}">
+            <img src="${plugin.image}" alt="${plugin.name}">
             <div class="modal-title-area">
                 <h2>${plugin.name} <span class="version">v${plugin.version}</span></h2>
                 <p class="author">by ${plugin.author}</p>

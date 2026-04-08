@@ -58,6 +58,31 @@
 - Wznawianie przerwanych pobierań
 - Inteligentne nazewnictwo plików (`Anime Name - S1E1.mp4`)
 
+### Śledzenie i synchronizacja
+- Integracja z **AniList** przez OAuth
+- Integracja z **MyAnimeList** przez OAuth
+- Integracja z **Kitsu** przez e-mail/hasło
+- Automatyczna synchronizacja postępów dla oglądania online i offline
+- Kolejka offline dla oczekujących aktualizacji
+- Inteligentne dopasowywanie tytułów anime z nazw plików
+
+### Biblioteka lokalna
+- Automatyczne skanowanie pobranych anime
+- Obsługa dysków zewnętrznych (USB, HDD)
+- Indeksowanie anime offline z automatyczną synchronizacją trackerów
+- Wyszukiwanie we wszystkich źródłach
+
+### Dodatkowe funkcje
+- Baza danych SQLite (szybka i niezawodna)
+- Powiadomienia systemowe po zakończeniu pobierania
+- Integracja Discord RPC (pokaż w co grasz/co oglądasz na Discordzie)
+- Historia wyszukiwania
+- Tryb debugowania i logowanie
+- Automatyczne sprawdzanie aktualizacji
+- Nieinteraktywne API JSON dla skryptów i agentów AI
+- Tryb serwera Torznab dla integracji z Sonarr/*arr
+- Serwer API RESTful dla aplikacji webowych/mobilnych
+
 ---
 
 ## Instalacja
@@ -97,9 +122,31 @@ weeb-cli api search "Angel Beats"
 
 ---
 
+## Roadmap
+
+### Ukończone
+- [x] Obsługa wielu źródeł (TR/EN/DE/PL)
+- [x] Streaming przez MPV
+- [x] Historia oglądania i śledzenie postępów
+- [x] Integracja pobierania Aria2/yt-dlp
+- [x] Dyski zewnętrzne i biblioteka lokalna
+- [x] Baza danych SQLite
+- [x] System powiadomień
+- [x] Tryb debugowania
+- [x] Integracja MAL/AniList
+- [x] Kopia zapasowa/przywracanie bazy danych
+- [x] Skróty klawiszowe
+- [x] Tryb API nieinteraktywnego (wyjście JSON)
+- [x] Serwer Torznab dla integracji Sonarr/*arr
+- [x] Serwer API RESTful dla aplikacji webowych/mobilnych
+- [x] System wtyczek z obsługą piaskownicy
+- [x] Plugin Builder i strona galerii
+
+---
+
 ## Licencja
 
-Ten projekt jest objęty licencją **Powszechna Licencja Publiczna GNU, wersja 3.0**.  
-Zajrzyj do pliku [LICENSE](../../LICENSE) dla wyświetlenia pełnej treści licencji.
+Ten projekt jest objęty licencją **GNU General Public License v3.0**.  
+Pełny tekst licencji znajduje się w pliku [LICENSE](../../LICENSE).
 
 Weeb-CLI (C) 2026

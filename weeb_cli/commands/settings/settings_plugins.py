@@ -24,14 +24,17 @@ def plugins_menu():
         plugins = plugin_manager.plugins
         choices = []
         
+        # Bug 0010: Use questionary.Choice for more robust selection
         for p_id, plugin in plugins.items():
             state = "[ON]" if plugin.enabled else "[OFF]"
-            choices.append(f"{plugin.manifest.name} v{plugin.manifest.version} {state}")
+            label = f"{plugin.manifest.name} v{plugin.manifest.version} {state}"
+            choices.append(questionary.Choice(title=label, value=p_id))
             
         choices.extend([
-            i18n.t("settings.load_plugin"),
-            i18n.t("settings.check_updates"),
-            i18n.t("shortcut_back")
+            questionary.Choice(title=i18n.t("settings.load_plugin"), value="load"),
+            questionary.Choice(title=i18n.t("settings.check_updates"), value="updates"),
+            # Bug 0003: Fixed i18n key path for back button
+            questionary.Choice(title=i18n.t("settings.shortcut_back"), value="back")
         ])
         
         try:
@@ -44,20 +47,17 @@ def plugins_menu():
         except KeyboardInterrupt:
             return
 
-        if answer is None or answer == i18n.t("shortcut_back"):
+        # Bug 0005: Use value-based comparison instead of raw string
+        if answer is None or answer == "back":
             return
             
-        if answer == i18n.t("settings.load_plugin"):
+        if answer == "load":
             _load_plugin_flow()
-        elif answer == i18n.t("settings.check_updates"):
+        elif answer == "updates":
             _check_updates_flow()
         else:
-            # Toggle plugin
-            plugin_name = answer.rsplit(' v', 1)[0]
-            for p_id, plugin in plugins.items():
-                if plugin.manifest.name == plugin_name:
-                    _toggle_plugin(p_id)
-                    break
+            # Toggle plugin using its ID directly from value
+            _toggle_plugin(answer)
 
 def _load_plugin_flow():
     try:

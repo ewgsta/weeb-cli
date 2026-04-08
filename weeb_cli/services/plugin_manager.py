@@ -190,7 +190,9 @@ class PluginManager:
             raise PluginError(f"Plugin not found: {plugin_id}")
             
         plugin = self.plugins[plugin_id]
-        if plugin.enabled:
+        
+        # Bug 0001: Only return if module is already loaded AND enabled
+        if plugin.enabled and plugin.module is not None:
             return
             
         try:
@@ -265,6 +267,7 @@ class PluginManager:
     def _get_safe_builtins(self):
         """Return a dictionary of safe Python builtins for the sandbox."""
         import builtins
+        # Bug 0006: Added __import__ and some common builtins needed for basic execution
         safe_names = [
             'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'bytearray',
             'callable', 'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate',
@@ -273,7 +276,8 @@ class PluginManager:
             'len', 'list', 'map', 'max', 'min', 'next', 'object', 'oct',
             'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed',
             'round', 'set', 'setattr', 'slice', 'sorted', 'str', 'sum', 'tuple',
-            'type', 'zip', 'Exception', 'ValueError', 'TypeError', 'RuntimeError'
+            'type', 'zip', 'Exception', 'ValueError', 'TypeError', 'RuntimeError',
+            '__import__', '__name__', '__doc__', '__package__', '__loader__', '__spec__'
         ]
         return {name: getattr(builtins, name) for name in safe_names if hasattr(builtins, name)}
 

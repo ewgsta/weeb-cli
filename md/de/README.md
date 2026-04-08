@@ -58,6 +58,31 @@
 - Unterbrochene Downloads fortsetzen
 - Intelligente Dateibenennung (`Anime Name - S1E1.mp4`)
 
+### Tracking & Synchronisation
+- **AniList** Integration mit OAuth
+- **MyAnimeList** Integration mit OAuth
+- **Kitsu** Integration mit E-Mail/Passwort
+- Automatische Fortschrittssynchronisation für Online- und Offline-Wiedergabe
+- Offline-Warteschlange für ausstehende Updates
+- Intelligente Anime-Titel-Erkennung aus Dateinamen
+
+### Lokale Bibliothek
+- Automatischer Scan heruntergeladener Animes
+- Unterstützung für externe Laufwerke (USB, HDD)
+- Offline-Anime-Indizierung mit automatischer Tracker-Synchronisation
+- Suche über alle Quellen hinweg
+
+### Zusätzliche Funktionen
+- SQLite-Datenbank (schnell und zuverlässig)
+- Systembenachrichtigungen bei Abschluss des Downloads
+- Discord RPC-Integration (zeige auf Discord, was du gerade schaust)
+- Suchverlauf
+- Debug-Modus und Protokollierung
+- Automatische Update-Prüfung
+- Nicht-interaktive JSON-API für Skripte und KI-Agenten
+- Torznab-Servermodus für Sonarr/*arr-Integration
+- RESTful-API-Server für Web/Mobile-Anwendungen
+
 ---
 
 ## Installation
@@ -73,7 +98,7 @@ yay -S weeb-cli
 ```
 
 ### Portable
-Lade die entsprechende Datei für deine Plattform unter [Releases](https://github.com/ewgsta/weeb-cli/releases) herunter.
+Laden Sie die entsprechende Datei für Ihre Plattform unter [Releases](https://github.com/ewgsta/weeb-cli/releases) herunter.
 
 ---
 
@@ -94,6 +119,28 @@ weeb-cli api providers
 # Nach Animes suchen (gibt IDs zurück)
 weeb-cli api search "Angel Beats"
 ```
+
+---
+
+## Roadmap
+
+### Abgeschlossen
+- [x] Unterstützung mehrerer Quellen (TR/EN/DE/PL)
+- [x] MPV-Streaming
+- [x] Wiedergabeverlauf und Fortschrittsverfolgung
+- [x] Aria2/yt-dlp Download-Integration
+- [x] Externe Laufwerke und lokale Bibliothek
+- [x] SQLite-Datenbank
+- [x] Benachrichtigungssystem
+- [x] Debug-Modus
+- [x] MAL/AniList Integration
+- [x] Datenbank-Sicherung/Wiederherstellung
+- [x] Tastenkombinationen
+- [x] Nicht-interaktiver API-Modus (JSON-Ausgabe)
+- [x] Torznab-Server für Sonarr/*arr-Integration
+- [x] RESTful-API-Server für Web/Mobile-Apps
+- [x] Plugin-System mit Sandbox-Unterstützung
+- [x] Plugin Builder & Galerie-Seite
 
 ---
 
