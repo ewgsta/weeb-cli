@@ -31,6 +31,13 @@
 
 ## Funkcje
 
+### System Wtyczek
+- **Niestandardowy format .weeb**: Pakuj i udostępniaj własnych dostawców
+- **Bezpieczna Piaskownica**: Uruchamiaj wtyczki bezpiecznie z ograniczonymi uprawnieniami
+- **Plugin Builder**: Łatwy w użyciu skrypt do pakowania wtyczek
+- **Galeria Wtyczek**: Przeglądaj i instaluj wtyczki społeczności z [Galerii](../../plugin_gallery/index.html)
+- **Automatyczne Wykrywanie**: Wtyczki są ładowane automatycznie przy starcie
+
 ### Wiele źródeł
 - **Turecki**: Animecix, Turkanime, Anizle, Weeb
 - **Angielski**: HiAnime, AllAnime
@@ -238,6 +245,8 @@ Wszystkie ustawienia mogą być modyfikowane poprzez interaktywne menu Ustawieni
 - [x] Skróty klawiszowe
 - [x] Bezobsługowe i nieniektywne JSON API (format wyjściowy)
 - [x] Serwer Torznab do integracji Sonarr/*arr
+- [x] System wtyczek z obsługą piaskownicy (Sandbox)
+- [x] Plugin Builder i strona galerii wtyczek
 
 ### Planowane
 - [ ] Rekomendacje anime

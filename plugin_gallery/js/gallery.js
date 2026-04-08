@@ -32,20 +32,8 @@ const TRANSLATIONS = {
         "details-btn": "Details",
         "author": "von {author}",
         "version": "v{version}",
-        "download-btn": ".weeb Herunterladen",
+        "download-btn": "Herunterladen .weeb",
         "back-btn": "Zurück zur Galerie"
-    },
-    fr: {
-        "hero-title": "Découvrir et Étendre",
-        "hero-desc": "Fournisseurs et outils personnalisés pour Weeb CLI.",
-        "search-placeholder": "Rechercher des plugins...",
-        "no-plugins": "Aucun plugin trouvé.",
-        "install-btn": "Installer",
-        "details-btn": "Détails",
-        "author": "par {author}",
-        "version": "v{version}",
-        "download-btn": "Télécharger .weeb",
-        "back-btn": "Retour à la Galerie"
     },
     pl: {
         "hero-title": "Odkrywaj i Rozszerzaj",

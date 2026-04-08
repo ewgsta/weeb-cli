@@ -32,6 +32,13 @@
 
 ## Features
 
+### Plugin System
+- **Custom .weeb format**: Package and share your own providers
+- **Secure Sandbox**: Run plugins safely with restricted permissions
+- **Plugin Builder**: Easy-to-use script for packaging plugins
+- **Plugin Gallery**: Browse and install community plugins from [Gallery](plugin_gallery/index.html)
+- **Automatic Discovery**: Plugins are loaded automatically on startup
+
 ### Multiple Sources
 - **Turkish**: Animecix, Turkanime, Anizle, Weeb
 - **English**: HiAnime, AllAnime
@@ -278,6 +285,8 @@ All settings can be modified through the interactive Settings menu.
 - [x] Non-interactive API mode (JSON output)
 - [x] Torznab server for Sonarr/*arr integration
 - [x] RESTful API server for web/mobile apps
+- [x] Plugin System with Sandbox support
+- [x] Plugin Builder & Gallery site
 
 
 ### Planned

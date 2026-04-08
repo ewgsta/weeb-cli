@@ -40,6 +40,9 @@ Weeb CLI to potężna aplikacja terminalowa do streamingu i pobierania anime, kt
 - Inteligentne dopasowywanie tytułów
 
 ### Dodatkowe funkcje
+- System wtyczek (Plugin System) z bezpieczną piaskownicą
+- Plugin Builder do łatwego pakowania wtyczek
+- Strona galerii wtyczek (Plugin Gallery)
 - Wsparcie wielu języków (TR, EN, DE, PL)
 - Discord Rich Presence
 - Powiadomienia systemowe
