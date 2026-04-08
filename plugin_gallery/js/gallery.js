@@ -179,6 +179,17 @@ async function fetchPlugins() {
     }
 }
 
+// Utility to prevent XSS
+function escapeHTML(str) {
+    if (!str) return '';
+    return str.toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 function getFilteredAndSortedPlugins() {
     let result = plugins.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchQuery) || 
@@ -208,30 +219,30 @@ function renderPlugins() {
 
     grid.innerHTML = filteredPlugins.map(p => `
         <div class="card">
-            <img src="${p.image}" alt="${p.name}" class="card-img">
+            <img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.name)}" class="card-img">
             <div class="card-content">
                 <div class="card-header">
-                    <h3 class="card-title">${p.name}</h3>
-                    <span class="version">v${p.version}</span>
+                    <h3 class="card-title">${escapeHTML(p.name)}</h3>
+                    <span class="version">v${escapeHTML(p.version)}</span>
                 </div>
-                <p class="author">by ${p.author}</p>
-                <p class="desc">${p.description}</p>
+                <p class="author">by ${escapeHTML(p.author)}</p>
+                <p class="desc">${escapeHTML(p.description)}</p>
                 
                 <div class="tags">
-                    ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                    ${p.tags.map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}
                 </div>
                 
                 <div class="stats">
-                    <span><i class="fas fa-download"></i> ${p.downloads}</span>
-                    <span><i class="fas fa-star" style="color: #ffd700;"></i> ${p.rating}</span>
+                    <span><i class="fas fa-download"></i> ${escapeHTML(p.downloads)}</span>
+                    <span><i class="fas fa-star" style="color: #ffd700;"></i> ${escapeHTML(p.rating)}</span>
                 </div>
             </div>
             <div class="card-actions">
-                <button class="btn btn-outline" onclick="openDetails('${p.id}')">
-                    <i class="fas fa-info-circle"></i> ${translations[currentLang].details}
+                <button class="btn btn-outline" onclick="openDetails('${escapeHTML(p.id)}')">
+                    <i class="fas fa-info-circle"></i> ${escapeHTML(translations[currentLang].details)}
                 </button>
-                <button class="btn btn-primary" onclick="installPlugin('${p.id}')">
-                    <i class="fas fa-download"></i> ${translations[currentLang].install}
+                <button class="btn btn-primary" onclick="installPlugin('${escapeHTML(p.id)}')">
+                    <i class="fas fa-download"></i> ${escapeHTML(translations[currentLang].install)}
                 </button>
             </div>
         </div>
@@ -243,7 +254,9 @@ function openDetails(id) {
     if (!plugin) return;
 
     // Simple markdown to HTML parser for demo
-    const htmlReadme = plugin.readme
+    // Note: In production, use a library like marked.js to safely render markdown
+    let htmlReadme = escapeHTML(plugin.readme);
+    htmlReadme = htmlReadme
         .replace(/^### (.*$)/gim, '<h3>$1</h3>')
         .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     // Bug 0002: Fixed 'p' variable error, using 'plugin'
@@ -253,21 +266,21 @@ function openDetails(id) {
 
     modalBody.innerHTML = `
         <div class="modal-header">
-            <img src="${plugin.image}" alt="${plugin.name}">
+            <img src="${escapeHTML(plugin.image)}" alt="${escapeHTML(plugin.name)}">
             <div class="modal-title-area">
-                <h2>${plugin.name} <span class="version">v${plugin.version}</span></h2>
-                <p class="author">by ${plugin.author}</p>
+                <h2>${escapeHTML(plugin.name)} <span class="version">v${escapeHTML(plugin.version)}</span></h2>
+                <p class="author">by ${escapeHTML(plugin.author)}</p>
                 <div class="stats">
-                    <span><i class="fas fa-download"></i> ${plugin.downloads} pobrań</span>
-                    <span><i class="fas fa-star" style="color: #ffd700;"></i> ${plugin.rating}</span>
+                    <span><i class="fas fa-download"></i> ${escapeHTML(plugin.downloads)} pobrań</span>
+                    <span><i class="fas fa-star" style="color: #ffd700;"></i> ${escapeHTML(plugin.rating)}</span>
                 </div>
                 <div class="tags" style="margin-top: 10px;">
-                    ${plugin.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+                    ${plugin.tags.map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('')}
                 </div>
             </div>
         </div>
         <div class="modal-actions" style="margin: 20px 0; display: flex; gap: 10px;">
-            <button class="btn btn-primary" onclick="installPlugin('${plugin.id}')" style="flex: 1;">
+            <button class="btn btn-primary" onclick="installPlugin('${escapeHTML(plugin.id)}')" style="flex: 1;">
                 <i class="fas fa-download"></i> Zainstaluj z Weeb CLI
             </button>
         </div>
