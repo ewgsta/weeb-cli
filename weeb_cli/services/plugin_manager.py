@@ -276,7 +276,7 @@ class PluginManager:
     def _get_safe_builtins(self):
         """Return a dictionary of safe Python builtins for the sandbox."""
         import builtins
-        # Bug 0006: Added __import__ and some common builtins needed for basic execution
+        # Removed __import__ from safe_names to prevent sandbox escape
         safe_names = [
             'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'bytearray',
             'callable', 'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate',
@@ -286,9 +286,29 @@ class PluginManager:
             'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed',
             'round', 'set', 'setattr', 'slice', 'sorted', 'str', 'sum', 'tuple',
             'type', 'zip', 'Exception', 'ValueError', 'TypeError', 'RuntimeError',
-            '__import__', '__name__', '__doc__', '__package__', '__loader__', '__spec__'
+            '__name__', '__doc__', '__package__', '__loader__', '__spec__'
         ]
-        return {name: getattr(builtins, name) for name in safe_names if hasattr(builtins, name)}
+        
+        safe_dict = {name: getattr(builtins, name) for name in safe_names if hasattr(builtins, name)}
+        safe_dict['__import__'] = self._safe_import
+        return safe_dict
+
+    def _safe_import(self, name, globals=None, locals=None, fromlist=(), level=0):
+        """Custom import function to restrict what plugins can load."""
+        allowed_modules = [
+            'weeb_cli.providers.registry',
+            'weeb_cli.providers.base',
+            'typing', 'datetime', 'json', 're', 'urllib', 'math', 'random'
+        ]
+        
+        # Allow importing allowed modules and their submodules
+        is_allowed = any(name == mod or name.startswith(mod + '.') for mod in allowed_modules)
+        
+        if not is_allowed:
+            raise ImportError(f"Importing '{name}' is not allowed in the sandbox")
+            
+        import builtins
+        return builtins.__import__(name, globals, locals, fromlist, level)
 
     def _get_register_provider_proxy(self, plugin: Plugin):
         """Proxy function to allow plugins to register providers securely."""
