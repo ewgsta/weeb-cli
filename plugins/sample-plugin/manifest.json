@@ -1,0 +1,11 @@
+{
+    "id": "sample-plugin",
+    "name": "Sample Plugin",
+    "version": "1.0.0",
+    "description": "A basic sample plugin to demonstrate the plugin system.",
+    "author": "Weeb CLI Team",
+    "entry_point": "main.py",
+    "dependencies": [],
+    "min_weeb_version": "1.0.0",
+    "permissions": ["network", "storage"]
+}
