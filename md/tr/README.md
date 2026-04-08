@@ -24,12 +24,20 @@
   <a href="#kurulum">Kurulum</a> •
   <a href="#özellikler">Özellikler</a> •
   <a href="#kullanım">Kullanım</a> •
-  <a href="#kaynaklar">Kaynaklar</a>
+  <a href="#kaynaklar">Kaynaklar</a> •
+  <a href="https://ewgsta.github.io/weeb-cli/">Dokümantasyon</a>
 </p>
 
 ---
 
 ## Özellikler
+
+### Eklenti Sistemi
+- **Özel .weeb formatı**: Kendi sağlayıcılarınızı paketleyin ve paylaşın
+- **Güvenli Sandbox**: Eklentileri kısıtlı izinlerle güvenli bir şekilde çalıştırın
+- **Eklenti Oluşturucu**: Eklentileri paketlemek için kullanımı kolay betik
+- **Eklenti Galerisi**: Topluluk eklentilerine [Galeri](https://ewgsta.github.io/weeb-cli/plugin_gallery/index.html) üzerinden göz atın ve yükleyin
+- **Otomatik Keşif**: Eklentiler başlangıçta otomatik olarak yüklenir
 
 ### Çoklu Kaynak Desteği
 - **Türkçe**: Animecix, Turkanime, Anizle, Weeb
@@ -58,24 +66,6 @@
 - Bekleyen güncellemeler için çevrimdışı kuyruk
 - Dosya adlarından akıllı anime başlığı eşleştirme
 
-### Yerel Kütüphane
-- İndirilen animeleri otomatik tarama
-- Harici disk desteği (USB, HDD)
-- Otomatik tracker senkronizasyonu ile çevrimdışı indexleme
-- Tüm kaynaklarda arama
-- **Önerilen format**: `Anime Adı - S1B1.mp4` (en iyi tracker uyumluluğu için)
-
-### Ek Özellikler
-- SQLite veritabanı (hızlı ve güvenilir)
-- İndirme tamamlandığında sistem bildirimi
-- Discord RPC entegrasyonu (izlediğiniz anime Discord'da görünsün)
-- Arama geçmişi
-- Debug modu ve loglama
-- Otomatik güncelleme kontrolü
-- Scriptler ve yapay zeka ajanları için etkileşimsiz JSON API
-- Sonarr/*arr entegrasyonu için Torznab sunucu modu
-- Web/mobil uygulamalar için RESTful API sunucusu
-
 ---
 
 ## Kurulum
@@ -93,13 +83,6 @@ yay -S weeb-cli
 ### Portable
 [Releases](https://github.com/ewgsta/weeb-cli/releases) sayfasından platformunuza uygun dosyayı indirin.
 
-### Geliştirici Kurulumu
-```bash
-git clone https://github.com/ewgsta/weeb-cli.git
-cd weeb-cli
-pip install -e .
-```
-
 ---
 
 ## Kullanım
@@ -110,7 +93,7 @@ weeb-cli
 
 ### API Modu (Etkileşimsiz)
 
-Scriptler, otomasyon ve yapay zeka ajanları icin weeb-cli, veritabanı veya TUI gerektirmeden headless calisan JSON API komutları sunar:
+Scriptler, otomasyon ve yapay zeka ajanları için weeb-cli, veritabanı veya TUI gerektirmeden headless çalışan JSON API komutları sunar:
 
 ```bash
 # Mevcut sağlayıcıları listele
@@ -118,302 +101,13 @@ weeb-cli api providers
 
 # Anime ara (ID'leri döndürür)
 weeb-cli api search "Angel Beats"
-# Döndürür: [{"id": "12345", "title": "Angel Beats!", ...}]
-
-# Bölümleri listele (aramadan gelen ID ile)
-weeb-cli api episodes 12345 --season 1
-
-# Stream URL'lerini al
-weeb-cli api streams 12345 --season 1 --episode 1
-
-# Anime detaylarını al
-weeb-cli api details 12345
-
-# Bir bölüm indir
-weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads
 ```
-
-Tüm API komutları stdout'a JSON çıktı verir.
-
-### Sonarr/*arr Entegrasyonu (Serve Modu)
-
-weeb-cli, Sonarr ve diğer *arr uygulamaları için Torznab uyumlu bir sunucu olarak çalışabilir:
-
-```bash
-pip install weeb-cli[serve]
-
-weeb-cli serve --port 9876 \
-  --watch-dir /downloads/watch \
-  --completed-dir /downloads/completed \
-  --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key ANAHTARINIZ \
-  --providers animecix,anizle,turkanime
-```
-
-Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
-
-### RESTful API Sunucusu
-
-Web/mobil uygulamalar ve özel entegrasyonlar için weeb-cli bir RESTful API sunucusu sağlar:
-
-```bash
-pip install weeb-cli[serve-restful]
-
-weeb-cli serve restful --port 8080 --cors
-```
-
-**API Endpoint'leri:**
-- `GET /health` - Sağlık kontrolü
-- `GET /api/providers` - Mevcut provider'ları listele
-- `GET /api/search?q=naruto&provider=animecix` - Anime ara
-- `GET /api/anime/{id}?provider=animecix` - Anime detaylarını al
-- `GET /api/anime/{id}/episodes?season=1` - Bölümleri listele
-- `GET /api/anime/{id}/episodes/{ep_id}/streams` - Stream URL'lerini al
-
-Tüm mevcut provider'lar otomatik olarak yüklenir. `provider` sorgu parametresi ile hangi provider'ı kullanacağınızı seçin.
-
-**Docker Desteği:**
-```bash
-docker-compose -f docker-compose.restful.yml up -d
-```
-
-Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/restful-api.tr/)'na bakın.
-
-#### Docker (Torznab)
-
-Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
-
-#### Docker
-
-```dockerfile
-FROM python:3.13-slim
-RUN apt-get update && apt-get install -y --no-install-recommends aria2 ffmpeg && rm -rf /var/lib/apt/lists/*
-RUN pip install --no-cache-dir weeb-cli[serve] yt-dlp
-EXPOSE 9876
-CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "--completed-dir", "/downloads/completed"]
-```
-
-### Klavye Kontrolleri
-| Tuş | İşlev |
-|-----|-------|
-| `↑` `↓` | Menüde gezinme |
-| `Enter` | Seçim yapma |
-| `s` | Anime Ara (Ana menüde) |
-| `d` | İndirmeler (Ana menüde) |
-| `w` | İzlediklerim (Ana menüde) |
-| `c` | Ayarlar (Ana menüde) |
-| `q` | Çıkış (Ana menüde) |
-| `Ctrl+C` | Geri dön / Çıkış |
-
-**Not:** Tüm kısayollar Ayarlar > Klavye Kısayolları menüsünden özelleştirilebilir.
-
----
-
-## Kaynaklar
-
-| Kaynak | Dil |
-|--------|-----|
-| Animecix | Türkçe |
-| Turkanime | Türkçe |
-| Anizle | Türkçe |
-| Weeb | Türkçe |
-| HiAnime | İngilizce |
-| AllAnime | İngilizce |
-| AniWorld | Almanca |
-| Docchi | Lehçe |
-
----
-
-## Ayarlar
-
-Yapılandırma: `~/.weeb-cli/weeb.db` (SQLite)
-
-### Mevcut Ayarlar
-
-| Ayar | Açıklama | Varsayılan | Tip |
-|------|----------|------------|-----|
-| `language` | Arayüz dili (tr/en/de/pl) | `null` (ilk çalıştırmada sorar) | string |
-| `scraping_source` | Aktif anime kaynağı | `animecix` | string |
-| `aria2_enabled` | İndirmeler için Aria2 kullan | `true` | boolean |
-| `aria2_max_connections` | İndirme başına max bağlantı | `16` | integer |
-| `ytdlp_enabled` | HLS yayınlar için yt-dlp kullan | `true` | boolean |
-| `ytdlp_format` | yt-dlp format string | `bestvideo+bestaudio/best` | string |
-| `max_concurrent_downloads` | Eşzamanlı indirme sayısı | `3` | integer |
-| `download_dir` | İndirme klasörü yolu | `./weeb-downloads` | string |
-| `download_max_retries` | Başarısız indirmeleri yeniden dene | `3` | integer |
-| `download_retry_delay` | Denemeler arası bekleme (saniye) | `10` | integer |
-| `show_description` | Anime açıklamalarını göster | `true` | boolean |
-| `discord_rpc_enabled` | Discord Rich Presence | `false` | boolean |
-| `shortcuts_enabled` | Klavye kısayolları | `true` | boolean |
-| `debug_mode` | Debug loglama | `false` | boolean |
-
-### Tracker Ayarları (ayrı saklanır)
-- `anilist_token` - AniList OAuth token
-- `anilist_user_id` - AniList kullanıcı ID
-- `mal_token` - MyAnimeList OAuth token
-- `mal_refresh_token` - MAL yenileme token
-- `mal_username` - MAL kullanıcı adı
-
-### Harici Diskler
-Ayarlar > Harici Diskler menüsünden yönetilir. Her disk şunları saklar:
-- Yol (örn. `D:\Anime`)
-- Özel isim/takma ad
-- Eklenme zamanı
-
-Tüm ayarlar interaktif Ayarlar menüsünden değiştirilebilir.
-
----
-
-## Yol Haritası
-
-### Tamamlanan
-- [x] Çoklu kaynak desteği (TR/EN/DE/PL)
-- [x] MPV ile izleme
-- [x] İzleme geçmişi ve ilerleme takibi
-- [x] Aria2/yt-dlp indirme entegrasyonu
-- [x] Harici disk ve yerel kütüphane
-- [x] SQLite veritabanı
-- [x] Bildirim sistemi
-- [x] Debug modu
-- [x] MAL/AniList entegrasyonu
-- [x] Veritabanı yedekleme/geri yükleme
-- [x] Klavye kısayolları
-- [x] Etkileşimsiz API modu (JSON çıktı)
-- [x] Sonarr/*arr entegrasyonu için Torznab sunucu
-
-## Gelecek Planlar
-
-### v2.6.0 (Planlanan)
-- [ ] Async/await refactoring
-- [ ] Download strategy pattern
-- [ ] Token şifreleme
-- [ ] Progress bar iyileştirmesi
-- [ ] Plugin sistemi
-
-### v2.7.0 (Planlanan)
-- [ ] Anime önerileri
-- [ ] Toplu işlemler
-- [ ] İzleme istatistikleri (grafik)
-- [ ] Tema desteği
-- [ ] Altyazı indirme
-
-### v3.0.0 (Uzun Vadeli)
-- [ ] Web UI (opsiyonel)
-- [ ] Torrent desteği (nyaa.si)
-- [ ] Watch party
-- [ ] Mobile app entegrasyonu
-
----
-
-## Proje Yapısı
-
-```
-weeb-cli/
-├── weeb_cli/                    # Ana uygulama paketi
-│   ├── commands/                # CLI komut yöneticileri
-│   │   ├── api.py               # Etkileşimsiz JSON API komutları
-│   │   ├── downloads.py         # İndirme yönetimi komutları
-│   │   ├── search.py            # Anime arama fonksiyonları
-│   │   ├── serve.py             # *arr entegrasyonu için Torznab sunucu
-│   │   ├── settings.py          # Ayarlar menüsü ve yapılandırma
-│   │   ├── setup.py             # İlk kurulum sihirbazı
-│   │   └── watchlist.py         # İzleme geçmişi ve ilerleme
-│   │
-│   ├── providers/               # Anime kaynak entegrasyonları
-│   │   ├── extractors/          # Video stream çıkarıcıları
-│   │   │   └── megacloud.py     # Megacloud çıkarıcı
-│   │   ├── allanime.py          # AllAnime sağlayıcı (EN)
-│   │   ├── animecix.py          # Animecix sağlayıcı (TR)
-│   │   ├── anizle.py            # Anizle sağlayıcı (TR)
-│   │   ├── base.py              # Temel sağlayıcı arayüzü
-│   │   ├── hianime.py           # HiAnime sağlayıcı (EN)
-│   │   ├── registry.py          # Sağlayıcı kayıt sistemi
-│   │   └── turkanime.py         # Turkanime sağlayıcı (TR)
-│   │
-│   ├── services/                # İş mantığı katmanı
-│   │   ├── cache.py             # Dosya tabanlı önbellekleme
-│   │   ├── database.py          # SQLite veritabanı yöneticisi
-│   │   ├── dependency_manager.py # FFmpeg, MPV otomatik kurulum
-│   │   ├── details.py           # Anime detay çekici
-│   │   ├── discord_rpc.py       # Discord Rich Presence
-│   │   ├── downloader.py        # Kuyruk tabanlı indirme yöneticisi
-│   │   ├── error_handler.py     # Global hata yönetimi
-│   │   ├── headless_downloader.py # Headless indirme (DB/TUI bağımlılığı yok)
-│   │   ├── local_library.py     # Yerel anime indeksleme
-│   │   ├── logger.py            # Debug loglama sistemi
-│   │   ├── notifier.py          # Sistem bildirimleri
-│   │   ├── player.py            # MPV video oynatıcı entegrasyonu
-│   │   ├── progress.py          # İzleme ilerleme takibi
-│   │   ├── scraper.py           # Sağlayıcı facade
-│   │   ├── search.py            # Arama servisi
-│   │   ├── shortcuts.py         # Klavye kısayol yöneticisi
-│   │   ├── tracker.py           # MAL/AniList entegrasyonu
-│   │   ├── updater.py           # Otomatik güncelleme kontrolü
-│   │   ├── watch.py             # Yayın servisi
-│   │   ├── _base.py             # Temel servis sınıfı
-│   │   └── _tracker_base.py     # Temel tracker arayüzü
-│   │
-│   ├── ui/                      # Terminal UI bileşenleri
-│   │   ├── header.py            # Başlık gösterimi
-│   │   ├── menu.py              # Ana menü
-│   │   └── prompt.py            # Özel promptlar
-│   │
-│   ├── utils/                   # Yardımcı fonksiyonlar
-│   │   └── sanitizer.py         # Dosya adı/yol temizleme
-│   │
-│   ├── locales/                 # Çoklu dil desteği
-│   │   ├── de.json              # Almanca çeviriler
-│   │   ├── en.json              # İngilizce çeviriler
-│   │   ├── pl.json              # Lehçe çeviriler
-│   │   └── tr.json              # Türkçe çeviriler
-│   │
-│   ├── templates/               # HTML şablonları
-│   │   ├── anilist_error.html   # AniList OAuth hata sayfası
-│   │   ├── anilist_success.html # AniList OAuth başarı sayfası
-│   │   ├── mal_error.html       # MAL OAuth hata sayfası
-│   │   └── mal_success.html     # MAL OAuth başarı sayfası
-│   │
-│   ├── config.py                # Yapılandırma yönetimi
-│   ├── exceptions.py            # Özel exception hiyerarşisi
-│   ├── i18n.py                  # Çoklu dil sistemi
-│   ├── main.py                  # CLI giriş noktası
-│   └── __main__.py              # Paket çalıştırma giriş noktası
-│
-├── tests/                       # Test paketi
-│   ├── test_api.py              # API komutları ve headless downloader testleri
-│   ├── test_cache.py            # Önbellek yöneticisi testleri
-│   ├── test_exceptions.py       # Exception testleri
-│   ├── test_sanitizer.py        # Sanitizer testleri
-│   └── conftest.py              # Pytest fixture'ları
-│
-├── weeb_landing/                # Landing sayfası varlıkları
-│   ├── logo/                    # Logo dosyaları (çeşitli boyutlar)
-│   └── index.html               # Landing sayfası
-│
-├── distribution/                # Build ve dağıtım dosyaları
-├── pyproject.toml               # Proje metadata ve bağımlılıklar
-├── requirements.txt             # Python bağımlılıkları
-├── pytest.ini                   # Pytest yapılandırması
-├── LICENSE                      # CC BY-NC-ND 4.0 lisansı
-└── README.md                    # Bu dosya
-```
-
----
-
-[![Star History Chart](https://api.star-history.com/image?repos=ewgsta/weeb-cli&type=date&legend=top-left)](https://www.star-history.com/?repos=ewgsta%2Fweeb-cli&type=date&legend=top-left)
 
 ---
 
 ## Lisans
 
 Bu proje **GNU Genel Kamu Lisansı v3.0** altında lisanslanmıştır.  
-Lisansın tam metni için [LICENSE](LICENSE) dosyasına bakın.
+Lisansın tam metni için [LICENSE](../../LICENSE) dosyasına bakın.
 
 Weeb-CLI (C) 2026
-
----
-
-<p align="center">
-  <a href="https://weeb-cli.ewgsta.me">Website</a> •
-  <a href="https://github.com/ewgsta/weeb-cli/issues">Sorun Bildir</a>
-</p>

@@ -1,23 +1,26 @@
 # Plugin Development Guide
 
-Weeb CLI provides a robust plugin architecture that allows you to extend the application with custom providers, trackers, and services. Plugins are packaged in a secure, portable `.weeb` format.
+Weeb CLI provides a robust plugin architecture that allows you to extend the application with custom providers, trackers, and services. Plugins are isolated in a secure, portable environment and follow a standardized directory structure.
 
 ## Plugin Structure
 
-A standard plugin folder must contain the following files:
+A standard plugin folder must be stored in the `data/` directory and contain the following structure:
 
 ```
-my-plugin/
-├── manifest.json
-├── main.py (Entry point)
-├── README.md
-└── assets/
-    └── logo.png (Optional)
+data/
+  my-plugin/
+    plugin.weeb        (Main code entry point)
+    manifest.json      (Metadata and configuration)
+    README.md          (Detailed documentation)
+    screenshots/       (At least one screenshot for the gallery)
+      ss1.png
+    assets/            (Icons and other assets)
+      icon.png
 ```
 
 ### manifest.json
 
-The manifest contains metadata about your plugin:
+The manifest contains mandatory and optional metadata about your plugin:
 
 ```json
 {
@@ -26,16 +29,21 @@ The manifest contains metadata about your plugin:
     "version": "1.0.0",
     "description": "A description of your plugin.",
     "author": "Your Name",
-    "entry_point": "main.py",
-    "dependencies": [],
+    "entry_point": "plugin.weeb",
     "min_weeb_version": "1.0.0",
-    "permissions": ["network", "storage"]
+    "dependencies": [],
+    "permissions": ["network", "storage"],
+    "tags": ["anime", "en"],
+    "icon": "assets/icon.png",
+    "homepage": "https://example.com",
+    "repository_url": "https://github.com/user/repo",
+    "license": "MIT"
 }
 ```
 
-### main.py
+### plugin.weeb
 
-The entry point must define a `register()` function that will be called when the plugin is enabled.
+The entry point is a Python script that must define a `register()` function. It runs in a restricted sandbox environment with access to a safe subset of builtins and `weeb_cli` APIs.
 
 ```python
 def register():
@@ -44,43 +52,40 @@ def register():
     
     @register_provider("my_custom_provider", lang="en", region="US")
     class MyProvider(BaseProvider):
-        # Implementation...
-        pass
+        def search(self, query: str):
+            # Implementation...
+            pass
 ```
 
-## Building a Plugin
+## Building and Packaging
 
-Use the provided builder script to package your plugin directory into a `.weeb` file:
+Use the provided builder script to package or create new plugins:
 
 ```bash
-python3 weeb_cli/utils/plugin_builder.py plugins/my-plugin -o my-plugin.weeb
+# Create a new plugin template
+python3 weeb_cli/utils/plugin_builder.py create my-new-plugin --id "new-id" --name "New Name"
+
+# Build/Package a plugin for distribution (.weeb_pkg)
+python3 weeb_cli/utils/plugin_builder.py build data/my-plugin -o my-plugin.weeb_pkg
 ```
 
-## Installing a Plugin
+## Installation
 
 1. Open Weeb CLI.
 2. Go to **Settings** > **Plugins**.
 3. Select **Load Plugin**.
-4. Enter the path to your `.weeb` file.
+4. Provide the local path to the plugin folder or its `.weeb_pkg`.
 
-## Security & Sandboxing
+## Testing and Quality
 
-Plugins run in a restricted execution environment. They are only allowed to use a subset of the Python standard library and must request specific permissions in the `manifest.json`.
+Plugins must maintain at least **80% test coverage** to be accepted into the official gallery. Automated tests should be placed in a `tests/` directory within the plugin folder.
 
-- **network**: Allows making HTTP requests.
-- **storage**: Allows local file access within the plugin's data directory.
+Our CI/CD pipeline validates:
+- **Manifest integrity**: Required fields (id, name, version, etc.) must be present.
+- **Security**: Scanned via Bandit for common vulnerabilities.
+- **Code Quality**: Linted via Ruff.
+- **Functionality**: Tests are executed, and coverage is checked.
 
-## Sharing Plugins
+## Sharing via Gallery
 
-You can share your plugins by submitting a Pull Request to the main repository. 
-
-1. Fork the repository.
-2. Create a folder under `plugins/` for your plugin.
-3. Add your plugin files.
-4. Open a Pull Request using the **Plugin Submission Template**.
-
-Our CI/CD pipeline will automatically validate your plugin for:
-- Manifest correctness
-- Security vulnerabilities (Bandit)
-- Code style (Ruff)
-- Structure integrity
+Submit a Pull Request adding your plugin folder to the `data/` directory. Once approved, it will automatically appear in the [Plugin Gallery](https://ewgsta.github.io/weeb-cli/plugin_gallery/index.html).

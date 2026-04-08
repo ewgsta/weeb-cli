@@ -22,14 +22,22 @@
 
 <p align="center">
   <a href="#installation">Installation</a> •
-  <a href="#features">Funktionen</a> •
+  <a href="#funktionen">Funktionen</a> •
   <a href="#nutzung">Nutzung</a> •
-  <a href="#quellen">Quellen</a>
+  <a href="#quellen">Quellen</a> •
+  <a href="https://ewgsta.github.io/weeb-cli/">Dokumentation</a>
 </p>
 
 ---
 
 ## Funktionen
+
+### Plugin-System
+- **Benutzerdefiniertes .weeb-Format**: Paketieren und Teilen eigener Anbieter
+- **Sichere Sandbox**: Plugins sicher mit eingeschränkten Berechtigungen ausführen
+- **Plugin Builder**: Einfach zu bedienendes Skript zum Paketieren von Plugins
+- **Plugin-Galerie**: Durchsuchen und Installieren von Community-Plugins aus der [Galerie](https://ewgsta.github.io/weeb-cli/plugin_gallery/index.html)
+- **Automatische Erkennung**: Plugins werden beim Start automatisch geladen
 
 ### Mehrere Quellen
 - **Türkisch**: Animecix, Turkanime, Anizle, Weeb
@@ -50,31 +58,6 @@
 - Unterbrochene Downloads fortsetzen
 - Intelligente Dateibenennung (`Anime Name - S1E1.mp4`)
 
-### Nachverfolgung & Synchronisation
-- **AniList** Integration mit OAuth
-- **MyAnimeList** Integration mit OAuth
-- **Kitsu** Integration mit E-Mail/Passwort
-- Automatische Fortschrittssynchronisierung für Online- und Offline-Wiedergabe
-- Offline-Warteschlange für ausstehende Updates
-- Intelligenter Abgleich von Anime-Titeln anhand von Dateinamen
-
-### Lokale Bibliothek
-- Heruntergeladene Animes automatisch scannen
-- Unterstützung externer Laufwerke (USB, HDD)
-- Offline-Anime-Indexierung mit automatischer Tracker-Synchronisation
-- Suche über alle Quellen hinweg
-- **Empfohlenes Format**: `Anime Name - S1E1.mp4` für beste Tracker-Kompatibilität
-
-### Zusätzliche Funktionen
-- SQLite-Datenbank (schnell und zuverlässig)
-- Systembenachrichtigungen bei Abschluss des Downloads
-- Discord RPC-Integration (Zeige auf Discord, was du dir gerade anschaust)
-- Suchverlauf
-- Debug-Modus und Protokollierung
-- Automatische Update-Prüfungen
-- Nicht interaktive JSON-API für Skripte und KI-Agenten
-- Torznab-Servermodus für Sonarr/*arr-Integration
-
 ---
 
 ## Installation
@@ -91,13 +74,6 @@ yay -S weeb-cli
 
 ### Portable
 Lade die entsprechende Datei für deine Plattform unter [Releases](https://github.com/ewgsta/weeb-cli/releases) herunter.
-
-### Für Entwickler
-```bash
-git clone https://github.com/ewgsta/weeb-cli.git
-cd weeb-cli
-pip install -e .
-```
 
 ---
 
@@ -117,147 +93,13 @@ weeb-cli api providers
 
 # Nach Animes suchen (gibt IDs zurück)
 weeb-cli api search "Angel Beats"
-# Rückgabe: [{"id": "12345", "title": "Angel Beats!", ...}]
-
-# Episoden auflisten (ID aus der Suche verwenden)
-weeb-cli api episodes 12345 --season 1
-
-# Stream-URLs für eine Episode abrufen
-weeb-cli api streams 12345 --season 1 --episode 1
-
-# Anime-Details abrufen
-weeb-cli api details 12345
-
-# Eine Episode herunterladen
-weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads
 ```
-
-Alle API-Befehle geben JSON über stdout aus.
-
-### Sonarr/*arr-Integration (Serve-Modus)
-
-weeb-cli kann als Torznab-kompatibler Server für Sonarr und andere *arr-Anwendungen betrieben werden:
-
-```bash
-pip install weeb-cli[serve]
-
-weeb-cli serve --port 9876 \
-  --watch-dir /downloads/watch \
-  --completed-dir /downloads/completed \
-  --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key DEIN_KEY \
-  --providers animecix,anizle,turkanime
-```
-
-Dann `http://weeb-cli-host:9876` als Torznab-Indexer in Sonarr mit der Kategorie 5070 (TV/Anime) hinzufügen. Der Server enthält einen Blackhole-Download-Worker, der heruntergeladene Episoden automatisch verarbeitet.
-
-### Tastatursteuerung
-| Taste | Aktion |
-|-------|--------|
-| `↑` `↓` | Im Menü navigieren |
-| `Enter` | Auswählen |
-| `s` | Anime suchen (Hauptmenü) |
-| `d` | Downloads (Hauptmenü) |
-| `w` | Watchlist (Hauptmenü) |
-| `c` | Einstellungen (Hauptmenü) |
-| `q` | Beenden (Hauptmenü) |
-| `Ctrl+C` | Zurück / Beenden |
-
-**Hinweis:** Alle Tastenkombinationen können in "Einstellungen > Tastaturkurzbefehle" angepasst werden.
-
----
-
-## Quellen
-
-| Quelle | Sprache |
-|--------|---------|
-| Animecix | Türkisch |
-| Turkanime | Türkisch |
-| Anizle | Türkisch |
-| Weeb | Türkisch |
-| HiAnime | Englisch |
-| AllAnime | Englisch |
-| AniWorld | Deutsch |
-| Docchi | Polnisch |
-
----
-
-## Konfiguration
-
-Speicherort der Konfiguration: `~/.weeb-cli/weeb.db` (SQLite)
-
-### Verfügbare Einstellungen
-
-| Einstellung | Beschreibung | Standard | Typ |
-|-------------|--------------|----------|-----|
-| `language` | Interface-Sprache (tr/en/de/pl) | `null` (fragt beim ersten Start) | string |
-| `scraping_source` | Aktive Anime-Quelle | `animecix` | string |
-| `aria2_enabled` | Aria2 für Downloads verwenden | `true` | boolean |
-| `aria2_max_connections` | Max. Verbindungen pro Download | `16` | integer |
-| `ytdlp_enabled` | yt-dlp für HLS-Streams verwenden | `true` | boolean |
-| `ytdlp_format` | yt-dlp Format string | `bestvideo+bestaudio/best` | string |
-| `max_concurrent_downloads` | Gleichzeitige Downloads | `3` | integer |
-| `download_dir` | Download-Ordnerpfad | `./weeb-downloads` | string |
-| `download_max_retries` | Fehlgeschlagene Downloads wiederholen | `3` | integer |
-| `download_retry_delay` | Verzögerung zwischen Wiederholungen (Sek.) | `10` | integer |
-| `show_description` | Anime-Beschreibungen anzeigen | `true` | boolean |
-| `discord_rpc_enabled` | Discord Rich Presence | `false` | boolean |
-| `shortcuts_enabled` | Tastaturkurzbefehle | `true` | boolean |
-| `debug_mode` | Debug-Protokollierung | `false` | boolean |
-
-### Tracker-Einstellungen (separat gespeichert)
-- `anilist_token` - AniList OAuth-Token
-- `anilist_user_id` - AniList-Benutzer-ID
-- `mal_token` - MyAnimeList OAuth-Token
-- `mal_refresh_token` - MAL Refresh-Token
-- `mal_username` - MAL Benutzername
-
-### Externe Laufwerke
-Verwaltet über "Einstellungen > Externe Laufwerke". Jedes Laufwerk speichert:
-- Pfad (z.B., `D:\Anime`)
-- Benutzerdefinierter Name/Spitzname
-- Hinzugefügt-Zeitstempel
-
-Alle Einstellungen können über das interaktive Einstellungsmenü geändert werden.
-
----
-
-## Roadmap
-
-### Abgeschlossen
-- [x] Unterstützung mehrerer Quellen (TR/EN/DE/PL)
-- [x] MPV-Streaming
-- [x] Wiedergabeverlauf und Fortschrittsverfolgung
-- [x] Aria2/yt-dlp Download-Integration
-- [x] Externe Laufwerke und lokale Bibliothek
-- [x] SQLite-Datenbank
-- [x] Benachrichtigungssystem
-- [x] Debug-Modus
-- [x] MAL/AniList-Integration
-- [x] Datenbanksicherung/-wiederherstellung
-- [x] Tastaturkurzbefehle
-- [x] Nicht interaktiver API-Modus (JSON-Ausgabe)
-- [x] Torznab-Server für Sonarr/*arr-Integration
-
-### Geplant
-- [ ] Anime-Empfehlungen
-- [ ] Stapelverarbeitung
-- [ ] Wiedergabestatistiken (Grafiken)
-- [ ] Theme-Unterstützung
-- [ ] Untertitel-Downloads
-- [ ] Torrent-Unterstützung (nyaa.si)
-- [ ] Watch Party
-
----
-
-## Projektstruktur
-*Siehe englische oder türkische README für Details zur Projektstruktur.*
 
 ---
 
 ## Lizenz
 
 Dieses Projekt ist unter der **GNU General Public License v3.0** lizenziert.  
-Die vollständige Lizenzvereinbarung findest du in der Datei [LICENSE](LICENSE).
+Die vollständige Lizenzvereinbarung findest du in der Datei [LICENSE](../../LICENSE).
 
 Weeb-CLI (C) 2026
