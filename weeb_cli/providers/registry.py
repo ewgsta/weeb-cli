@@ -124,6 +124,19 @@ def _discover_providers() -> None:
                     except Exception as e:
                         debug(f"[Registry] Error loading provider {lang}/{name}: {e}")
     
+    # Discover plugins as well
+    try:
+        from weeb_cli.services.plugin_manager import plugin_manager
+        enabled_plugins = plugin_manager.get_enabled_plugins()
+        for plugin in enabled_plugins:
+            try:
+                plugin_manager.enable_plugin(plugin.manifest.id)
+                debug(f"[Registry] Discovered plugin provider: {plugin.manifest.id}")
+            except Exception as e:
+                debug(f"[Registry] Error loading plugin provider {plugin.manifest.id}: {e}")
+    except (ImportError, Exception) as e:
+        debug(f"[Registry] Error during plugin discovery: {e}")
+
     _initialized = True
 
 
