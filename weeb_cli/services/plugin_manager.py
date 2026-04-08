@@ -223,20 +223,32 @@ class PluginManager:
             
         module_name = f"weeb_plugin_{plugin.manifest.id}"
         
-        # Security: In a real sandbox, we would use something more restrictive.
-        # For this CLI, we'll use a custom module loader that limits available globals.
+        # Security: Sandbox layer
+        # We restrict the globals available to the plugin module.
+        # Note: This is a cooperative sandbox.
         spec = importlib.util.spec_from_file_location(module_name, entry_path)
         if spec is None or spec.loader is None:
             raise PluginError(f"Could not load spec for {entry_path}")
             
         module = importlib.util.module_from_spec(spec)
         
-        # Basic sandbox: restrict globals
-        # Note: This is not a perfect sandbox, but a first layer of security.
-        # RestrictedPython would be better but it's an external dependency.
+        # Define restricted globals
+        # Only allow essential builtins and weeb_cli modules that are safe
+        restricted_globals = {
+            '__name__': module_name,
+            '__file__': str(entry_path),
+            '__package__': None,
+            '__doc__': None,
+            '__builtins__': self._get_safe_builtins(),
+            'i18n': i18n,
+            'debug': debug,
+            'error': error,
+            # Provide a way to register providers/services
+            'register_provider': self._get_register_provider_proxy(plugin),
+        }
         
-        # Inject restricted globals if needed
-        # module.__dict__['__builtins__'] = ...
+        # Update module dict with restricted globals
+        module.__dict__.update(restricted_globals)
         
         try:
             spec.loader.exec_module(module)
@@ -249,6 +261,30 @@ class PluginManager:
             debug(f"[PluginManager] Successfully loaded plugin module: {plugin.manifest.id}")
         except Exception as e:
             raise PluginError(f"Error executing plugin code: {e}")
+
+    def _get_safe_builtins(self):
+        """Return a dictionary of safe Python builtins for the sandbox."""
+        import builtins
+        safe_names = [
+            'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytes', 'bytearray',
+            'callable', 'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate',
+            'filter', 'float', 'format', 'frozenset', 'getattr', 'hasattr',
+            'hash', 'hex', 'id', 'int', 'isinstance', 'issubclass', 'iter',
+            'len', 'list', 'map', 'max', 'min', 'next', 'object', 'oct',
+            'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed',
+            'round', 'set', 'setattr', 'slice', 'sorted', 'str', 'sum', 'tuple',
+            'type', 'zip', 'Exception', 'ValueError', 'TypeError', 'RuntimeError'
+        ]
+        return {name: getattr(builtins, name) for name in safe_names if hasattr(builtins, name)}
+
+    def _get_register_provider_proxy(self, plugin: Plugin):
+        """Proxy function to allow plugins to register providers securely."""
+        from weeb_cli.providers.registry import register_provider
+        
+        def proxy(name, lang="en", region="US", disabled=False):
+            # We can add validation here to ensure name matches plugin prefix, etc.
+            return register_provider(name, lang, region, disabled)
+        return proxy
 
     def get_enabled_plugins(self) -> List[Plugin]:
         """Get list of all enabled plugins."""
