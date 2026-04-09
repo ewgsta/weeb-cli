@@ -9,7 +9,7 @@
 </p>
 
 <div align="center">
-  <a href="README.md">English</a> | <a href="md/tr/README.md">Türkçe</a> | <a href="md/de/README.md">Deutsch</a> | <a href="md/pl/README.md">Polski</a>
+  <a href="README.md">English</a> | <a href="docs/md/tr/README.md">Türkçe</a> | <a href="docs/md/de/README.md">Deutsch</a> | <a href="docs/md/pl/README.md">Polski</a>
 </div>
 <br>
 

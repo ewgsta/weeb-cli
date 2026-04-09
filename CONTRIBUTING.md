@@ -1,7 +1,7 @@
 # Contributing to Weeb CLI
 
 <div align="center">
-  <a href="CONTRIBUTING.md">English</a> | <a href="md/tr/CONTRIBUTING.md">Türkçe</a> | <a href="md/de/CONTRIBUTING.md">Deutsch</a> | <a href="md/pl/CONTRIBUTING.md">Polski</a>
+  <a href="CONTRIBUTING.md">English</a> | <a href="docs/md/tr/CONTRIBUTING.md">Türkçe</a> | <a href="docs/md/de/CONTRIBUTING.md">Deutsch</a> | <a href="docs/md/pl/CONTRIBUTING.md">Polski</a>
 </div>
 <br>
 
@@ -42,7 +42,7 @@ If you enjoy anime, tools, and the terminal, you are in the right place.
 - Keep your pull requests focused on a single change, feature, or bugfix. This makes the review process smoother.
 - Link any related issues to your PR so maintainers have context.
 - Adhere to the existing code style (use Black/Flake8 for Python components).
-- Update the documentation (`README.md`, `md/tr/README.md`, etc.) if your changes affect external behavior.
+- Update the documentation (`README.md`, `docs/md/tr/README.md`, etc.) if your changes affect external behavior.
 
 ## Issues
 
