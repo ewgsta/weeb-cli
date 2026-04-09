@@ -220,12 +220,14 @@ GET /api/anime/{anime_id}/episodes/{episode_id}/streams?provider=animecix&sort=d
 docker-compose -f docker-compose.restful.yml up -d
 ```
 
-### Używając Dockerfile
+### Używając Inline Dockerfile
 
-Zbuduj obraz:
-
-```bash
-docker build -f Dockerfile.restful -t weeb-cli-restful .
+```dockerfile
+FROM python:3.12-slim
+RUN apt-get update && apt-get install -y --no-install-recommends gcc && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir weeb-cli[serve-restful]
+EXPOSE 8080
+CMD ["weeb-cli", "serve", "restful"]
 ```
 
 Uruchom kontener:
@@ -234,6 +236,9 @@ Uruchom kontener:
 docker run -d \
   --name weeb-cli-restful \
   -p 8080:8080 \
+  -e RESTFUL_PORT=8080 \
+  -e RESTFUL_HOST=0.0.0.0 \
+  -e RESTFUL_CORS=true \
   -e RESTFUL_PROVIDERS=animecix,hianime \
   weeb-cli-restful
 ```
