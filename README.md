@@ -175,7 +175,7 @@ All available providers are loaded automatically. Select which provider to use v
 
 **Docker Support:**
 ```bash
-docker-compose -f docker-compose.restful.yml up -d
+docker-compose -f docs/docker-compose.restful.yml up -d
 ```
 
 See [RESTful API Documentation](https://ewgsta.github.io/weeb-cli/cli/restful-api/) for full details.

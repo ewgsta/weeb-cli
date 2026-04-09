@@ -219,7 +219,7 @@ GET /api/anime/{anime_id}/episodes/{episode_id}/streams?provider=animecix&sort=d
 ### Using Docker Compose
 
 ```bash
-docker-compose -f docker-compose.restful.yml up -d
+docker-compose -f docs/docker-compose.restful.yml up -d
 ```
 
 ### Using Inline Dockerfile

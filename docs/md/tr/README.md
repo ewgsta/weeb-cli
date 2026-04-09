@@ -174,7 +174,7 @@ Tüm mevcut provider'lar otomatik olarak yüklenir. `provider` sorgu parametresi
 
 **Docker Desteği:**
 ```bash
-docker-compose -f docker-compose.restful.yml up -d
+docker-compose -f docs/docker-compose.restful.yml up -d
 ```
 
 Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/restful-api.tr/)'na bakın.
