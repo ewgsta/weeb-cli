@@ -1,0 +1,413 @@
+/* Weeb CLI - Textual Theme */
+/* Dark theme with cyan accent */
+
+* {
+    scrollbar-size: 1;
+    scrollbar-color: $surface-lighten-2;
+    scrollbar-color-hover: $accent;
+    scrollbar-color-active: $accent-lighten-1;
+}
+
+/* Main App */
+
+Screen {
+    background: $surface;
+}
+
+/* Header */
+
+WeebHeader {
+    dock: top;
+    height: 1;
+    background: $accent;
+    color: $text;
+}
+
+WeebHeader .header--title {
+    text-style: bold;
+    padding: 0 1;
+}
+
+WeebHeader .header--info {
+    text-style: none;
+    color: $text-muted;
+    padding: 0 1;
+    content-align-horizontal: right;
+}
+
+/* Footer */
+
+WeebFooter {
+    dock: bottom;
+    height: 1;
+    background: $surface-lighten-1;
+    color: $text-muted;
+    padding: 0 1;
+}
+
+/* Sidebar */
+
+#sidebar {
+    width: 28;
+    dock: left;
+    background: $surface-lighten-1;
+    border-right: solid $surface-lighten-2;
+    padding: 1 0;
+}
+
+#sidebar .sidebar-title {
+    text-align: center;
+    text-style: bold;
+    color: $accent;
+    padding: 0 1 1 1;
+}
+
+#sidebar OptionList {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar OptionList > .option-list--option {
+    padding: 0 2;
+    height: 3;
+    content-align-vertical: middle;
+}
+
+#sidebar OptionList > .option-list--option-highlighted {
+    background: $accent 20%;
+    color: $accent;
+    text-style: bold;
+}
+
+/* Content Area */
+
+#content {
+    padding: 1 2;
+}
+
+#content-header {
+    height: auto;
+    max-height: 3;
+    padding: 0 0 1 0;
+}
+
+#content-header .title {
+    text-style: bold;
+    color: $text;
+}
+
+/* Search */
+
+#search-input {
+    margin: 0 0 1 0;
+}
+
+#search-input Input {
+    border: tall $surface-lighten-2;
+}
+
+#search-input Input:focus {
+    border: tall $accent;
+}
+
+#search-history {
+    height: auto;
+    max-height: 2;
+    color: $text-muted;
+    padding: 0 0 1 0;
+}
+
+#search-results {
+    height: 1fr;
+}
+
+#search-results ListView {
+    background: transparent;
+}
+
+#search-results ListItem {
+    padding: 0 1;
+    height: 3;
+}
+
+#search-results ListItem:hover {
+    background: $accent 10%;
+}
+
+/* Anime Detail */
+
+#anime-info {
+    height: auto;
+    max-height: 12;
+    padding: 0 0 1 0;
+}
+
+#anime-description {
+    color: $text-muted;
+    max-height: 6;
+    overflow-y: auto;
+    padding: 0 0 1 0;
+}
+
+#anime-actions {
+    height: auto;
+    layout: horizontal;
+    padding: 0 0 1 0;
+}
+
+#anime-actions Button {
+    margin: 0 1 0 0;
+    min-width: 16;
+}
+
+#anime-actions Button.action-primary {
+    background: $accent;
+    color: $text;
+}
+
+#anime-actions Button.action-secondary {
+    background: $surface-lighten-2;
+}
+
+#episode-list {
+    height: 1fr;
+}
+
+#episode-list ListView {
+    background: transparent;
+}
+
+/* Watchlist */
+
+#watchlist-stats {
+    height: auto;
+    layout: horizontal;
+    padding: 0 0 1 0;
+}
+
+StatsPanel {
+    height: auto;
+    padding: 1 2;
+}
+
+.stat-card {
+    width: 1fr;
+    height: auto;
+    background: $surface-lighten-1;
+    border: round $surface-lighten-2;
+    padding: 1 2;
+    margin: 0 1 0 0;
+}
+
+.stat-card .stat-value {
+    text-style: bold;
+    color: $accent;
+}
+
+.stat-card .stat-label {
+    color: $text-muted;
+}
+
+#watchlist-content {
+    height: 1fr;
+}
+
+/* Downloads */
+
+#download-sources {
+    height: auto;
+    max-height: 10;
+    padding: 0 0 1 0;
+}
+
+#download-queue {
+    height: 1fr;
+}
+
+#download-queue DataTable {
+    height: 1fr;
+}
+
+#queue-controls {
+    height: auto;
+    layout: horizontal;
+    padding: 1 0 0 0;
+}
+
+#queue-controls Button {
+    margin: 0 1 0 0;
+}
+
+/* Download progress */
+
+DownloadProgressItem {
+    height: 3;
+    padding: 0 1;
+    margin: 0 0 1 0;
+    background: $surface-lighten-1;
+    border: round $surface-lighten-2;
+}
+
+DownloadProgressItem ProgressBar {
+    margin: 0;
+    padding: 0;
+}
+
+/* Library */
+
+#library-tabs {
+    height: 1fr;
+}
+
+/* Settings */
+
+#settings-list {
+    width: 1fr;
+}
+
+#settings-list OptionList > .option-list--option {
+    padding: 0 2;
+    height: 3;
+}
+
+.settings-section {
+    height: auto;
+    padding: 1;
+    margin: 0 0 1 0;
+    background: $surface-lighten-1;
+    border: round $surface-lighten-2;
+}
+
+.settings-section .section-title {
+    text-style: bold;
+    color: $accent;
+    padding: 0 0 1 0;
+}
+
+.toggle-row {
+    height: auto;
+    layout: horizontal;
+    padding: 0 0 1 0;
+}
+
+.toggle-row .toggle-label {
+    width: 1fr;
+    content-align-vertical: middle;
+}
+
+.toggle-row Switch {
+    width: auto;
+}
+
+/* Setup */
+
+#setup-container {
+    align: center middle;
+    width: 60;
+    height: auto;
+    max-height: 24;
+    padding: 2;
+    background: $surface-lighten-1;
+    border: round $accent;
+}
+
+#setup-container .setup-title {
+    text-align: center;
+    text-style: bold;
+    color: $accent;
+    padding: 0 0 2 0;
+}
+
+#setup-container OptionList {
+    height: auto;
+    margin: 1 0;
+}
+
+/* Stream select modal */
+
+ModalScreen {
+    align: center middle;
+}
+
+#stream-dialog {
+    width: 60;
+    height: auto;
+    max-height: 20;
+    padding: 1 2;
+    background: $surface-lighten-1;
+    border: round $accent;
+}
+
+#stream-dialog .dialog-title {
+    text-style: bold;
+    color: $accent;
+    padding: 0 0 1 0;
+}
+
+/* Confirm dialog */
+
+#confirm-dialog {
+    width: 50;
+    height: auto;
+    padding: 2;
+    background: $surface-lighten-1;
+    border: round $warning;
+    align: center middle;
+}
+
+#confirm-dialog .dialog-title {
+    text-align: center;
+    text-style: bold;
+    padding: 0 0 1 0;
+}
+
+#confirm-dialog .dialog-buttons {
+    layout: horizontal;
+    height: auto;
+    align-horizontal: center;
+    padding: 1 0 0 0;
+}
+
+#confirm-dialog .dialog-buttons Button {
+    margin: 0 1;
+    min-width: 12;
+}
+
+/* Loading */
+
+#loading-container {
+    align: center middle;
+    height: 1fr;
+}
+
+LoadingIndicator {
+    color: $accent;
+}
+
+/* Tabs */
+
+TabbedContent {
+    height: 1fr;
+}
+
+TabPane {
+    padding: 1 0;
+}
+
+/* DataTable */
+
+DataTable {
+    height: 1fr;
+}
+
+DataTable > .datatable--header {
+    text-style: bold;
+    color: $accent;
+}
+
+DataTable > .datatable--cursor {
+    background: $accent 20%;
+    color: $accent;
+}

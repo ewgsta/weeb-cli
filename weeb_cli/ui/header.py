@@ -1,19 +1,26 @@
-from rich import print
-from rich.text import Text
-from rich.console import Console
+"""Application header display for Weeb CLI.
+
+Provides header functionality for both Textual screens
+and backward-compatible rich console output.
+"""
+
 from weeb_cli.config import config
 from weeb_cli import __version__
 
-console = Console()
 
-def show_header(title="Weeb CLI", show_version=False, show_source=False):
-    console.clear()
-    
-    text = Text()
-    text.append(f" {title} ", style="bold white on blue")
-    
+def get_header_text(title="Weeb CLI", show_version=False, show_source=False):
+    """Get formatted header text string.
+
+    Args:
+        title: Header title text.
+        show_version: Whether to show version number.
+        show_source: Whether to show current scraping source.
+
+    Returns:
+        Formatted header string with optional version and source info.
+    """
     parts = []
-    
+
     if show_source:
         cfg_source = config.get("scraping_source")
         if not cfg_source:
@@ -21,13 +28,12 @@ def show_header(title="Weeb CLI", show_version=False, show_source=False):
             lang = config.get("language", "tr")
             cfg_source = get_default_provider(lang) or "animecix"
         parts.append(cfg_source.capitalize())
-        
+
     if show_version:
         parts.append(f"v{__version__}")
-        
+
     if parts:
         joined = " | ".join(parts)
-        text.append(f" | {joined}", style="dim white")
-    
-    console.print(text, justify="left")
-    print()
+        return f" {title}  | {joined}"
+
+    return f" {title} "
