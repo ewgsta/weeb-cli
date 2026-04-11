@@ -1,6 +1,6 @@
 typer[all]
 rich
-questionary
+textual>=1.0.0
 requests
 packaging
 beautifulsoup4
@@ -8,10 +8,8 @@ lxml
 pycryptodome
 curl_cffi
 appdirs
-prompt_toolkit>=3.0.36,<3.0.53
 build
 pyinstaller
-pyfiglet
 setuptools
 wheel
 py7zr
