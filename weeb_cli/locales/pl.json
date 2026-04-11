@@ -358,10 +358,7 @@
         "retrying": "Ponawianie {count} pobrań...",
         "episode_short": "Odc",
         "retrying_status": "Ponawianie ({attempt}/{max})...",
-        "ffmpeg_progress": "W {time}",
-        "stream_data_failed": "Nie udało se pobrać danych strumienia",
-        "empty_stream_links": "Linki strumienia są puste",
-        "no_valid_streams_found": "Nie znaleziono prawidłowych strumieni"
+        "ffmpeg_progress": "W {time}"
     },
     "library": {
         "title": "Moja Biblioteka",

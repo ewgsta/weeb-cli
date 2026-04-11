@@ -152,8 +152,6 @@
         "restore_success": "Geri yükleme başarılı!",
         "restore_failed": "Geri yükleme başarısız.",
         "cache_title": "Önbellek Yönetimi",
-        "cache_title": "Önbellek Yönetimi",
-        "cache_memory_entries": "Bellekteki girişler",
         "cache_file_entries": "Dosyadaki girişler",
         "cache_total_size": "Toplam boyut",
         "cache_clear_all": "Tüm önbelleği temizle",
@@ -265,9 +263,7 @@
         },
         "player_starting": "Oynatıcı Başlatılıyor...",
         "stream_not_found": "Yayın URL'si bulunamadı.",
-        "validating_streams": "Yayınlar doğrulanıyor",
-        "no_valid_streams": "Geçerli yayın bulunamadı",
-        "streams_valid": "yayın geçerli",
+
         "select_source": "Kaynak Seçin:",
         "invalid_ep_id": "Geçersiz Bölüm ID.",
         "download_wip": "İndirme özelliği yakında...",
@@ -359,14 +355,7 @@
         "notification_title": "Weeb CLI",
         "notification_complete": "{anime} - {episode}. bölüm indirildi",
         "retry_failed": "Başarısızları Yeniden Dene",
-        "retrying": "{count} indirme yeniden deneniyor...",
-        "disk_full": "Disk alanı yetersiz!",
-        "episode_short": "Blm",
-        "retrying_status": "Yeniden deneniyor ({attempt}/{max})...",
-        "ffmpeg_progress": "{time} konumunda",
-        "stream_data_failed": "Stream verisi alınamadı",
-        "empty_stream_links": "Stream linkleri boş",
-        "no_valid_streams_found": "Geçerli stream bulunamadı"
+        "retrying": "{count} indirme yeniden deneniyor..."
     },
     "library": {
         "title": "Kütüphanem",
