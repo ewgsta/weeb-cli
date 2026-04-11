@@ -1,44 +1,26 @@
-"""Command handlers for Weeb CLI.
+"""Command handlers and API endpoints for Weeb CLI.
 
-This package contains all CLI command implementations using Typer framework.
-Commands provide both interactive (TUI) and non-interactive (API) interfaces.
+This package contains CLI command implementations using the Typer framework.
+The interactive Textual UI is managed separately from the API endpoints.
 
 Command Modules:
     api: Non-interactive JSON API for scripts and automation
-    search: Anime search with history and filtering
-    downloads: Download queue management and monitoring
-    watchlist: Watch history and progress tracking
-    library: Local and virtual library management
-    settings: Configuration and user preferences
-    setup: Initial setup wizard
     serve: Torznab server for *arr integration
-
-Interactive Commands:
-    Most commands provide rich terminal UI with menus, prompts, and
-    progress indicators using Rich and Questionary libraries.
-
-API Commands:
-    The api subcommand provides JSON output for headless operation
-    and integration with external tools.
+    serve_restful: RESTful JSON API server
+    setup: Initial setup wizard and dependency installer
 
 Example:
-    Interactive mode::
-
+    Interactive mode:
         $ weeb-cli start
     
-    API mode::
-
+    API mode:
         $ weeb-cli api search "anime name" --provider animecix
-        $ weeb-cli api episodes <anime-id> --provider animecix
+        $ weeb-cli serve --port 8080
 """
 
 __all__ = [
     "api",
-    "search",
-    "downloads",
-    "watchlist",
-    "library",
-    "settings",
-    "setup",
     "serve",
+    "serve_restful",
+    "setup",
 ]
