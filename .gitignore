@@ -51,3 +51,4 @@ Thumbs.db
 .weeb-cli/
 weeb-downloads/
 *.log
+venv/
