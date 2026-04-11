@@ -382,5 +382,13 @@
         "select_anime": "Select Anime",
         "switching_provider": "Switching to {provider}...",
         "provider_not_found": "Provider {provider} not found."
+    },
+    "tui": {
+        "footer_source": "Source",
+        "footer_downloads": "Downloads",
+        "loading": "Loading...",
+        "confirm_exit": "Exit?",
+        "no_results": "No results",
+        "stream_select_title": "Select Stream"
     }
 }

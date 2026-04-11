@@ -382,5 +382,13 @@
         "select_anime": "Anime auswählen",
         "switching_provider": "Wechsel zu {provider}...",
         "provider_not_found": "Provider {provider} nicht gefunden."
+    },
+    "tui": {
+        "footer_source": "Quelle",
+        "footer_downloads": "Downloads",
+        "loading": "Wird geladen...",
+        "confirm_exit": "Beenden?",
+        "no_results": "Keine Ergebnisse",
+        "stream_select_title": "Stream auswahlen"
     }
 }

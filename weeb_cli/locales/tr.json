@@ -379,6 +379,14 @@
         "total_anime": "Toplam Anime",
         "select_anime": "Anime Seçin",
         "switching_provider": "Kaynak {provider} olarak değiştiriliyor...",
-        "provider_not_found": "Kaynak {provider} bulunamadı."
+        "provider_not_found": "Kaynak {provider} bulunamadi."
+    },
+    "tui": {
+        "footer_source": "Kaynak",
+        "footer_downloads": "Indirmeler",
+        "loading": "Yukleniyor...",
+        "confirm_exit": "Cikmak istiyor musunuz?",
+        "no_results": "Sonuc bulunamadi",
+        "stream_select_title": "Yayin Secin"
     }
 }

@@ -374,6 +374,14 @@
         "total_anime": "Suma Anime",
         "select_anime": "Wybierz Anime",
         "switching_provider": "Przełączanie na {provider}...",
-        "provider_not_found": "Dostawca {provider} nie został znaleziony."
+        "provider_not_found": "Dostawca {provider} nie zostal znaleziony."
+    },
+    "tui": {
+        "footer_source": "Zrodlo",
+        "footer_downloads": "Pobrane",
+        "loading": "Ladowanie...",
+        "confirm_exit": "Wyjsc?",
+        "no_results": "Brak wynikow",
+        "stream_select_title": "Wybierz strumien"
     }
 }
