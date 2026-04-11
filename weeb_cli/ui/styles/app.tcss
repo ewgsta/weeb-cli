@@ -2,7 +2,7 @@
 /* Dark theme with cyan accent */
 
 * {
-    scrollbar-size: 1;
+    scrollbar-size: 1 1;
     scrollbar-color: $surface-lighten-2;
     scrollbar-color-hover: $accent;
     scrollbar-color-active: $accent-lighten-1;
