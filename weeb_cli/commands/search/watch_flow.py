@@ -8,6 +8,10 @@ from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.scraper import scraper
 from weeb_cli.services.logger import error as log_error
+from weeb_cli.services.stream_validator import stream_validator
+from weeb_cli.config import config
+from concurrent.futures import ThreadPoolExecutor
+from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
 from .episode_utils import get_episodes_safe, group_episodes_by_season, make_season_episode_id
 from .stream_utils import sort_streams, extract_streams_from_response
 
@@ -148,15 +152,7 @@ def _build_episode_choices(episodes, season, completed_ids, next_ep_num):
     
     return ep_choices
 
-def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
-    ep_id = selected_ep.get("id")
-    ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
-    
-    if not ep_id:
-        console.print(f"[red]{i18n.t('details.invalid_ep_id')}[/red]")
-        time.sleep(1)
-        return False
-
+def _fetch_and_validate_streams(slug, ep_id):
     with console.status(i18n.t("common.processing"), spinner="dots"):
         stream_resp = get_streams(slug, ep_id)
     
@@ -168,24 +164,40 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
             error_msg += f" [{scraper.last_error}]"
         console.print(f"[red]{error_msg}[/red]")
         time.sleep(1.5)
-        return False
+        return None
     
-    from weeb_cli.services.stream_validator import stream_validator
-    from weeb_cli.config import config
-
     valid_streams = []
     if config.get("scraping_source") == "docchi":
         valid_streams = streams_list
     else:
         console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
-        for stream in streams_list:
-            is_valid, error = stream_validator.validate_url(stream.get("url"), timeout=3)
-            if is_valid:
-                valid_streams.append(stream)
+        
+        def check_stream(stream):
+            is_valid, _ = stream_validator.validate_url(stream.get("url"), timeout=3)
+            return stream if is_valid else None
+            
+        with ThreadPoolExecutor(max_workers=len(streams_list) if streams_list else 1) as executor:
+            results = executor.map(check_stream, streams_list)
+            valid_streams = [s for s in results if s is not None]
 
     if not valid_streams:
         console.print(f"[red]{i18n.t('details.no_valid_streams')}[/red]")
         time.sleep(1.5)
+        return None
+
+    return valid_streams
+
+def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
+    ep_id = selected_ep.get("id")
+    ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
+    
+    if not ep_id:
+        console.print(f"[red]{i18n.t('details.invalid_ep_id')}[/red]")
+        time.sleep(1)
+        return False
+
+    valid_streams = _fetch_and_validate_streams(slug, ep_id)
+    if not valid_streams:
         return False
 
     streams_list = sort_streams(valid_streams)
@@ -287,9 +299,6 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         return False
 
 def _update_trackers(details, slug, ep_num=None):
-    from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
-    from concurrent.futures import ThreadPoolExecutor
-    
     updated_prog = progress_tracker.get_anime_progress(slug)
     
     if ep_num is not None:
