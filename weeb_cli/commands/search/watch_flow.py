@@ -148,15 +148,7 @@ def _build_episode_choices(episodes, season, completed_ids, next_ep_num):
     
     return ep_choices
 
-def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
-    ep_id = selected_ep.get("id")
-    ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
-    
-    if not ep_id:
-        console.print(f"[red]{i18n.t('details.invalid_ep_id')}[/red]")
-        time.sleep(1)
-        return False
-
+def _fetch_and_validate_streams(slug, ep_id):
     with console.status(i18n.t("common.processing"), spinner="dots"):
         stream_resp = get_streams(slug, ep_id)
     
@@ -168,7 +160,7 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
             error_msg += f" [{scraper.last_error}]"
         console.print(f"[red]{error_msg}[/red]")
         time.sleep(1.5)
-        return False
+        return None
     
     from weeb_cli.services.stream_validator import stream_validator
     from weeb_cli.config import config
@@ -191,6 +183,21 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
     if not valid_streams:
         console.print(f"[red]{i18n.t('details.no_valid_streams')}[/red]")
         time.sleep(1.5)
+        return None
+
+    return valid_streams
+
+def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
+    ep_id = selected_ep.get("id")
+    ep_num = selected_ep.get("number") or selected_ep.get("ep_num")
+    
+    if not ep_id:
+        console.print(f"[red]{i18n.t('details.invalid_ep_id')}[/red]")
+        time.sleep(1)
+        return False
+
+    valid_streams = _fetch_and_validate_streams(slug, ep_id)
+    if not valid_streams:
         return False
 
     streams_list = sort_streams(valid_streams)
