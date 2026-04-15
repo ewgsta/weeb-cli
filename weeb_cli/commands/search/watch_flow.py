@@ -11,6 +11,7 @@ from weeb_cli.services.logger import error as log_error
 from weeb_cli.services.stream_validator import stream_validator
 from weeb_cli.config import config
 from concurrent.futures import ThreadPoolExecutor
+from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
 from .episode_utils import get_episodes_safe, group_episodes_by_season, make_season_episode_id
 from .stream_utils import sort_streams, extract_streams_from_response
 
@@ -298,9 +299,6 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         return False
 
 def _update_trackers(details, slug, ep_num=None):
-    from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
-    from concurrent.futures import ThreadPoolExecutor
-    
     updated_prog = progress_tracker.get_anime_progress(slug)
     
     if ep_num is not None:
