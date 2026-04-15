@@ -222,7 +222,7 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
                 title=details.get("title"),
                 total_episodes=total_eps
             )
-            _update_trackers(details, slug)
+            _update_trackers(details, slug, n)
             auto_watched["triggered"] = True
 
     play_success = player.play(
@@ -278,7 +278,7 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         )
         console.print(f"[green]✓ {i18n.t('details.marked_watched')}[/green]")
         
-        _update_trackers(details, slug)
+        _update_trackers(details, slug, n)
         
         completed_ids.add(season_ep_id)
         return True
@@ -286,12 +286,17 @@ def _mark_episode_watched(slug, details, ep_num, season, episodes, completed_ids
         log_error(f"Failed to mark episode as watched: {e}")
         return False
 
-def _update_trackers(details, slug):
+def _update_trackers(details, slug, ep_num=None):
     from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
     from concurrent.futures import ThreadPoolExecutor
     
     updated_prog = progress_tracker.get_anime_progress(slug)
-    total_watched = len(updated_prog.get("completed", []))
+    
+    if ep_num is not None:
+        total_watched = int(ep_num)
+    else:
+        total_watched = len(updated_prog.get("completed", []))
+        
     total_eps = details.get("total_episodes", 0)
     
     trackers = [
