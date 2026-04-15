@@ -8,6 +8,9 @@ from weeb_cli.services.player import player
 from weeb_cli.services.progress import progress_tracker
 from weeb_cli.services.scraper import scraper
 from weeb_cli.services.logger import error as log_error
+from weeb_cli.services.stream_validator import stream_validator
+from weeb_cli.config import config
+from concurrent.futures import ThreadPoolExecutor
 from .episode_utils import get_episodes_safe, group_episodes_by_season, make_season_episode_id
 from .stream_utils import sort_streams, extract_streams_from_response
 
@@ -162,14 +165,10 @@ def _fetch_and_validate_streams(slug, ep_id):
         time.sleep(1.5)
         return None
     
-    from weeb_cli.services.stream_validator import stream_validator
-    from weeb_cli.config import config
-
     valid_streams = []
     if config.get("scraping_source") == "docchi":
         valid_streams = streams_list
     else:
-        from concurrent.futures import ThreadPoolExecutor
         console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
         
         def check_stream(stream):
