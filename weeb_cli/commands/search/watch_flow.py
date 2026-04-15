@@ -177,11 +177,16 @@ def _play_episode(slug, selected_ep, details, season, episodes, completed_ids):
     if config.get("scraping_source") == "docchi":
         valid_streams = streams_list
     else:
+        from concurrent.futures import ThreadPoolExecutor
         console.print(f"[dim]{i18n.t('details.validating_streams')}...[/dim]")
-        for stream in streams_list:
-            is_valid, error = stream_validator.validate_url(stream.get("url"), timeout=3)
-            if is_valid:
-                valid_streams.append(stream)
+        
+        def check_stream(stream):
+            is_valid, _ = stream_validator.validate_url(stream.get("url"), timeout=3)
+            return stream if is_valid else None
+            
+        with ThreadPoolExecutor(max_workers=len(streams_list) if streams_list else 1) as executor:
+            results = executor.map(check_stream, streams_list)
+            valid_streams = [s for s in results if s is not None]
 
     if not valid_streams:
         console.print(f"[red]{i18n.t('details.no_valid_streams')}[/red]")
