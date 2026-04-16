@@ -104,27 +104,27 @@ def check_incomplete_downloads():
 
 def sync_tracker_pending():
     from weeb_cli.services.tracker import anilist_tracker, mal_tracker, kitsu_tracker
-    
-    if anilist_tracker.is_authenticated():
-        pending = anilist_tracker.get_pending_count()
-        if pending > 0:
-            synced = anilist_tracker.sync_pending()
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    trackers = [
+        ("AniList", anilist_tracker),
+        ("MAL", mal_tracker),
+        ("Kitsu", kitsu_tracker),
+    ]
+
+    def _sync_one(name, tracker):
+        if tracker.is_authenticated() and tracker.get_pending_count() > 0:
+            synced = tracker.sync_pending()
             if synced > 0:
-                console.print(f"[dim]AniList: {synced} {i18n.t('settings.anilist_synced').split()[1]}[/dim]")
-    
-    if mal_tracker.is_authenticated():
-        pending = mal_tracker.get_pending_count()
-        if pending > 0:
-            synced = mal_tracker.sync_pending()
+                return name, synced
+        return name, 0
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {executor.submit(_sync_one, n, t): n for n, t in trackers}
+        for future in as_completed(futures):
+            name, synced = future.result()
             if synced > 0:
-                console.print(f"[dim]MAL: {synced} {i18n.t('settings.mal_synced').split()[1]}[/dim]")
-    
-    if kitsu_tracker.is_authenticated():
-        pending = kitsu_tracker.get_pending_count()
-        if pending > 0:
-            synced = kitsu_tracker.sync_pending()
-            if synced > 0:
-                console.print(f"[dim]Kitsu: {synced} synced[/dim]")
+                console.print(f"[dim]{name}: {synced} synced[/dim]")
     
 @app.callback(invoke_without_command=True)
 def main(ctx: typer.Context):
