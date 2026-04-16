@@ -274,8 +274,9 @@ class LocalLibrary:
             for future in as_completed(futures):
                 try:
                     total += future.result()
-                except Exception:
-                    pass
+                except Exception as e:
+                    from weeb_cli.services.logger import debug
+                    debug(f"[Library] Indexing failed for source: {e}")
         return total
     
     def index_all_sources(self):

@@ -416,8 +416,9 @@ def play_local_episode(anime, episode):
                 
         except KeyboardInterrupt:
             pass
-        except Exception:
-            pass
+        except Exception as e:
+            from weeb_cli.services.logger import debug
+            debug(f"[Downloads] Tracker sync display error: {e}")
 
 def manage_queue():
     while True:

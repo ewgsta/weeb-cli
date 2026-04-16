@@ -155,17 +155,17 @@ class Database:
         with self._lock:
             try:
                 conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
-            except Exception:
+            except sqlite3.OperationalError:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN retry_count INTEGER DEFAULT 0')
-            
+
             try:
                 conn.execute('SELECT speed FROM download_queue LIMIT 1')
-            except Exception:
+            except sqlite3.OperationalError:
                 conn.execute('ALTER TABLE download_queue ADD COLUMN speed TEXT')
-            
+
             try:
                 conn.execute('SELECT current_time FROM progress LIMIT 1')
-            except Exception:
+            except sqlite3.OperationalError:
                 conn.execute('ALTER TABLE progress ADD COLUMN current_time REAL DEFAULT 0')
                 conn.execute('ALTER TABLE progress ADD COLUMN duration REAL DEFAULT 0')
             
@@ -182,8 +182,9 @@ class Database:
                 for key, value in data.items():
                     self.set_config(key, value)
                 config_file.rename(config_file.with_suffix('.json.bak'))
-            except Exception:
-                pass
+            except (json.JSONDecodeError, OSError) as e:
+                from weeb_cli.services.logger import debug
+                debug(f"[DB] Config migration failed: {e}")
         
         progress_file = config_dir / "progress.json"
         if progress_file.exists():
@@ -200,8 +201,9 @@ class Database:
                         info.get("last_watched_at")
                     )
                 progress_file.rename(progress_file.with_suffix('.json.bak'))
-            except Exception:
-                pass
+            except (json.JSONDecodeError, OSError) as e:
+                from weeb_cli.services.logger import debug
+                debug(f"[DB] Progress migration failed: {e}")
         
         history_file = config_dir / "search_history.json"
         if history_file.exists():
@@ -211,8 +213,9 @@ class Database:
                 for query in reversed(data):
                     self.add_search_history(query)
                 history_file.rename(history_file.with_suffix('.json.bak'))
-            except Exception:
-                pass
+            except (json.JSONDecodeError, OSError) as e:
+                from weeb_cli.services.logger import debug
+                debug(f"[DB] Search history migration failed: {e}")
         
         queue_file = config_dir / "download_queue.json"
         if queue_file.exists():
@@ -222,8 +225,9 @@ class Database:
                 for item in data:
                     self.add_to_queue(item)
                 queue_file.rename(queue_file.with_suffix('.json.bak'))
-            except Exception:
-                pass
+            except (json.JSONDecodeError, OSError) as e:
+                from weeb_cli.services.logger import debug
+                debug(f"[DB] Download queue migration failed: {e}")
     
     def get_config(self, key, default=None):
         with self._conn() as conn:
@@ -406,9 +410,11 @@ class Database:
         try:
             shutil.copy2(self.db_path, backup_path)
             return True
-        except Exception as e:
+        except OSError as e:
+            from weeb_cli.services.logger import error as log_error
+            log_error(f"[DB] Backup failed: {e}")
             return False
-    
+
     def restore_database(self, backup_path: str) -> bool:
         import shutil
         try:
@@ -425,13 +431,17 @@ class Database:
                 self._initialized = False
                 self._ensure_initialized()
                 return True
-            except Exception:
+            except OSError as e:
+                from weeb_cli.services.logger import error as log_error
+                log_error(f"[DB] Restore failed, rolling back: {e}")
                 shutil.copy2(backup_temp, self.db_path)
                 backup_temp.unlink()
                 self._initialized = False
                 self._ensure_initialized()
                 return False
-        except Exception:
+        except OSError as e:
+            from weeb_cli.services.logger import error as log_error
+            log_error(f"[DB] Restore preparation failed: {e}")
             return False
     
     def add_to_virtual_library(self, anime_id: str, anime_title: str, provider_name: str, 

@@ -23,7 +23,7 @@ def _setup_logger():
         
         try:
             _clean_old_logs(log_dir)
-        except Exception:
+        except OSError:
             pass
         
         log_file = log_dir / f"debug_{datetime.now().strftime('%Y%m%d')}.log"
@@ -66,5 +66,5 @@ def _clean_old_logs(log_dir: Path):
         for log in log_dir.glob("debug_*.log"):
             if log.stat().st_mtime < cutoff:
                 log.unlink()
-    except Exception:
+    except OSError:
         pass

@@ -70,7 +70,9 @@ class I18n:
         """Initialize i18n with language from config or default to English."""
         try:
             self.language: str = config.get("language", "en")
-        except Exception:
+        except Exception as e:
+            from weeb_cli.services.logger import debug
+            debug(f"[I18n] Config read failed, defaulting to English: {e}")
             self.language = "en"
         self.translations: Dict[str, Any] = {}
         self.load_translations()
@@ -98,7 +100,9 @@ class I18n:
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 self.translations = json.load(f)
-        except Exception:
+        except (json.JSONDecodeError, OSError) as e:
+            from weeb_cli.services.logger import debug
+            debug(f"[I18n] Failed to load translations for '{self.language}': {e}")
             self.translations = {}
 
     def get(self, key_path: str, default: Optional[str] = None, **kwargs: Any) -> str:
