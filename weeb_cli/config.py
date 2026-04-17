@@ -137,7 +137,7 @@ class Config:
 
         # Use provided default, fallback to DEFAULT_CONFIG, then None
         if default is not None:
-            return DEFAULT_CONFIG.get(key, default)
+            return default
         return DEFAULT_CONFIG.get(key)
 
     def set(self, key: str, value: Any) -> None:
