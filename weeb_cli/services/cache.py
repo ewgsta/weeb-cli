@@ -40,7 +40,6 @@ Example:
 """
 
 import json
-import pickle
 import time
 import hashlib
 from pathlib import Path
@@ -118,14 +117,6 @@ class CacheManager:
                         self._memory_cache[key] = (value, time.time())
                         return value
                 except (json.JSONDecodeError, UnicodeDecodeError, OSError):
-                    pass
-                # Fallback: try reading as pickle for backward compatibility
-                try:
-                    with open(cache_file, 'rb') as f:
-                        value = pickle.load(f)
-                        self._memory_cache[key] = (value, time.time())
-                        return value
-                except (pickle.PickleError, EOFError, OSError):
                     cache_file.unlink(missing_ok=True)
         
         return None
