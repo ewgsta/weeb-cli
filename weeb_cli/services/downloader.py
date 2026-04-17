@@ -393,35 +393,8 @@ class QueueManager:
                 self._download_generic(stream_url, output_path, item)
 
     def _extract_url(self, data):
-        PRIORITY = ["ALUCARD", "AMATERASU", "SIBNET", "MP4UPLOAD", "UQLOAD"]
-        
-        if isinstance(data, dict):
-            node = data
-            for _ in range(3):
-                if "data" in node and isinstance(node["data"], (dict, list)):
-                    node = node["data"]
-                else:
-                    break
-             
-            sources = node if isinstance(node, list) else node.get("links") or node.get("sources")
-            if sources and isinstance(sources, list) and len(sources) > 0:
-                def get_priority(s):
-                    server = (s.get("server") or "").upper()
-                    for i, p in enumerate(PRIORITY):
-                        if p in server:
-                            return i
-                    return 999
-                
-                sorted_sources = sorted(sources, key=get_priority)
-                
-                for src in sorted_sources:
-                    url = src.get("url")
-                    if url:
-                        return url
-                        
-            elif isinstance(node, dict) and "url" in node:
-                return node["url"]
-        return None
+        urls = self._extract_all_urls(data)
+        return urls[0][0] if urls else None
 
     def _update_progress(self, item, progress=None, eta=None, speed=None):
         updates = {}
