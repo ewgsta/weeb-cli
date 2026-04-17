@@ -28,10 +28,10 @@ class Database:
             if self._connection is None:
                 self.db_path.parent.mkdir(parents=True, exist_ok=True)
                 self._connection = sqlite3.connect(
-                    self.db_path, 
+                    self.db_path,
                     timeout=30,  # Increased timeout for better reliability
                     check_same_thread=False,
-                    isolation_level=None
+                    isolation_level="DEFERRED"  # Removed autocommit for safe transactions
                 )
                 self._connection.row_factory = sqlite3.Row
                 # WAL mode for better concurrent access
