@@ -146,11 +146,17 @@ weeb-cli serve --port 9876 \
   --watch-dir /downloads/watch \
   --completed-dir /downloads/completed \
   --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key ANAHTARINIZ \
-  --providers animecix,anizle,turkanime
+  --sonarr-api-key ANAHTARINIZ
 ```
 
 Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
+
+**Docker Desteği:**
+```bash
+docker-compose -f docs/docker-compose.torznab.yml up -d
+```
+
+Tüm detaylar için [Torznab Sunucu Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/serve-mode.tr/)'na bakın.
 
 ### RESTful API Sunucusu
 
@@ -181,9 +187,7 @@ Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-
 
 #### Docker (Torznab)
 
-Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
-
-#### Docker
+#### Docker (Torznab)
 
 ```dockerfile
 FROM python:3.13-slim
@@ -192,6 +196,33 @@ RUN pip install --no-cache-dir weeb-cli[serve] yt-dlp
 EXPOSE 9876
 CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "--completed-dir", "/downloads/completed"]
 ```
+
+### RESTful API Server
+
+Web/mobil uygulamalar ve özel entegrasyonlar için weeb-cli bir RESTful API sunucusu sağlar:
+
+```bash
+pip install weeb-cli[serve-restful]
+
+weeb-cli serve restful --port 8080 --cors
+```
+
+**API Endpoint'leri:**
+- `GET /health` - Sağlık kontrolü
+- `GET /api/providers` - Mevcut provider'ları listele
+- `GET /api/search?q=naruto&provider=animecix` - Anime ara
+- `GET /api/anime/{id}?provider=animecix` - Anime detaylarını al
+- `GET /api/anime/{id}/episodes?season=1` - Bölümleri listele
+- `GET /api/anime/{id}/episodes/{ep_id}/streams` - Stream URL'lerini al
+
+Tüm mevcut provider'lar otomatik olarak yüklenir. `provider` sorgu parametresi ile hangi provider'ı kullanacağınızı seçin.
+
+**Docker Desteği:**
+```bash
+docker-compose -f docs/docker-compose.restful.yml up -d
+```
+
+Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/restful-api.tr/)'na bakın.
 
 ### Klavye Kontrolleri
 | Tuş | İşlev |
