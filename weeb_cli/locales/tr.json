@@ -82,20 +82,7 @@
         "drive_removed": "Disk kaldırıldı.",
         "current_dir": "Mevcut: {dir}",
         "retry_delay_error": "Yeniden deneme aralığı 0 ile 300 saniye arasında olmalıdır.",
-        "cache": {
-            "title": "Önbellek Yönetimi",
-            "memory_entries": "Bellek kayıtları",
-            "file_entries": "Dosya kayıtları",
-            "total_size": "Toplam boyut",
-            "clear_all": "Tüm önbelleği temizle",
-            "clear_provider": "Mevcut kaynak önbelleğini temizle",
-            "cleanup_old": "Eski önbelleği temizle (>24s)",
-            "cleared": "Önbellek temizlendi",
-            "provider_cleared": "Kaynak önbelleği temizlendi",
-            "cleaned": "Temizlendi",
-            "prompt": "İşlem seçin",
-            "confirm_clear_all": "Tüm önbellek temizlensin mi?"
-        },
+        "cache": "Önbellek Yönetimi",
         "anilist": "AniList",
         "anilist_connected": "Bağlı: {user}",
         "anilist_not_connected": "AniList hesabınıza bağlanarak izleme geçmişinizi senkronize edebilirsiniz.",
@@ -276,7 +263,9 @@
     "player": {
         "installing_mpv": "MPV bulunamadı. Kuruluyor...",
         "install_failed": "MPV kurulamadı. Lütfen manuel kurun.",
-        "error": "Oynatıcı hatası"
+        "error": "Oynatıcı hatası",
+        "resuming": "{time} saniyeden devam ediliyor",
+        "auto_marked": "Yüzde 80'e ulaşıldı, otomatik olarak izlendi işaretlendi."
     },
     "watchlist": {
         "total_anime": "Toplam Anime",

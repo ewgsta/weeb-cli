@@ -131,6 +131,17 @@ Discord'da ne izlediğinizi gösterin:
 
 Yol: Ayarlar → Entegrasyonlar → Discord RPC
 
+### AniSkip Otomatik Atlama
+
+Anime açılış ve kapanışlarını otomatik olarak atlayın:
+- Etkinleştir/Devre Dışı Bırak
+- AniSkip API kullanır
+- MyAnimeList'ten atlama zamanlarını alır
+- Oynatma sırasında otomatik olarak atlar
+- OP, ED ve mixed-OP türlerini destekler
+
+Yol: Ayarlar → Entegrasyonlar → Otomatik Atlama
+
 ### Klavye Kısayolları
 
 Global klavye kısayolları (deneysel):

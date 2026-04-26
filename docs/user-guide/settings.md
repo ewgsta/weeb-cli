@@ -131,6 +131,17 @@ Show what you're watching on Discord:
 
 Path: Settings → Integrations → Discord RPC
 
+### AniSkip Auto Skip
+
+Automatically skip anime openings and endings:
+- Enable/Disable
+- Uses AniSkip API
+- Fetches skip times from MyAnimeList
+- Automatically seeks during playback
+- Supports OP, ED, and mixed-OP types
+
+Path: Settings → Integrations → Auto Skip
+
 ### Keyboard Shortcuts
 
 Global keyboard shortcuts (experimental):

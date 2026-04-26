@@ -145,11 +145,46 @@ weeb-cli serve --port 9876 \
   --watch-dir /downloads/watch \
   --completed-dir /downloads/completed \
   --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key DEIN_KEY \
-  --providers animecix,anizle,turkanime
+  --sonarr-api-key DEIN_KEY
 ```
 
 Dann `http://weeb-cli-host:9876` als Torznab-Indexer in Sonarr mit der Kategorie 5070 (TV/Anime) hinzufügen. Der Server enthält einen Blackhole-Download-Worker, der heruntergeladene Episoden automatisch verarbeitet.
+
+**Docker-Unterstützung:**
+```bash
+docker-compose -f docs/docker-compose.torznab.yml up -d
+```
+
+Siehe [Torznab Server Dokumentation](https://ewgsta.github.io/weeb-cli/cli/serve-mode.de/) für vollständige Details.
+
+### RESTful API Server
+
+### RESTful API Server
+
+Für Web-/Mobilanwendungen und benutzerdefinierte Integrationen bietet weeb-cli einen RESTful API-Server:
+
+```bash
+pip install weeb-cli[serve-restful]
+
+weeb-cli serve restful --port 8080 --cors
+```
+
+**API-Endpunkte:**
+- `GET /health` - Gesundheitsprüfung
+- `GET /api/providers` - Verfügbare Provider auflisten
+- `GET /api/search?q=naruto&provider=animecix` - Anime suchen
+- `GET /api/anime/{id}?provider=animecix` - Anime-Details abrufen
+- `GET /api/anime/{id}/episodes?season=1` - Episoden auflisten
+- `GET /api/anime/{id}/episodes/{ep_id}/streams` - Stream-URLs abrufen
+
+Alle verfügbaren Provider werden automatisch geladen. Wählen Sie über den `provider` Query-Parameter, welchen Provider Sie verwenden möchten.
+
+**Docker-Unterstützung:**
+```bash
+docker-compose -f docs/docker-compose.restful.yml up -d
+```
+
+Siehe [RESTful API Dokumentation](https://ewgsta.github.io/weeb-cli/cli/restful-api.de/) für vollständige Details.
 
 ### Tastatursteuerung
 | Taste | Aktion |

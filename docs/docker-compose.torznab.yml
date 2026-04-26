@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  weeb-cli-torznab:
+    image: python:3.12-slim
+    container_name: weeb-cli-torznab
+    command: >
+      sh -c "apt-get update && 
+             apt-get install -y --no-install-recommends gcc aria2 ffmpeg && 
+             rm -rf /var/lib/apt/lists/* && 
+             pip install --no-cache-dir weeb-cli[serve] yt-dlp && 
+             weeb-cli serve --port 9876 --watch-dir /downloads/watch --completed-dir /downloads/completed"
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./downloads/watch:/downloads/watch
+      - ./downloads/completed:/downloads/completed
+    environment:
+      - TORZNAB_PORT=9876
+      - SONARR_URL=${SONARR_URL:-}
+      - SONARR_API_KEY=${SONARR_API_KEY:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:9876/api?t=caps', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+

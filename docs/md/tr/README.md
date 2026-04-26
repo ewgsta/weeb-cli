@@ -146,11 +146,17 @@ weeb-cli serve --port 9876 \
   --watch-dir /downloads/watch \
   --completed-dir /downloads/completed \
   --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key ANAHTARINIZ \
-  --providers animecix,anizle,turkanime
+  --sonarr-api-key ANAHTARINIZ
 ```
 
 Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
+
+**Docker Desteği:**
+```bash
+docker-compose -f docs/docker-compose.torznab.yml up -d
+```
+
+Tüm detaylar için [Torznab Sunucu Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/serve-mode.tr/)'na bakın.
 
 ### RESTful API Sunucusu
 
@@ -179,21 +185,9 @@ docker-compose -f docs/docker-compose.restful.yml up -d
 
 Tüm detaylar için [RESTful API Dokümantasyonu](https://ewgsta.github.io/weeb-cli/cli/restful-api.tr/)'na bakın.
 
-#### Docker (Torznab)
+---
 
-Ardından Sonarr'da `http://weeb-cli-host:9876` adresini 5070 (TV/Anime) kategorisiyle Torznab indexer olarak ekleyin. Sunucu, yakalanan bölümleri otomatik olarak işleyen bir blackhole indirme worker'ı içerir.
-
-#### Docker
-
-```dockerfile
-FROM python:3.13-slim
-RUN apt-get update && apt-get install -y --no-install-recommends aria2 ffmpeg && rm -rf /var/lib/apt/lists/*
-RUN pip install --no-cache-dir weeb-cli[serve] yt-dlp
-EXPOSE 9876
-CMD ["weeb-cli", "serve", "--port", "9876", "--watch-dir", "/downloads/watch", "--completed-dir", "/downloads/completed"]
-```
-
-### Klavye Kontrolleri
+## Klavye Kontrolleri
 | Tuş | İşlev |
 |-----|-------|
 | `↑` `↓` | Menüde gezinme |
