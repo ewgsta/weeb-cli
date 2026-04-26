@@ -147,11 +147,17 @@ weeb-cli serve --port 9876 \
   --watch-dir /downloads/watch \
   --completed-dir /downloads/completed \
   --sonarr-url http://sonarr:8989 \
-  --sonarr-api-key YOUR_KEY \
-  --providers animecix,anizle,turkanime
+  --sonarr-api-key YOUR_KEY
 ```
 
 Then add `http://weeb-cli-host:9876` as a Torznab indexer in Sonarr with category 5070 (TV/Anime). The server includes a blackhole download worker that automatically processes grabbed episodes.
+
+**Docker Support:**
+```bash
+docker-compose -f docs/docker-compose.torznab.yml up -d
+```
+
+See [Torznab Server Documentation](https://ewgsta.github.io/weeb-cli/cli/serve-mode/) for full details.
 
 ### RESTful API Server
 
