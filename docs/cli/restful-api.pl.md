@@ -28,10 +28,11 @@ Serwer uruchomi się na `http://0.0.0.0:8080` ze wszystkimi dostępnymi dostawca
 weeb-cli serve restful \
   --port 9000 \
   --host 127.0.0.1 \
-  --providers animecix,hianime \
   --no-cors \
   --debug
 ```
+
+Wszyscy dostępni dostawcy są ładowani automatycznie. Wybierz, którego dostawcy użyć, za pomocą parametru zapytania `provider` w żądaniach API.
 
 ### Opcje polecenia
 
@@ -39,9 +40,10 @@ weeb-cli serve restful \
 |-------|---------------------|----------|------|
 | `--port` | `RESTFUL_PORT` | `8080` | Port HTTP do powiązania |
 | `--host` | `RESTFUL_HOST` | `0.0.0.0` | Adres hosta do powiązania |
-| `--providers` | `RESTFUL_PROVIDERS` | `animecix,hianime,aniworld,docchi` | Nazwy dostawców oddzielone przecinkami |
 | `--cors/--no-cors` | `RESTFUL_CORS` | `true` | Włącz/wyłącz CORS |
 | `--debug` | `RESTFUL_DEBUG` | `false` | Włącz tryb debugowania |
+
+**Uwaga:** Wszyscy dostępni dostawcy są ładowani automatycznie. Użyj parametru zapytania `provider` w żądaniach API, aby wybrać, którego dostawcy użyć.
 
 ## Punkty końcowe API
 
@@ -239,13 +241,12 @@ docker run -d \
   -e RESTFUL_PORT=8080 \
   -e RESTFUL_HOST=0.0.0.0 \
   -e RESTFUL_CORS=true \
-  -e RESTFUL_PROVIDERS=animecix,hianime \
   weeb-cli-restful
 ```
 
 ### Zmienne środowiskowe
 
-Wszystkie opcje poleceń można skonfigurować za pomocą zmiennych środowiskowych:
+Skonfiguruj serwer za pomocą zmiennych środowiskowych:
 
 ```bash
 docker run -d \
@@ -253,7 +254,6 @@ docker run -d \
   -p 9000:9000 \
   -e RESTFUL_PORT=9000 \
   -e RESTFUL_HOST=0.0.0.0 \
-  -e RESTFUL_PROVIDERS=animecix,hianime,aniworld \
   -e RESTFUL_CORS=true \
   -e RESTFUL_DEBUG=false \
   weeb-cli-restful
@@ -374,7 +374,6 @@ Type=simple
 User=weeb
 WorkingDirectory=/opt/weeb-cli
 Environment="RESTFUL_PORT=8080"
-Environment="RESTFUL_PROVIDERS=animecix,hianime"
 ExecStart=/usr/local/bin/weeb-cli serve restful
 Restart=always
 
@@ -413,14 +412,14 @@ weeb-cli serve restful --port 9000
 
 ### Dostawca nie znaleziony
 
-Upewnij się, że nazwa dostawcy jest poprawna:
+Upewnij się, że nazwa dostawcy jest poprawna i dostępna:
 
 ```bash
 # Wyświetl dostępnych dostawców
 weeb-cli api providers
 
-# Użyj poprawnej nazwy dostawcy
-weeb-cli serve restful --providers animecix,hianime
+# Użyj poprawnej nazwy dostawcy w żądaniu API
+curl "http://localhost:8080/api/search?q=naruto&provider=animecix"
 ```
 
 ### Problemy z CORS
