@@ -131,6 +131,17 @@ Pokaż na Discordzie, co oglądasz:
 
 Ścieżka: Ustawienia → Integracje → Discord RPC
 
+### AniSkip Auto Pomijanie
+
+Automatycznie pomijaj czołówki i napisy końcowe anime:
+- Włącz/Wyłącz
+- Używa API AniSkip
+- Pobiera czasy pomijania z MyAnimeList
+- Automatycznie przewija podczas odtwarzania
+- Obsługuje typy OP, ED i mixed-OP
+
+Ścieżka: Ustawienia → Integracje → Auto Pomijanie
+
 ### Skróty klawiszowe
 
 Globalne skróty klawiszowe (eksperymentalne):

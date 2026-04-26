@@ -131,6 +131,17 @@ Zeigen Sie auf Discord, was Sie ansehen:
 
 Pfad: Einstellungen → Integrationen → Discord RPC
 
+### AniSkip Auto-Überspringen
+
+Anime-Openings und -Endings automatisch überspringen:
+- Aktivieren/Deaktivieren
+- Verwendet AniSkip API
+- Holt Skip-Zeiten von MyAnimeList
+- Springt automatisch während der Wiedergabe
+- Unterstützt OP, ED und mixed-OP Typen
+
+Pfad: Einstellungen → Integrationen → Auto-Überspringen
+
 ### Tastaturkürzel
 
 Globale Tastaturkürzel (experimentell):
