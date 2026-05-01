@@ -10,6 +10,87 @@ API modu tüm işlemler için JSON çıktısı sağlar, bu sayede kolayca:
 - Özel arayüzler oluşturun
 - Diğer araçlarla bağlantı kurun
 
+**Tüm API komutları sağlayıcı seçimini destekler** `--provider` (veya `-p`) seçeneği ile. Bu, her işlem için hangi anime kaynağını kullanacağınızı seçmenize olanak tanır.
+
+## Sağlayıcı Seçimi
+
+### Mevcut Sağlayıcılar
+
+Tüm mevcut sağlayıcıları görmek için `providers` komutunu kullanın:
+
+```bash
+weeb-cli api providers
+```
+
+Yanıt:
+```json
+[
+  {
+    "name": "animecix",
+    "lang": "tr",
+    "region": "TR",
+    "class": "AnimecixProvider",
+    "disabled": false
+  },
+  {
+    "name": "hianime",
+    "lang": "en",
+    "region": "US",
+    "class": "HiAnimeProvider",
+    "disabled": false
+  },
+  {
+    "name": "aniworld",
+    "lang": "de",
+    "region": "DE",
+    "class": "AniWorldProvider",
+    "disabled": false
+  },
+  {
+    "name": "docchi",
+    "lang": "pl",
+    "region": "PL",
+    "class": "DocchiProvider",
+    "disabled": false
+  }
+]
+```
+
+### Sağlayıcı Kategorileri
+
+**Türkçe Sağlayıcılar:**
+- `animecix` - Varsayılan Türkçe sağlayıcı
+- `turkanime` - Alternatif Türkçe kaynak
+- `anizle` - Türkçe anime akışı
+- `weeb` - Türkçe anime kaynağı
+
+**İngilizce Sağlayıcılar:**
+- `hianime` - Yüksek kaliteli İngilizce anime
+- `allanime` - Kapsamlı İngilizce kaynak
+
+**Almanca Sağlayıcılar:**
+- `aniworld` - Almanca anime akışı
+
+**Lehçe Sağlayıcılar:**
+- `docchi` - Lehçe anime kaynağı
+
+### Sağlayıcıları Kullanma
+
+Tüm komutlar `--provider` veya `-p` seçeneğini kabul eder:
+
+```bash
+# Belirli bir sağlayıcı ile ara
+weeb-cli api search "Naruto" --provider hianime
+
+# Türkçe kaynaktan bölümleri al
+weeb-cli api episodes "anime-id" --provider turkanime
+
+# Almanca sağlayıcıdan indir
+weeb-cli api download "anime-id" -s 1 -e 1 --provider aniworld
+```
+
+**Varsayılan Sağlayıcı:** `--provider` belirtilmezse, varsayılan olarak `animecix` kullanılır.
+
 ## Temel Kullanım
 
 Tüm API komutları bu kalıbı takip eder:
