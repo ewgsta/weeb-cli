@@ -10,6 +10,87 @@ Tryb API zapewnia wyjście JSON dla wszystkich operacji, ułatwiając:
 - Tworzenie niestandardowych interfejsów
 - Łączenie z innymi narzędziami
 
+**Wszystkie polecenia API obsługują wybór dostawcy** za pomocą opcji `--provider` (lub `-p`). Pozwala to wybrać, którego źródła anime użyć dla każdej operacji.
+
+## Wybór dostawcy
+
+### Dostępni dostawcy
+
+Użyj polecenia `providers`, aby zobaczyć wszystkich dostępnych dostawców:
+
+```bash
+weeb-cli api providers
+```
+
+Odpowiedź:
+```json
+[
+  {
+    "name": "animecix",
+    "lang": "tr",
+    "region": "TR",
+    "class": "AnimecixProvider",
+    "disabled": false
+  },
+  {
+    "name": "hianime",
+    "lang": "en",
+    "region": "US",
+    "class": "HiAnimeProvider",
+    "disabled": false
+  },
+  {
+    "name": "aniworld",
+    "lang": "de",
+    "region": "DE",
+    "class": "AniWorldProvider",
+    "disabled": false
+  },
+  {
+    "name": "docchi",
+    "lang": "pl",
+    "region": "PL",
+    "class": "DocchiProvider",
+    "disabled": false
+  }
+]
+```
+
+### Kategorie dostawców
+
+**Dostawcy tureccy:**
+- `animecix` - Domyślny turecki dostawca
+- `turkanime` - Alternatywne tureckie źródło
+- `anizle` - Tureckie streamowanie anime
+- `weeb` - Tureckie źródło anime
+
+**Dostawcy angielscy:**
+- `hianime` - Wysokiej jakości angielskie anime
+- `allanime` - Kompleksowe angielskie źródło
+
+**Dostawcy niemieccy:**
+- `aniworld` - Niemieckie streamowanie anime
+
+**Dostawcy polscy:**
+- `docchi` - Polskie źródło anime
+
+### Używanie dostawców
+
+Wszystkie polecenia akceptują opcję `--provider` lub `-p`:
+
+```bash
+# Wyszukiwanie z określonym dostawcą
+weeb-cli api search "Naruto" --provider hianime
+
+# Pobieranie odcinków z tureckiego źródła
+weeb-cli api episodes "anime-id" --provider turkanime
+
+# Pobieranie z niemieckiego dostawcy
+weeb-cli api download "anime-id" -s 1 -e 1 --provider aniworld
+```
+
+**Domyślny dostawca:** Jeśli `--provider` nie jest określony, domyślnie używany jest `animecix`.
+
 ## Podstawowe użycie
 
 Wszystkie polecenia API są zgodne z tym wzorcem:

@@ -10,6 +10,87 @@ Der API-Modus bietet JSON-Ausgabe für alle Operationen und erleichtert:
 - Erstellung benutzerdefinierter Schnittstellen
 - Verbindung mit anderen Tools
 
+**Alle API-Befehle unterstützen die Anbieterauswahl** über die Option `--provider` (oder `-p`). Damit können Sie für jede Operation auswählen, welche Anime-Quelle verwendet werden soll.
+
+## Anbieterauswahl
+
+### Verfügbare Anbieter
+
+Verwenden Sie den Befehl `providers`, um alle verfügbaren Anbieter anzuzeigen:
+
+```bash
+weeb-cli api providers
+```
+
+Antwort:
+```json
+[
+  {
+    "name": "animecix",
+    "lang": "tr",
+    "region": "TR",
+    "class": "AnimecixProvider",
+    "disabled": false
+  },
+  {
+    "name": "hianime",
+    "lang": "en",
+    "region": "US",
+    "class": "HiAnimeProvider",
+    "disabled": false
+  },
+  {
+    "name": "aniworld",
+    "lang": "de",
+    "region": "DE",
+    "class": "AniWorldProvider",
+    "disabled": false
+  },
+  {
+    "name": "docchi",
+    "lang": "pl",
+    "region": "PL",
+    "class": "DocchiProvider",
+    "disabled": false
+  }
+]
+```
+
+### Anbieterkategorien
+
+**Türkische Anbieter:**
+- `animecix` - Standard türkischer Anbieter
+- `turkanime` - Alternative türkische Quelle
+- `anizle` - Türkisches Anime-Streaming
+- `weeb` - Türkische Anime-Quelle
+
+**Englische Anbieter:**
+- `hianime` - Hochwertiges englisches Anime
+- `allanime` - Umfassende englische Quelle
+
+**Deutsche Anbieter:**
+- `aniworld` - Deutsches Anime-Streaming
+
+**Polnische Anbieter:**
+- `docchi` - Polnische Anime-Quelle
+
+### Anbieter verwenden
+
+Alle Befehle akzeptieren die Option `--provider` oder `-p`:
+
+```bash
+# Suche mit bestimmtem Anbieter
+weeb-cli api search "Naruto" --provider hianime
+
+# Episoden von türkischer Quelle abrufen
+weeb-cli api episodes "anime-id" --provider turkanime
+
+# Von deutschem Anbieter herunterladen
+weeb-cli api download "anime-id" -s 1 -e 1 --provider aniworld
+```
+
+**Standard-Anbieter:** Wenn `--provider` nicht angegeben wird, wird standardmäßig `animecix` verwendet.
+
 ## Grundlegende Verwendung
 
 Alle API-Befehle folgen diesem Muster:
