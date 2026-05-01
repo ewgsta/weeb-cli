@@ -127,9 +127,9 @@ class Config:
                 val = self.db.get_config(key)
                 if val is not None:
                     return val
-            except Exception as e:
-                from weeb_cli.services.logger import debug
-                debug(f"[Config] DB read failed for '{key}': {e}")
+            except Exception:
+                # Avoid circular import with logger, just pass silently
+                pass
 
         # Special handling for download_dir
         if key == "download_dir":
