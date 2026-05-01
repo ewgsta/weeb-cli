@@ -6,14 +6,101 @@ from pathlib import Path
 from datetime import datetime
 from contextlib import contextmanager
 from typing import Optional, List, Dict, Any
+from queue import Queue, Empty
 
 DB_PATH = Path.home() / ".weeb-cli" / "weeb.db"
+
+
+class ConnectionPool:
+    """Simple connection pool for SQLite database.
+    
+    Maintains a pool of reusable connections to reduce overhead
+    of creating new connections for each operation.
+    """
+    
+    def __init__(self, db_path: Path, pool_size: int = 5):
+        self.db_path = db_path
+        self.pool_size = pool_size
+        self._pool: Queue = Queue(maxsize=pool_size)
+        self._lock = threading.Lock()
+        self._initialized = False
+    
+    def _create_connection(self) -> sqlite3.Connection:
+        """Create a new database connection with optimal settings."""
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        conn = sqlite3.connect(
+            self.db_path,
+            timeout=30,
+            check_same_thread=False,
+            isolation_level="DEFERRED"
+        )
+        conn.row_factory = sqlite3.Row
+        conn.execute('PRAGMA journal_mode=WAL')
+        conn.execute('PRAGMA synchronous=NORMAL')
+        conn.execute('PRAGMA cache_size=-64000')
+        conn.execute('PRAGMA foreign_keys=ON')
+        conn.execute('PRAGMA busy_timeout=30000')
+        return conn
+    
+    def _initialize_pool(self):
+        """Initialize the connection pool."""
+        with self._lock:
+            if self._initialized:
+                return
+            for _ in range(self.pool_size):
+                conn = self._create_connection()
+                self._pool.put(conn)
+            self._initialized = True
+    
+    @contextmanager
+    def get_connection(self):
+        """Get a connection from the pool.
+        
+        Yields:
+            sqlite3.Connection: A database connection.
+        """
+        if not self._initialized:
+            self._initialize_pool()
+        
+        conn = None
+        try:
+            # Try to get a connection from pool, create new if pool is empty
+            try:
+                conn = self._pool.get(block=False)
+            except Empty:
+                conn = self._create_connection()
+            
+            yield conn
+            conn.commit()
+        except Exception:
+            if conn:
+                conn.rollback()
+            raise
+        finally:
+            if conn:
+                # Try to return to pool, close if pool is full
+                try:
+                    self._pool.put(conn, block=False)
+                except:
+                    conn.close()
+    
+    def close_all(self):
+        """Close all connections in the pool."""
+        with self._lock:
+            while not self._pool.empty():
+                try:
+                    conn = self._pool.get(block=False)
+                    conn.close()
+                except Empty:
+                    break
+            self._initialized = False
+
 
 class Database:
     def __init__(self) -> None:
         self.db_path: Path = DB_PATH
         self._initialized: bool = False
-        self._connection: Optional[sqlite3.Connection] = None
+        self._pool: Optional[ConnectionPool] = None
         self._lock: threading.RLock = threading.RLock()
 
     def _ensure_initialized(self) -> None:
@@ -23,40 +110,19 @@ class Database:
         self._initialized = True
         self._migrate_from_json()
     
-    def _get_connection(self) -> sqlite3.Connection:
+    def _get_pool(self) -> ConnectionPool:
+        """Get or create the connection pool."""
         with self._lock:
-            if self._connection is None:
-                self.db_path.parent.mkdir(parents=True, exist_ok=True)
-                self._connection = sqlite3.connect(
-                    self.db_path,
-                    timeout=30,  # Increased timeout for better reliability
-                    check_same_thread=False,
-                    isolation_level="DEFERRED"  # Removed autocommit for safe transactions
-                )
-                self._connection.row_factory = sqlite3.Row
-                # WAL mode for better concurrent access
-                self._connection.execute('PRAGMA journal_mode=WAL')
-                # NORMAL is safe with WAL mode
-                self._connection.execute('PRAGMA synchronous=NORMAL')
-                # Larger cache for better performance
-                self._connection.execute('PRAGMA cache_size=-64000')
-                # Enable foreign keys
-                self._connection.execute('PRAGMA foreign_keys=ON')
-                # Busy timeout for concurrent access
-                self._connection.execute('PRAGMA busy_timeout=30000')
-            return self._connection
+            if self._pool is None:
+                self._pool = ConnectionPool(self.db_path, pool_size=5)
+            return self._pool
     
     @contextmanager
     def _raw_conn(self):
         self._ensure_initialized()
-        conn = self._get_connection()
-        with self._lock:
-            try:
-                yield conn
-                conn.commit()
-            except Exception:
-                conn.rollback()
-                raise
+        pool = self._get_pool()
+        with pool.get_connection() as conn:
+            yield conn
 
     @contextmanager
     def _conn(self):
@@ -64,14 +130,15 @@ class Database:
             yield conn
     
     def close(self) -> None:
+        """Close all database connections."""
         with self._lock:
-            if self._connection:
-                self._connection.close()
-                self._connection = None
+            if self._pool:
+                self._pool.close_all()
+                self._pool = None
     
     def _init_db(self):
-        conn = self._get_connection()
-        with self._lock:
+        pool = self._get_pool()
+        with pool.get_connection() as conn:
             conn.executescript('''
                 CREATE TABLE IF NOT EXISTS config (
                     key TEXT PRIMARY KEY,
