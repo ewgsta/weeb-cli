@@ -218,8 +218,8 @@ class Database:
         self._migrate_columns()
     
     def _migrate_columns(self):
-        conn = self._get_connection()
-        with self._lock:
+        pool = self._get_pool()
+        with pool.get_connection() as conn:
             try:
                 conn.execute('SELECT retry_count FROM download_queue LIMIT 1')
             except sqlite3.OperationalError:
@@ -235,8 +235,6 @@ class Database:
             except sqlite3.OperationalError:
                 conn.execute('ALTER TABLE progress ADD COLUMN current_time REAL DEFAULT 0')
                 conn.execute('ALTER TABLE progress ADD COLUMN duration REAL DEFAULT 0')
-            
-            conn.commit()
     
     def _migrate_from_json(self):
         config_dir = Path.home() / ".weeb-cli"
