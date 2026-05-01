@@ -347,7 +347,7 @@ class WeebSDK:
         if not target_episodes:
             raise WeebCLIError(
                 f"Episode S{season:02d}E{episode:02d} not found",
-                error_code="EPISODE_NOT_FOUND"
+                code="EPISODE_NOT_FOUND"
             )
         
         target_episode = target_episodes[0]
@@ -357,7 +357,7 @@ class WeebSDK:
         if not stream_links:
             raise WeebCLIError(
                 "No streams available for this episode",
-                error_code="NO_STREAMS"
+                code="NO_STREAMS"
             )
         
         # Sort by quality (best first)
@@ -398,7 +398,7 @@ class WeebSDK:
         
         raise WeebCLIError(
             "All stream download attempts failed",
-            error_code="DOWNLOAD_FAILED"
+            code="DOWNLOAD_FAILED"
         )
     
     def download_url(

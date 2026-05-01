@@ -178,7 +178,7 @@ class TestWeebSDK:
         assert len(streams) == 2
         assert streams[0].quality == "1080p"
     
-    @patch('weeb_cli.sdk.download_episode')
+    @patch('weeb_cli.services.headless_downloader.download_episode')
     @patch('weeb_cli.sdk.get_provider')
     def test_download_episode_success(self, mock_get_provider, mock_download):
         """Test downloading an episode."""
@@ -249,7 +249,7 @@ class TestWeebSDK:
         
         assert "No streams available" in str(exc_info.value)
     
-    @patch('weeb_cli.sdk.download_episode')
+    @patch('weeb_cli.services.headless_downloader.download_episode')
     def test_download_url_success(self, mock_download):
         """Test downloading from direct URL."""
         mock_download.return_value = "/path/to/file.mp4"
