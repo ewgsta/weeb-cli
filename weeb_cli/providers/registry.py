@@ -40,16 +40,21 @@ Example:
 
 import importlib
 import pkgutil
+import pickle
 from pathlib import Path
 from typing import Dict, List, Type, Optional
 
 from weeb_cli.providers.base import BaseProvider
 from weeb_cli.services.logger import debug
+from weeb_cli.config import CONFIG_DIR
 
 # Global registry storage
 _providers: Dict[str, Type[BaseProvider]] = {}
 _provider_meta: Dict[str, dict] = {}
 _initialized: bool = False
+
+# Cache file location
+PROVIDER_CACHE_FILE = CONFIG_DIR / "provider_cache.pkl"
 
 
 def register_provider(name: str, lang: str = "tr", region: str = "TR", disabled: bool = False):
@@ -103,11 +108,19 @@ def _discover_providers() -> None:
     
     This function is called automatically on first registry access.
     Uses a global flag to ensure it only runs once.
+    
+    Attempts to load from cache first for faster startup.
     """
-    global _initialized
+    global _initialized, _providers, _provider_meta
     if _initialized:
         return
-        
+    
+    # Try to load from cache first
+    if _load_from_cache():
+        _initialized = True
+        debug("[Registry] Loaded providers from cache")
+        return
+    
     base_path = Path(__file__).parent
     
     # Scan language directories
@@ -124,7 +137,67 @@ def _discover_providers() -> None:
                     except Exception as e:
                         debug(f"[Registry] Error loading provider {lang}/{name}: {e}")
     
+    # Save to cache for next time
+    _save_to_cache()
     _initialized = True
+
+
+def _load_from_cache() -> bool:
+    """Load provider registry from cache file.
+    
+    Returns:
+        True if cache was loaded successfully, False otherwise.
+    """
+    global _providers, _provider_meta
+    
+    if not PROVIDER_CACHE_FILE.exists():
+        return False
+    
+    try:
+        with open(PROVIDER_CACHE_FILE, 'rb') as f:
+            cache_data = pickle.load(f)
+        
+        # Validate cache structure
+        if not isinstance(cache_data, dict) or 'providers' not in cache_data:
+            return False
+        
+        # Import all provider modules to register classes
+        for module_path in cache_data.get('modules', []):
+            try:
+                importlib.import_module(module_path)
+            except Exception as e:
+                debug(f"[Registry] Failed to import cached module {module_path}: {e}")
+                return False
+        
+        return True
+    except Exception as e:
+        debug(f"[Registry] Failed to load provider cache: {e}")
+        return False
+
+
+def _save_to_cache() -> None:
+    """Save provider registry to cache file."""
+    try:
+        PROVIDER_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        
+        # Collect module paths for all registered providers
+        modules = set()
+        for name, cls in _providers.items():
+            module_path = cls.__module__
+            modules.add(module_path)
+        
+        cache_data = {
+            'providers': list(_providers.keys()),
+            'modules': list(modules),
+            'meta': _provider_meta
+        }
+        
+        with open(PROVIDER_CACHE_FILE, 'wb') as f:
+            pickle.dump(cache_data, f)
+        
+        debug(f"[Registry] Saved {len(_providers)} providers to cache")
+    except Exception as e:
+        debug(f"[Registry] Failed to save provider cache: {e}")
 
 
 def get_provider(name: str) -> Optional[BaseProvider]:
