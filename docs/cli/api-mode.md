@@ -10,6 +10,87 @@ API mode provides JSON output for all operations, making it easy to:
 - Build custom interfaces
 - Connect with other tools
 
+**All API commands support provider selection** via the `--provider` (or `-p`) option. This allows you to choose which anime source to use for each operation.
+
+## Provider Selection
+
+### Available Providers
+
+Use the `providers` command to see all available providers:
+
+```bash
+weeb-cli api providers
+```
+
+Response:
+```json
+[
+  {
+    "name": "animecix",
+    "lang": "tr",
+    "region": "TR",
+    "class": "AnimecixProvider",
+    "disabled": false
+  },
+  {
+    "name": "hianime",
+    "lang": "en",
+    "region": "US",
+    "class": "HiAnimeProvider",
+    "disabled": false
+  },
+  {
+    "name": "aniworld",
+    "lang": "de",
+    "region": "DE",
+    "class": "AniWorldProvider",
+    "disabled": false
+  },
+  {
+    "name": "docchi",
+    "lang": "pl",
+    "region": "PL",
+    "class": "DocchiProvider",
+    "disabled": false
+  }
+]
+```
+
+### Provider Categories
+
+**Turkish Providers:**
+- `animecix` - Default Turkish provider
+- `turkanime` - Alternative Turkish source
+- `anizle` - Turkish anime streaming
+- `weeb` - Turkish anime source
+
+**English Providers:**
+- `hianime` - High-quality English anime
+- `allanime` - Comprehensive English source
+
+**German Providers:**
+- `aniworld` - German anime streaming
+
+**Polish Providers:**
+- `docchi` - Polish anime source
+
+### Using Providers
+
+All commands accept the `--provider` or `-p` option:
+
+```bash
+# Search with specific provider
+weeb-cli api search "Naruto" --provider hianime
+
+# Get episodes from Turkish source
+weeb-cli api episodes "anime-id" --provider turkanime
+
+# Download from German provider
+weeb-cli api download "anime-id" -s 1 -e 1 --provider aniworld
+```
+
+**Default Provider:** If `--provider` is not specified, `animecix` is used by default.
+
 ## Basic Usage
 
 All API commands follow this pattern:

@@ -118,23 +118,76 @@ For scripts, automation, and AI agents, weeb-cli provides JSON API commands that
 weeb-cli api providers
 
 # Search for anime (returns IDs)
-weeb-cli api search "Angel Beats"
+weeb-cli api search "Angel Beats" --provider hianime
 # Returns: [{"id": "12345", "title": "Angel Beats!", ...}]
 
 # List episodes (use ID from search)
-weeb-cli api episodes 12345 --season 1
+weeb-cli api episodes 12345 --season 1 --provider hianime
 
 # Get stream URLs for an episode
-weeb-cli api streams 12345 --season 1 --episode 1
+weeb-cli api streams 12345 --season 1 --episode 1 --provider hianime
 
 # Get anime details
-weeb-cli api details 12345
+weeb-cli api details 12345 --provider hianime
 
 # Download an episode
-weeb-cli api download 12345 --season 1 --episode 1 --output ./downloads
+weeb-cli api download 12345 --season 1 --episode 1 --provider hianime --output ./downloads
 ```
 
+**Provider Selection:**
+All API commands support the `--provider` (or `-p`) option to select which anime source to use:
+- Turkish: `animecix`, `turkanime`, `anizle`, `weeb`
+- English: `hianime`, `allanime`
+- German: `aniworld`
+- Polish: `docchi`
+
+Default provider is `animecix` if not specified. Use `weeb-cli api providers` to see all available providers with their language and region information.
+
 All API commands output JSON to stdout.
+
+### Python SDK (Programmatic Access)
+
+For Python applications, weeb-cli provides a native SDK that doesn't require spawning processes:
+
+```python
+from weeb_cli import WeebSDK
+
+# Initialize SDK
+sdk = WeebSDK(default_provider="hianime")
+
+# Search for anime
+results = sdk.search("One Piece")
+for anime in results:
+    print(f"{anime.title} ({anime.year})")
+
+# Get episodes
+episodes = sdk.get_episodes(results[0].id, season=1)
+
+# Get stream URLs
+streams = sdk.get_streams(
+    anime_id=results[0].id,
+    episode_id=episodes[0].id
+)
+
+# Download episode
+path = sdk.download_episode(
+    anime_id=results[0].id,
+    season=1,
+    episode=1,
+    output_dir="./downloads"
+)
+print(f"Downloaded to: {path}")
+```
+
+**SDK Features:**
+- No subprocess overhead - direct Python API
+- Type-safe with full type hints
+- Automatic provider discovery
+- Same caching as CLI mode
+- Thread-safe operations
+- Headless mode (no database/TUI dependencies)
+
+See [SDK Documentation](https://ewgsta.github.io/weeb-cli/api/sdk/) for complete API reference.
 
 ### Sonarr/*arr Integration (Serve Mode)
 

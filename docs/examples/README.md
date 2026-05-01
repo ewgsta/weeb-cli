@@ -2,6 +2,59 @@
 
 This directory contains example scripts demonstrating how to use weeb-cli's various features.
 
+## Python SDK Examples
+
+### SDK Example Script
+
+**File:** `sdk_example.py`
+
+A comprehensive demonstration of the Weeb CLI Python SDK.
+
+**Requirements:**
+```bash
+pip install weeb-cli
+```
+
+**Usage:**
+```bash
+python docs/examples/sdk_example.py
+```
+
+**Features:**
+- List available providers
+- Search anime across providers
+- Get anime details
+- List episodes
+- Get stream URLs
+- Multi-provider search
+- Download episodes
+
+**Quick Start:**
+```python
+from weeb_cli import WeebSDK
+
+# Initialize SDK
+sdk = WeebSDK(default_provider="hianime")
+
+# Search for anime
+results = sdk.search("One Piece")
+for anime in results:
+    print(f"{anime.title} ({anime.year})")
+
+# Get episodes
+episodes = sdk.get_episodes(results[0].id, season=1)
+
+# Download episode
+path = sdk.download_episode(
+    anime_id=results[0].id,
+    season=1,
+    episode=1,
+    output_dir="./downloads"
+)
+```
+
+See [SDK Documentation](../api/sdk.md) for complete API reference.
+
 ## RESTful API Client Examples
 
 ### Python Client
