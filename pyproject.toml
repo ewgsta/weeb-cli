@@ -37,6 +37,7 @@ dependencies = [
 [project.optional-dependencies]
 serve = ["flask>=3.0", "pyyaml>=6.0"]
 serve-restful = ["flask>=3.0", "flask-cors>=4.0"]
+shortcuts = ["pywin32; sys_platform == 'win32'", "winshell; sys_platform == 'win32'"]
 dev = ["build", "pyinstaller", "pytest>=7.0.0", "pytest-cov", "pytest-asyncio", "pytest-mock"]
 
 [tool.setuptools.packages.find]

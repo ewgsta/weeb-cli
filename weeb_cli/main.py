@@ -65,6 +65,17 @@ def start():
     if not config.get("language"):
         run_setup()
 
+    # Create desktop shortcuts in background (non-blocking)
+    import threading
+    def _create_shortcuts_background():
+        try:
+            from weeb_cli.utils.shortcuts import create_shortcuts
+            create_shortcuts()
+        except Exception:
+            pass  # Silently fail, shortcuts are optional
+    
+    threading.Thread(target=_create_shortcuts_background, daemon=True).start()
+
     # Initialize AniSkip service with config
     from weeb_cli.services.aniskip import aniskip_service
     aniskip_enabled = config.get("aniskip_enabled", False)
