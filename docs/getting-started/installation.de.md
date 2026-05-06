@@ -47,11 +47,51 @@ Für die Entwicklung oder Beiträge zum Projekt:
 git clone https://github.com/ewgsta/weeb-cli.git
 cd weeb-cli
 
+# Im bearbeitbaren Modus mit Makefile installieren
+make install
+
+# Oder mit Entwicklungsabhängigkeiten installieren
+make install-dev
+
+# Oder alle Abhängigkeiten installieren (einschließlich Servermodi)
+make install-all
+```
+
+### Manuelle Installation
+
+```bash
 # Im bearbeitbaren Modus installieren
 pip install -e .
 
 # Entwicklungsabhängigkeiten installieren
-pip install -r requirements.txt
+pip install -e ".[dev]"
+
+# Serverabhängigkeiten installieren
+pip install -e ".[serve,serve-restful]"
+```
+
+## Makefile-Befehle
+
+Das Projekt enthält ein Makefile für häufige Aufgaben:
+
+```bash
+# Alle verfügbaren Befehle anzeigen
+make help
+
+# Tests ausführen
+make test
+
+# Tests mit Abdeckungsbericht ausführen
+make test-cov
+
+# Verteilungspakete erstellen
+make build
+
+# Build-Artefakte bereinigen
+make clean
+
+# Abhängigkeiten überprüfen
+make check-deps
 ```
 
 ## Abhängigkeiten

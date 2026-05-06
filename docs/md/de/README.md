@@ -96,7 +96,37 @@ Lade die entsprechende Datei für deine Plattform unter [Releases](https://githu
 ```bash
 git clone https://github.com/ewgsta/weeb-cli.git
 cd weeb-cli
-pip install -e .
+
+# Mit Makefile installieren
+make install-dev
+
+# Oder manuell installieren
+pip install -e ".[dev]"
+```
+
+#### Makefile-Befehle
+
+Das Projekt enthält ein Makefile für häufige Entwicklungsaufgaben:
+
+```bash
+# Installation
+make install          # Kernabhängigkeiten installieren
+make install-dev      # Mit Entwicklungsabhängigkeiten installieren
+make install-serve    # Mit Serverabhängigkeiten installieren
+make install-all      # Alle Abhängigkeiten installieren
+
+# Tests
+make test             # Tests ausführen
+make test-cov         # Tests mit Abdeckungsbericht ausführen
+
+# Build
+make build            # Verteilungspakete erstellen
+make clean            # Build-Artefakte bereinigen
+
+# Hilfsprogramme
+make lint             # Linting-Prüfungen ausführen
+make check-deps       # Abhängigkeiten überprüfen
+make help             # Alle verfügbaren Befehle anzeigen
 ```
 
 ---

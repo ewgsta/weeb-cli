@@ -97,7 +97,37 @@ yay -S weeb-cli
 ```bash
 git clone https://github.com/ewgsta/weeb-cli.git
 cd weeb-cli
-pip install -e .
+
+# Makefile ile kur
+make install-dev
+
+# Veya manuel olarak kur
+pip install -e ".[dev]"
+```
+
+#### Makefile Komutları
+
+Proje, yaygın geliştirme görevleri için bir Makefile içerir:
+
+```bash
+# Kurulum
+make install          # Temel bağımlılıkları kur
+make install-dev      # Geliştirme bağımlılıklarıyla kur
+make install-serve    # Sunucu bağımlılıklarıyla kur
+make install-all      # Tüm bağımlılıkları kur
+
+# Test
+make test             # Testleri çalıştır
+make test-cov         # Kapsam raporuyla testleri çalıştır
+
+# Build
+make build            # Dağıtım paketlerini oluştur
+make clean            # Derleme yapılarını temizle
+
+# Yardımcılar
+make lint             # Linting kontrollerini çalıştır
+make check-deps       # Bağımlılıkları doğrula
+make help             # Tüm kullanılabilir komutları göster
 ```
 
 ---

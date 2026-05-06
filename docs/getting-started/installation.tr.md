@@ -47,11 +47,51 @@ Geliştirme veya projeye katkıda bulunmak için:
 git clone https://github.com/ewgsta/weeb-cli.git
 cd weeb-cli
 
+# Makefile ile düzenlenebilir modda kurun
+make install
+
+# Veya geliştirme bağımlılıklarıyla kurun
+make install-dev
+
+# Veya tüm bağımlılıkları kurun (sunucu modları dahil)
+make install-all
+```
+
+### Manuel Kurulum
+
+```bash
 # Düzenlenebilir modda kurun
 pip install -e .
 
 # Geliştirme bağımlılıklarını kurun
-pip install -r requirements.txt
+pip install -e ".[dev]"
+
+# Sunucu bağımlılıklarını kurun
+pip install -e ".[serve,serve-restful]"
+```
+
+## Makefile Komutları
+
+Proje, yaygın görevler için bir Makefile içerir:
+
+```bash
+# Tüm kullanılabilir komutları göster
+make help
+
+# Testleri çalıştır
+make test
+
+# Kapsam raporuyla testleri çalıştır
+make test-cov
+
+# Dağıtım paketlerini oluştur
+make build
+
+# Derleme yapılarını temizle
+make clean
+
+# Bağımlılıkları kontrol et
+make check-deps
 ```
 
 ## Bağımlılıklar
