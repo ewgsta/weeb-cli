@@ -16,7 +16,7 @@ depends=(
     'python-beautifulsoup4'
     'python-lxml'
     'python-pycryptodome'
-    'python-curl-cffi'
+    'python-curl_cffi'
     'python-appdirs'
     'python-prompt_toolkit'
     'python-pyfiglet'
