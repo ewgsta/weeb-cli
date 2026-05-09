@@ -314,6 +314,16 @@ def _update_trackers(details, slug, ep_num=None):
         ("Kitsu", kitsu_tracker)
     ]
     
+    # First, try to sync any pending updates
+    for name, tracker in trackers:
+        if tracker.is_authenticated():
+            try:
+                synced_count = tracker.sync_pending()
+                if synced_count > 0:
+                    console.print(f"[green]✓ {name}: {synced_count} {i18n.t('watchlist.pending_synced', 'pending updates synced')}[/green]")
+            except Exception as e:
+                log_error(f"Failed to sync pending updates for {name}: {e}")
+    
     updated = []
     pending = []
 

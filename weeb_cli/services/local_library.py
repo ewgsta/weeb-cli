@@ -148,7 +148,18 @@ class LocalLibrary:
         if not connected_trackers:
             return
         
-        # Try to sync to all trackers
+        # First, try to sync any pending updates
+        for name, tracker in connected_trackers:
+            try:
+                synced_count = tracker.sync_pending()
+                if synced_count > 0:
+                    from weeb_cli.services.logger import info
+                    info(f"{name}: Synced {synced_count} pending updates")
+            except Exception as e:
+                from weeb_cli.services.logger import error
+                error(f"Failed to sync pending updates for {name}: {e}")
+        
+        # Try to sync current episode to all trackers
         for name, tracker in connected_trackers:
             tracker.update_progress(anime_title, ep_number, total_episodes)
     

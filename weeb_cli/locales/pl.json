@@ -280,7 +280,8 @@
         "tracker_updated": "zaktualizowano",
         "tracker_syncing": "synchronizacja...",
         "tracker_pending": "Dodano do oczekujących",
-        "tracker_error": "Błąd trackera"
+        "tracker_error": "Błąd trackera",
+        "pending_synced": "zsynchronizowano oczekujące aktualizacje"
     },
     "errors": {
         "generic": "Wystąpił błąd",

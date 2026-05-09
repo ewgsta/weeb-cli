@@ -284,7 +284,8 @@
         "tracker_updated": "aktualisiert",
         "tracker_syncing": "wird synchronisiert...",
         "tracker_pending": "Zu ausstehend hinzugefügt",
-        "tracker_error": "Tracker-Fehler"
+        "tracker_error": "Tracker-Fehler",
+        "pending_synced": "ausstehende Aktualisierung(en) synchronisiert"
     },
     "errors": {
         "generic": "Ein Fehler ist aufgetreten",

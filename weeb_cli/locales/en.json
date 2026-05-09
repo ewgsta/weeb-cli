@@ -284,7 +284,8 @@
         "tracker_updated": "updated",
         "tracker_syncing": "syncing...",
         "tracker_pending": "Added to pending",
-        "tracker_error": "Tracker error"
+        "tracker_error": "Tracker error",
+        "pending_synced": "pending update(s) synced"
     },
     "errors": {
         "generic": "An error occurred",

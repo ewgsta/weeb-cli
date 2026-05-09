@@ -284,7 +284,8 @@
         "tracker_updated": "güncellendi",
         "tracker_syncing": "senkronize ediliyor...",
         "tracker_pending": "Bekleyenlere eklendi",
-        "tracker_error": "Tracker hatası"
+        "tracker_error": "Tracker hatası",
+        "pending_synced": "bekleyen güncelleme senkronize edildi"
     },
     "errors": {
         "generic": "Bir hata oluştu",
