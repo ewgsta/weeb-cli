@@ -19,7 +19,12 @@ Jeśli lubisz anime, przydatne narzędzia i terminal, jesteś we właściwym mie
    ```
 3. **Zainstaluj zależności** w trybie edytowalnym:
    ```bash
-   pip install -e .
+   pip install -e ".[dev]"
+   ```
+4. **Do tworzenia dokumentacji**:
+   ```bash
+   pip install -e ".[docs]"
+   mkdocs serve
    ```
 
 ## Przepływ pracy (Workflow)

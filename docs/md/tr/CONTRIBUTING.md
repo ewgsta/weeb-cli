@@ -19,7 +19,12 @@ Eğer anime izlemeyi, terminali ve pratik araçları seviyorsanız, doğru yerde
    ```
 3. Bağımlılıkları geliştirici modunda kurun:
    ```bash
-   pip install -e .
+   pip install -e ".[dev]"
+   ```
+4. **Dokümantasyon geliştirme için**:
+   ```bash
+   pip install -e ".[docs]"
+   mkdocs serve
    ```
 
 ## İş Akışı

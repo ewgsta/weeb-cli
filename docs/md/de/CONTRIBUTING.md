@@ -19,7 +19,12 @@ Wenn du Anime, Tools und das Terminal magst, bist du hier genau richtig.
    ```
 3. **Installiere Abhängigkeiten** im bearbeitbaren Modus (editable mode):
    ```bash
-   pip install -e .
+   pip install -e ".[dev]"
+   ```
+4. **Für die Dokumentationsentwicklung**:
+   ```bash
+   pip install -e ".[docs]"
+   mkdocs serve
    ```
 
 ## Workflow

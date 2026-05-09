@@ -19,7 +19,12 @@ If you enjoy anime, tools, and the terminal, you are in the right place.
    ```
 3. **Install dependencies** in editable mode:
    ```bash
-   pip install -e .
+   pip install -e ".[dev]"
+   ```
+4. **For documentation development**:
+   ```bash
+   pip install -e ".[docs]"
+   mkdocs serve
    ```
 
 ## Workflow
