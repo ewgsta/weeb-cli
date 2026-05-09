@@ -1,3 +1,4 @@
+# Core dependencies
 typer[all]
 rich
 questionary
@@ -9,16 +10,33 @@ pycryptodome
 curl_cffi
 appdirs
 prompt_toolkit>=3.0.36,<3.0.53
-build
-pyinstaller
 pyfiglet
-setuptools
-wheel
 py7zr
 pypresence
+winotify; sys_platform == 'win32'
 
-# dev
+# Optional dependencies
+flask>=3.0
+flask-cors>=4.0
+pyyaml>=6.0
+pywin32; sys_platform == 'win32'
+winshell; sys_platform == 'win32'
+
+# Build dependencies
+build
+setuptools>=61.0
+wheel
+pyinstaller
+
+# Development dependencies
 pytest>=7.0.0
 pytest-cov>=7.1.0
 pytest-asyncio>=1.3.0
 pytest-mock>=3.15.1
+
+# Documentation dependencies
+mkdocs>=1.6.1
+mkdocs-material>=9.7.6
+mkdocstrings[python]>=1.0.4
+pymdown-extensions>=10.21.2
+mkdocs-static-i18n>=1.3.1
