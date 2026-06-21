@@ -77,12 +77,19 @@ class I18n:
         self.translations: Dict[str, Any] = {}
         self.load_translations()
 
+    SUPPORTED_LANGUAGES = {"en", "tr", "de", "pl"}
+
     def set_language(self, language_code: str) -> None:
         """Set the active language and reload translations.
         
         Args:
             language_code: Language code (e.g., 'en', 'tr', 'de', 'pl').
+        
+        Raises:
+            ValueError: If language_code is not a supported language.
         """
+        if language_code not in self.SUPPORTED_LANGUAGES:
+            raise ValueError(f"Unsupported language: {language_code}. Supported: {self.SUPPORTED_LANGUAGES}")
         self.language = language_code
         config.set("language", language_code)
         self.load_translations()
