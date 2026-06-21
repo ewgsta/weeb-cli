@@ -1,7 +1,8 @@
 import platform
+import re
 import subprocess
+import shutil
 import threading
-from typing import Optional
 
 
 def send_notification(title: str, message: str) -> None:
@@ -24,6 +25,10 @@ def _send_notification_sync(title: str, message: str) -> None:
             _notify_linux(title, message)
     except Exception:
         pass
+
+
+def _sanitize_for_shell(text: str) -> str:
+    return re.sub(r'[^\w\s\-.,!?:()\'"/]', '', text)[:256]
 
 
 def _notify_windows(title: str, message: str) -> None:
@@ -64,15 +69,17 @@ def _try_win10toast(title: str, message: str) -> bool:
 
 def _try_powershell(title: str, message: str) -> None:
     try:
-        ps_script = f'''
-        [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
-        $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
-        $textNodes = $template.GetElementsByTagName("text")
-        $textNodes.Item(0).AppendChild($template.CreateTextNode("{title}")) | Out-Null
-        $textNodes.Item(1).AppendChild($template.CreateTextNode("{message}")) | Out-Null
-        $toast = [Windows.UI.Notifications.ToastNotification]::new($template)
-        [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("Weeb CLI").Show($toast)
-        '''
+        safe_title = _sanitize_for_shell(title)
+        safe_message = _sanitize_for_shell(message)
+        ps_script = (
+            '[Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null\n'
+            '$template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)\n'
+            '$textNodes = $template.GetElementsByTagName("text")\n'
+            f'$textNodes.Item(0).AppendChild($template.CreateTextNode("{safe_title}")) | Out-Null\n'
+            f'$textNodes.Item(1).AppendChild($template.CreateTextNode("{safe_message}")) | Out-Null\n'
+            '$toast = [Windows.UI.Notifications.ToastNotification]::new($template)\n'
+            '[Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier("Weeb CLI").Show($toast)'
+        )
         subprocess.run(
             ["powershell", "-Command", ps_script], 
             capture_output=True, 
@@ -83,10 +90,14 @@ def _try_powershell(title: str, message: str) -> None:
 
 
 def _notify_macos(title: str, message: str) -> None:
-    script = f'display notification "{message}" with title "{title}"'
-    subprocess.run(["osascript", "-e", script], capture_output=True)
+    safe_title = _sanitize_for_shell(title)
+    safe_message = _sanitize_for_shell(message)
+    script = f'display notification "{safe_message}" with title "{safe_title}"'
+    subprocess.run(["osascript", "-e", script], capture_output=True, timeout=5)
 
 
 def _notify_linux(title: str, message: str) -> None:
-    subprocess.run(["notify-send", title, message], capture_output=True)
+    if not shutil.which("notify-send"):
+        return
+    subprocess.run(["notify-send", title, message], capture_output=True, timeout=5)
 

@@ -39,8 +39,8 @@ Example:
 """
 
 import importlib
+import json
 import pkgutil
-import pickle
 from pathlib import Path
 from typing import Dict, List, Type, Optional
 
@@ -53,8 +53,8 @@ _providers: Dict[str, Type[BaseProvider]] = {}
 _provider_meta: Dict[str, dict] = {}
 _initialized: bool = False
 
-# Cache file location
-PROVIDER_CACHE_FILE = CONFIG_DIR / "provider_cache.pkl"
+# Cache file location (JSON instead of pickle for security)
+PROVIDER_CACHE_FILE = CONFIG_DIR / "provider_cache.json"
 
 
 def register_provider(name: str, lang: str = "tr", region: str = "TR", disabled: bool = False):
@@ -143,7 +143,7 @@ def _discover_providers() -> None:
 
 
 def _load_from_cache() -> bool:
-    """Load provider registry from cache file.
+    """Load provider registry from cache file (JSON-based).
     
     Returns:
         True if cache was loaded successfully, False otherwise.
@@ -151,14 +151,21 @@ def _load_from_cache() -> bool:
     global _providers, _provider_meta
     
     if not PROVIDER_CACHE_FILE.exists():
+        # Clean up old pickle cache if it exists
+        old_pickle = PROVIDER_CACHE_FILE.with_suffix(".pkl")
+        if old_pickle.exists():
+            try:
+                old_pickle.unlink()
+            except OSError:
+                pass
         return False
     
     try:
-        with open(PROVIDER_CACHE_FILE, 'rb') as f:
-            cache_data = pickle.load(f)
+        with open(PROVIDER_CACHE_FILE, 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
         
         # Validate cache structure
-        if not isinstance(cache_data, dict) or 'providers' not in cache_data:
+        if not isinstance(cache_data, dict) or 'modules' not in cache_data:
             return False
         
         # Import all provider modules to register classes
@@ -170,33 +177,30 @@ def _load_from_cache() -> bool:
                 return False
         
         return True
-    except Exception as e:
+    except (json.JSONDecodeError, OSError) as e:
         debug(f"[Registry] Failed to load provider cache: {e}")
         return False
 
 
 def _save_to_cache() -> None:
-    """Save provider registry to cache file."""
+    """Save provider registry to cache file (JSON-based)."""
     try:
         PROVIDER_CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
         
         # Collect module paths for all registered providers
         modules = set()
         for name, cls in _providers.items():
-            module_path = cls.__module__
-            modules.add(module_path)
+            modules.add(cls.__module__)
         
         cache_data = {
-            'providers': list(_providers.keys()),
-            'modules': list(modules),
-            'meta': _provider_meta
+            'modules': sorted(modules),
         }
         
-        with open(PROVIDER_CACHE_FILE, 'wb') as f:
-            pickle.dump(cache_data, f)
+        with open(PROVIDER_CACHE_FILE, 'w', encoding='utf-8') as f:
+            json.dump(cache_data, f, indent=2)
         
         debug(f"[Registry] Saved {len(_providers)} providers to cache")
-    except Exception as e:
+    except OSError as e:
         debug(f"[Registry] Failed to save provider cache: {e}")
 
 

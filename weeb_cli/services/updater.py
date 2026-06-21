@@ -112,11 +112,13 @@ def download_exe(url, filename):
         console.print(f"[dim]{i18n.t('update.location')}: {new_exe_path}[/dim]")
         
         if getattr(sys, 'frozen', False):
+            safe_current = current_exe.replace('^', '^^').replace('&', '^&').replace('|', '^|').replace('<', '^<').replace('>', '^>').replace('%', '%%')
+            safe_new = new_exe_path.replace('^', '^^').replace('&', '^&').replace('|', '^|').replace('<', '^<').replace('>', '^>').replace('%', '%%')
             batch_content = f'''@echo off
 timeout /t 2 /nobreak >nul
-del "{current_exe}"
-move "{new_exe_path}" "{current_exe}"
-start "" "{current_exe}"
+del "{safe_current}"
+move "{safe_new}" "{safe_current}"
+start "" "{safe_current}"
 del "%~f0"
 '''
             batch_path = os.path.join(download_dir, "update.bat")

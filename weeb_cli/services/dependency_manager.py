@@ -273,7 +273,7 @@ class DependencyManager:
                     z.extractall(path=temp_extract)
             elif archive_path.endswith((".tar.gz", ".tar.xz", ".tar.bz2", ".tgz")):
                 with tarfile.open(archive_path, "r:*") as tar_ref:
-                    tar_ref.extractall(temp_extract)
+                    tar_ref.extractall(temp_extract, filter='data')
             else:
                 raise Exception("Unsupported format")
 
