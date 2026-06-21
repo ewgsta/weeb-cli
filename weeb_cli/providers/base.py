@@ -273,7 +273,7 @@ class BaseProvider(ABC):
                 
                 if attempt < max_retries - 1:
                     # Skip retries for permanent errors
-                    if isinstance(e, requests.HTTPError) and e.response.status_code in [404, 403, 401]:
+                    if isinstance(e, requests.HTTPError) and hasattr(e, 'response') and e.response is not None and e.response.status_code in [404, 403, 401]:
                         debug(f"[HTTP] Permanent error, skipping retries")
                         return None
                     

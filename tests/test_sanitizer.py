@@ -13,8 +13,8 @@ class TestSanitizeFilename:
         assert ".." not in sanitize_filename("test..file")
     
     def test_empty_input(self):
-        assert sanitize_filename("") == "unnamed"
-        assert sanitize_filename("   ") == "unnamed"
+        assert sanitize_filename("") == "untitled"
+        assert sanitize_filename("   ") == "untitled"
     
     def test_unicode_handling(self):
         result = sanitize_filename("Anime - 第1話")

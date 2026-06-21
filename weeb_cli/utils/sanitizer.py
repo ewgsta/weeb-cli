@@ -14,9 +14,8 @@ def sanitize_filename(filename: str, max_length: int = 200) -> str:
     filename = filename.replace('..', '')
     filename = Path(filename).name  # Extract only filename, remove any path components
     
-    # Normalize unicode characters
-    filename = unicodedata.normalize('NFKD', filename)
-    filename = filename.encode('ascii', 'ignore').decode('ascii')
+    # Normalize unicode characters (preserve non-ASCII like Japanese/Turkish)
+    filename = unicodedata.normalize('NFKC', filename)
     
     # Remove invalid characters for Windows/Linux/macOS
     # Windows: < > : " / \ | ? *

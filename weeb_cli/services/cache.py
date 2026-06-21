@@ -121,7 +121,7 @@ class CacheManager:
         
         return None
     
-    def set(self, key: str, value: Any) -> None:
+    def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:
         """Store value in cache.
         
         Stores in both memory and file cache for persistence.
@@ -129,9 +129,12 @@ class CacheManager:
         Args:
             key: Cache key.
             value: Value to cache (must be JSON-serializable).
+            ttl: Optional time-to-live in seconds. Used as max_age hint
+                 when retrieving. Stored alongside the value for reference.
         
         Example:
             >>> cache.set("search:naruto", results)
+            >>> cache.set("mal_id:one_piece", 21, ttl=86400 * 7)
         """
         self._memory_cache[key] = (value, time.time())
         

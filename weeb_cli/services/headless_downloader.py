@@ -55,7 +55,7 @@ def download_episode(
                 _download_ffmpeg(stream_url, temp_path)
 
         if temp_path.exists() and temp_path.stat().st_size > 0:
-            temp_path.rename(output_path)
+            shutil.move(str(temp_path), str(output_path))
             log.info(f"Downloaded: {output_path}")
             return str(output_path)
         else:

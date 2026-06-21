@@ -89,6 +89,7 @@ class Config:
         """Initialize configuration manager."""
         self._db: Optional['Database'] = None
         self._headless: bool = False
+        self._headless_store: dict = {}
 
     @property
     def db(self) -> 'Database':
@@ -122,13 +123,15 @@ class Config:
             >>> config.get("aria2_max_connections")
             16
         """
-        if not self._headless:
+        if self._headless:
+            if key in self._headless_store:
+                return self._headless_store[key]
+        else:
             try:
                 val = self.db.get_config(key)
                 if val is not None:
                     return val
             except Exception:
-                # Avoid circular import with logger, just pass silently
                 pass
 
         # Special handling for download_dir
@@ -144,6 +147,7 @@ class Config:
         """Set configuration value.
         
         Persists the value to database for future retrieval.
+        In headless mode, stores in-memory only.
         
         Args:
             key: Configuration key name.
@@ -153,6 +157,9 @@ class Config:
             >>> config.set("language", "tr")
             >>> config.set("aria2_max_connections", 32)
         """
+        if self._headless:
+            self._headless_store[key] = value
+            return
         self.db.set_config(key, value)
 
     def set_headless(self, headless: bool = True) -> None:
