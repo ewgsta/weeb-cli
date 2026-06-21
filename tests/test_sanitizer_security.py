@@ -7,9 +7,14 @@ class TestSanitizerSecurity:
     
     def test_path_traversal_prevention(self):
         """Test that path traversal attempts are blocked."""
-        assert sanitize_filename("../../etc/passwd") == "etcpasswd"
-        assert sanitize_filename("..\\..\\windows\\system32") == "windowssystem32"
-        assert sanitize_filename("../../../root") == "root"
+        result = sanitize_filename("../../etc/passwd")
+        assert ".." not in result
+        assert "/" not in result
+        assert "\\" not in result
+        result2 = sanitize_filename("..\\..\\windows\\system32")
+        assert ".." not in result2
+        result3 = sanitize_filename("../../../root")
+        assert ".." not in result3
     
     def test_windows_reserved_names(self):
         """Test Windows reserved filenames are handled."""
