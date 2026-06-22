@@ -40,17 +40,18 @@ install-all:
 	pip install -e ".[dev,serve,serve-restful,shortcuts]"
 
 test:
-	pytest tests/
+	python3 -m pytest tests/
 
 test-cov:
-	pytest tests/ --cov=weeb_cli --cov-report=html --cov-report=term
+	python3 -m pytest tests/ --cov=weeb_cli --cov-report=html --cov-report=term
 
 lint:
 	@echo "Running linting checks..."
-	@python -m py_compile weeb_cli/**/*.py || echo "Syntax check completed"
+	@python3 -m py_compile weeb_cli/**/*.py || echo "Syntax check completed"
 
 format:
-	@echo "Code formatting not configured. Consider adding black or ruff."
+	@echo "Formatting code using ruff (if available)..."
+	@python3 -m ruff format . || echo "Ruff not found. Consider adding it via pip install ruff."
 
 check-deps:
 	@echo "Checking dependencies..."
