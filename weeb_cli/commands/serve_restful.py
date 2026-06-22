@@ -37,6 +37,39 @@ def _quality_score(q: str) -> int:
         return 1
     return 0
 
+def _serialize_anime_result(result):
+    """Serialize AnimeResult to dict."""
+    return {
+        "id": result.id,
+        "title": result.title,
+        "type": getattr(result, "type", ""),
+        "cover": getattr(result, "cover", ""),
+        "year": getattr(result, "year", None),
+    }
+
+def _serialize_episode(episode):
+    """Serialize Episode to dict."""
+    return {
+        "id": episode.id,
+        "number": episode.number,
+        "title": getattr(episode, "title", ""),
+        "season": getattr(episode, "season", 1),
+        "url": getattr(episode, "url", ""),
+    }
+
+def _serialize_stream(stream):
+    """Serialize StreamLink to dict."""
+    return {
+        "url": stream.url,
+        "quality": stream.quality,
+        "server": getattr(stream, "server", "default"),
+        "headers": getattr(stream, "headers", {}),
+        "subtitles": getattr(stream, "subtitles", ""),
+    }
+
+# Import provider functions at module level for easier mocking
+from weeb_cli.providers.registry import get_provider, list_providers as list_all_providers
+
 
 @restful_app.callback(invoke_without_command=True)
 def serve_restful(
@@ -76,9 +109,6 @@ def serve_restful(
         datefmt="%Y-%m-%d %H:%M:%S",
         stream=sys.stdout,
     )
-
-    # Import provider functions
-    from weeb_cli.providers.registry import get_provider, list_providers as list_all_providers
 
     # Create Flask app
     flask_app = Flask(__name__)
@@ -148,10 +178,7 @@ def serve_restful(
 
         try:
             results = provider.search(query)
-            return jsonify([
-                {"id": r.id, "title": r.title, "type": r.type, "cover": r.cover, "year": r.year}
-                for r in results
-            ])
+            return jsonify([_serialize_anime_result(r) for r in results])
         except Exception as e:
             log.error(f"Search error: {e}")
             return jsonify({"error": str(e)}), 500
@@ -189,10 +216,7 @@ def serve_restful(
                 except ValueError:
                     return jsonify({"error": "Invalid season number"}), 400
 
-            return jsonify([
-                {"id": e.id, "number": e.number, "title": e.title, "season": e.season, "url": e.url}
-                for e in eps
-            ])
+            return jsonify([_serialize_episode(e) for e in eps])
         except Exception as e:
             log.error(f"Episodes error: {e}")
             return jsonify({"error": str(e)}), 500
@@ -238,10 +262,7 @@ def serve_restful(
             ep = target[0]
             links = provider.get_streams(anime_id, ep.id)
             
-            return jsonify([
-                {"url": s.url, "quality": s.quality, "server": s.server, "headers": s.headers, "subtitles": s.subtitles}
-                for s in links
-            ])
+            return jsonify([_serialize_stream(s) for s in links])
         except Exception as e:
             log.error(f"Streams error: {e}")
             return jsonify({"error": str(e)}), 500
