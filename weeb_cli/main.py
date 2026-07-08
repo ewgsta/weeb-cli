@@ -62,6 +62,12 @@ def check_ffmpeg_silent():
 
 @app.command()
 def start():
+    from weeb_cli.services.telemetry import init_telemetry
+    init_telemetry(environment="cli")
+
+    from weeb_cli.services.logger import reload as reload_logger
+    reload_logger()
+
     if not config.get("language"):
         run_setup()
 
@@ -93,6 +99,8 @@ def start():
     finally:
         from weeb_cli.services.discord_rpc import discord_rpc
         discord_rpc.disconnect()
+        from weeb_cli.services.telemetry import shutdown_telemetry
+        shutdown_telemetry()
 
 def check_incomplete_downloads():
     from weeb_cli.services.downloader import queue_manager

@@ -70,14 +70,24 @@ class CacheManager:
     
     def _get_cache_key(self, key: str) -> str:
         """Generate SHA256 hash for cache key.
-        
+
         Args:
             key: Original cache key.
-        
+
         Returns:
             Hexadecimal hash string.
         """
         return hashlib.sha256(key.encode()).hexdigest()
+
+    def _record_cache_metric(self, result: str, tier: str) -> None:
+        try:
+            from weeb_cli.services.telemetry import get_metrics
+            get_metrics().cache_operations.add(1, {
+                "weeb.cache.result": result,
+                "weeb.cache.tier": tier,
+            })
+        except Exception:
+            pass
     
     def get(self, key: str, max_age: int = 3600) -> Optional[Any]:
         """Retrieve cached value if not expired.
@@ -100,14 +110,15 @@ class CacheManager:
         if key in self._memory_cache:
             value, timestamp = self._memory_cache[key]
             if time.time() - timestamp < max_age:
+                self._record_cache_metric("hit", "memory")
                 return value
             else:
                 del self._memory_cache[key]
-        
+
         # Check file cache
         cache_key = self._get_cache_key(key)
         cache_file = self.cache_dir / f"{cache_key}.cache"
-        
+
         if cache_file.exists():
             age = time.time() - cache_file.stat().st_mtime
             if age < max_age:
@@ -115,10 +126,12 @@ class CacheManager:
                     with open(cache_file, 'r', encoding='utf-8') as f:
                         value = json.load(f)
                         self._memory_cache[key] = (value, time.time())
+                        self._record_cache_metric("hit", "file")
                         return value
                 except (json.JSONDecodeError, UnicodeDecodeError, OSError):
                     cache_file.unlink(missing_ok=True)
-        
+
+        self._record_cache_metric("miss", "none")
         return None
     
     def set(self, key: str, value: Any, ttl: Optional[int] = None) -> None:

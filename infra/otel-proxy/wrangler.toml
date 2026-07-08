@@ -1,0 +1,13 @@
+name = "weeb-otel-proxy"
+main = "src/worker.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# Grafana Cloud OTLP Gateway (EU West 2)
+# Region'ını değiştirmek için: https://grafana.com/docs/grafana-cloud/send-data/otlp/otlp-endpoint/
+[vars]
+GRAFANA_OTLP_ENDPOINT = "https://otlp-gateway-prod-eu-west-2.grafana.net/otlp"
+ALLOWED_ORIGINS = "*"

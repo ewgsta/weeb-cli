@@ -253,33 +253,61 @@ class BaseProvider(ABC):
         import requests
         import time
         import random
-        
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(
-                    url, 
-                    headers=self.headers, 
-                    params=params,
-                    timeout=15
-                )
-                response.raise_for_status()
-                
-                if json_response:
-                    return response.json()
-                return response.text
-                
-            except requests.RequestException as e:
-                debug(f"[HTTP] Request failed (attempt {attempt + 1}/{max_retries}): {url} - {e}")
-                
-                if attempt < max_retries - 1:
-                    # Skip retries for permanent errors
-                    if isinstance(e, requests.HTTPError) and hasattr(e, 'response') and e.response is not None and e.response.status_code in [404, 403, 401]:
-                        debug(f"[HTTP] Permanent error, skipping retries")
-                        return None
-                    
-                    # Exponential backoff with jitter
-                    delay = min(2 ** attempt, 10) + random.uniform(0, 1)
-                    time.sleep(delay)
-                    continue
-                
-                return None
+        from weeb_cli.services.telemetry import get_tracer, record_exception, get_metrics
+
+        tracer = get_tracer()
+        metrics = get_metrics()
+
+        with tracer.start_as_current_span(
+            f"provider.request",
+            attributes={
+                "weeb.provider.name": getattr(self, "name", "unknown"),
+                "http.url": url[:256],
+                "weeb.request.max_retries": max_retries,
+            },
+        ) as span:
+            for attempt in range(max_retries):
+                try:
+                    response = requests.get(
+                        url,
+                        headers=self.headers,
+                        params=params,
+                        timeout=15
+                    )
+                    response.raise_for_status()
+
+                    span.set_attribute("weeb.request.attempts", attempt + 1)
+                    metrics.provider_requests.add(1, {
+                        "weeb.provider.name": getattr(self, "name", "unknown"),
+                        "weeb.request.status": "success",
+                    })
+
+                    if json_response:
+                        return response.json()
+                    return response.text
+
+                except requests.RequestException as e:
+                    debug(f"[HTTP] Request failed (attempt {attempt + 1}/{max_retries}): {url} - {e}")
+
+                    if attempt < max_retries - 1:
+                        # Skip retries for permanent errors
+                        if isinstance(e, requests.HTTPError) and hasattr(e, 'response') and e.response is not None and e.response.status_code in [404, 403, 401]:
+                            debug(f"[HTTP] Permanent error, skipping retries")
+                            span.set_attribute("weeb.request.attempts", attempt + 1)
+                            metrics.provider_requests.add(1, {
+                                "weeb.provider.name": getattr(self, "name", "unknown"),
+                                "weeb.request.status": "permanent_error",
+                            })
+                            return None
+
+                        # Exponential backoff with jitter
+                        delay = min(2 ** attempt, 10) + random.uniform(0, 1)
+                        time.sleep(delay)
+                        continue
+
+                    record_exception(span, e)
+                    metrics.provider_requests.add(1, {
+                        "weeb.provider.name": getattr(self, "name", "unknown"),
+                        "weeb.request.status": "failed",
+                    })
+                    return None

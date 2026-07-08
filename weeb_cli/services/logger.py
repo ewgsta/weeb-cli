@@ -16,21 +16,21 @@ def _setup_logger():
     logger = logging.getLogger("weeb-cli")
     logger.setLevel(logging.DEBUG)
     logger.handlers = []
-    
+
     if config.get("debug_mode", False):
         log_dir = Path.home() / ".weeb-cli" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
-        
+
         try:
             _clean_old_logs(log_dir)
         except OSError:
             pass
-        
+
         log_file = log_dir / f"debug_{datetime.now().strftime('%Y%m%d')}.log"
-        
+
         handler = logging.FileHandler(log_file, encoding='utf-8')
         handler.setLevel(logging.DEBUG)
-        
+
         formatter = logging.Formatter(
             '%(asctime)s | %(levelname)s | %(module)s:%(lineno)d | %(message)s',
             datefmt='%H:%M:%S'
@@ -39,7 +39,20 @@ def _setup_logger():
         logger.addHandler(handler)
     else:
         logger.addHandler(logging.NullHandler())
-    
+
+    try:
+        from weeb_cli.services.telemetry import is_enabled
+        if is_enabled():
+            from opentelemetry._logs import get_logger_provider
+            from opentelemetry.sdk._logs import LoggingHandler
+            otel_handler = LoggingHandler(
+                level=logging.DEBUG,
+                logger_provider=get_logger_provider(),
+            )
+            logger.addHandler(otel_handler)
+    except (ImportError, Exception):
+        pass
+
     return logger
 
 def debug(msg, *args):

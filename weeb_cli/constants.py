@@ -25,6 +25,7 @@ class ConfigKey(str, Enum):
     DISCORD_RPC_ENABLED = "discord_rpc_enabled"
     SHORTCUTS_ENABLED = "shortcuts_enabled"
     ANISKIP_ENABLED = "aniskip_enabled"
+    TELEMETRY_ENABLED = "telemetry_enabled"
 
 
 class DownloadStatus(str, Enum):

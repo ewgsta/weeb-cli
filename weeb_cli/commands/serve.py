@@ -259,6 +259,10 @@ def serve_torznab(
     from weeb_cli.config import config as weeb_config
     weeb_config.set_headless(True)
 
+    # Initialize telemetry
+    from weeb_cli.services.telemetry import init_telemetry
+    init_telemetry(environment="server-torznab")
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(message)s",
@@ -299,6 +303,10 @@ def serve_torznab(
 
     # Flask app
     flask_app = Flask(__name__)
+
+    # Instrument Flask app for telemetry
+    from weeb_cli.services.telemetry import instrument_flask_app
+    instrument_flask_app(flask_app)
 
     @flask_app.route("/api", methods=["GET"])
     def torznab_api():

@@ -55,6 +55,7 @@ Functions:
     get_provider_info: Get metadata for a specific provider
 """
 
+import os
 from typing import List, Optional, Dict, Any
 from pathlib import Path
 
@@ -104,6 +105,10 @@ class WeebSDK:
         if headless:
             config.set_headless(True)
             debug("[SDK] Initialized in headless mode")
+
+        if os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT") or os.environ.get("WEEB_TELEMETRY_ENABLED", "").lower() == "true":
+            from weeb_cli.services.telemetry import init_telemetry
+            init_telemetry(environment="sdk")
     
     def list_providers(self) -> List[Dict[str, Any]]:
         """List all available anime providers.

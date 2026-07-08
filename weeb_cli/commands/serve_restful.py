@@ -102,6 +102,10 @@ def serve_restful(
     from weeb_cli.config import config as weeb_config
     weeb_config.set_headless(True)
 
+    # Initialize telemetry
+    from weeb_cli.services.telemetry import init_telemetry
+    init_telemetry(environment="server-restful")
+
     # Setup logging
     logging.basicConfig(
         level=logging.DEBUG if debug else logging.INFO,
@@ -112,6 +116,10 @@ def serve_restful(
 
     # Create Flask app
     flask_app = Flask(__name__)
+
+    # Instrument Flask app for telemetry
+    from weeb_cli.services.telemetry import instrument_flask_app
+    instrument_flask_app(flask_app)
     
     if enable_cors:
         try:

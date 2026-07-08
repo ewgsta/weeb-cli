@@ -4,6 +4,7 @@ from weeb_cli.providers import get_provider, get_default_provider, list_provider
 from weeb_cli.providers.base import AnimeResult, AnimeDetails, Episode, StreamLink
 from weeb_cli.exceptions import ProviderError
 from weeb_cli.services.error_handler import handle_provider_error
+from weeb_cli.services.telemetry import traced
 
 
 class Scraper:
@@ -30,6 +31,7 @@ class Scraper:
         
         return self._provider
     
+    @traced(name="scraper.search")
     def search(self, query: str) -> List[AnimeResult]:
         self.last_error = None
         if not self.provider:
@@ -45,6 +47,7 @@ class Scraper:
             handle_provider_error(e, self._provider_name)
             return []
     
+    @traced(name="scraper.get_details")
     def get_details(self, anime_id: str) -> Optional[AnimeDetails]:
         self.last_error = None
         if not self.provider:
@@ -60,6 +63,7 @@ class Scraper:
             handle_provider_error(e, self._provider_name)
             return None
     
+    @traced(name="scraper.get_episodes")
     def get_episodes(self, anime_id: str) -> List[Episode]:
         self.last_error = None
         if not self.provider:
@@ -75,6 +79,7 @@ class Scraper:
             handle_provider_error(e, self._provider_name)
             return []
     
+    @traced(name="scraper.get_streams")
     def get_streams(self, anime_id: str, episode_id: str) -> List[StreamLink]:
         from weeb_cli.services.logger import debug
         

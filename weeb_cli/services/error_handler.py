@@ -9,11 +9,22 @@ console = Console()
 
 def handle_error(e: Exception, context: str = "", user_message: Optional[str] = None) -> None:
     is_debug = config.get("debug_mode", False)
-    
+
     if is_debug:
         log_error(f"[{context}] {type(e).__name__}: {str(e)}")
         log_error(traceback.format_exc())
-    
+
+    try:
+        from opentelemetry import trace as _trace
+        span = _trace.get_current_span()
+        if span.is_recording():
+            from weeb_cli.services.telemetry import record_exception
+            record_exception(span, e)
+            if context:
+                span.set_attribute("weeb.error.context", context)
+    except (ImportError, Exception):
+        pass
+
     if user_message:
         console.print(f"[red]{user_message}[/red]")
     else:
