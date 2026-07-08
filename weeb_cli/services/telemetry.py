@@ -3,16 +3,12 @@
 Provides distributed tracing, metrics, and log correlation.
 Zero overhead when disabled or when telemetry packages are not installed.
 
-Configuration is driven by standard OTEL_* environment variables:
-    OTEL_EXPORTER_OTLP_ENDPOINT: Collector endpoint (e.g. http://localhost:4318)
-    OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf" (default) or "grpc"
-    OTEL_SDK_DISABLED: "true" to kill all telemetry
-    OTEL_TRACES_EXPORTER: "console" for stdout traces during development
-    OTEL_SERVICE_NAME: Override service name (default: weeb-cli)
-
-App-level toggle:
-    WEEB_TELEMETRY_ENABLED: "true" / "false" explicit toggle
-    WEEB_TELEMETRY_CONSOLE: "true" to enable console exporters
+Configuration is set in code - no environment variables needed:
+    - Telemetry is ON by default (opt-out)
+    - Disable via: config.set("telemetry_enabled", False)
+    - Or via CLI settings menu
+    
+Advanced users can override with OTEL_SDK_DISABLED="true" to force disable.
 """
 
 import os
@@ -23,20 +19,23 @@ from typing import Any, Optional
 _initialized = False
 _init_lock = threading.Lock()
 
+OTEL_PROXY_ENDPOINT = "https://weeb-otel-proxy.ewgsta.workers.dev"
+OTEL_PROTOCOL = "http/protobuf"
+SERVICE_NAME = "weeb-cli"
+CONSOLE_DEBUG = False
 
 def is_enabled() -> bool:
+    """Check if telemetry is enabled.
+    
+    Priority order:
+    1. OTEL_SDK_DISABLED env var (force disable)
+    2. User config: telemetry_enabled setting
+    """
+    # Force disable override
     if os.environ.get("OTEL_SDK_DISABLED", "").lower() == "true":
         return False
 
-    explicit = os.environ.get("WEEB_TELEMETRY_ENABLED", "").lower()
-    if explicit == "true":
-        return True
-    if explicit == "false":
-        return False
-
-    if os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"):
-        return True
-
+    # Check user config
     try:
         from weeb_cli.config import config
         return bool(config.get("telemetry_enabled", False))
@@ -79,11 +78,15 @@ def _setup_providers(environment: str) -> None:
     import socket
 
     resource = Resource.create({
-        "service.name": os.environ.get("OTEL_SERVICE_NAME", "weeb-cli"),
+        "service.name": SERVICE_NAME,
         "service.version": __version__,
         "deployment.environment": environment,
         "service.instance.id": f"{socket.gethostname()}-{os.getpid()}",
     })
+
+    # Configure endpoint and protocol
+    os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = OTEL_PROXY_ENDPOINT
+    os.environ["OTEL_EXPORTER_OTLP_PROTOCOL"] = OTEL_PROTOCOL
 
     span_exporter = _create_span_exporter()
     metric_exporter = _create_metric_exporter()
@@ -107,12 +110,13 @@ def _setup_providers(environment: str) -> None:
 
 
 def _create_span_exporter():
-    if _use_console_exporter("OTEL_TRACES_EXPORTER"):
+    """Create span exporter based on configuration."""
+    if CONSOLE_DEBUG:
         from opentelemetry.sdk.trace.export import ConsoleSpanExporter
         return ConsoleSpanExporter()
 
-    protocol = os.environ.get("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf")
-    if protocol == "grpc":
+    # Use configured protocol (http/protobuf for Cloudflare Worker)
+    if OTEL_PROTOCOL == "grpc":
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
     else:
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
@@ -120,36 +124,34 @@ def _create_span_exporter():
 
 
 def _create_metric_exporter():
-    if _use_console_exporter("OTEL_METRICS_EXPORTER"):
+    """Create metric exporter based on configuration."""
+    if CONSOLE_DEBUG:
         from opentelemetry.sdk.metrics.export import ConsoleMetricExporter
         return ConsoleMetricExporter()
 
-    protocol = os.environ.get("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf")
-    if protocol == "grpc":
+    # Use configured protocol (http/protobuf for Cloudflare Worker)
+    if OTEL_PROTOCOL == "grpc":
         from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
     else:
         from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter
     return OTLPMetricExporter()
 
 
-def _use_console_exporter(env_key: str) -> bool:
-    if os.environ.get("WEEB_TELEMETRY_CONSOLE", "").lower() == "true":
-        return True
-    return os.environ.get(env_key, "").lower() == "console"
-
-
 def _setup_log_bridge(resource) -> None:
+    """Setup log bridge for log correlation."""
+def _setup_log_bridge(resource) -> None:
+    """Setup log bridge for log correlation."""
     try:
         from opentelemetry.sdk._logs import LoggerProvider
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
         from opentelemetry._logs import set_logger_provider
 
-        if _use_console_exporter("OTEL_LOGS_EXPORTER"):
+        if CONSOLE_DEBUG:
             from opentelemetry.sdk._logs.export import ConsoleLogExporter
             log_exporter = ConsoleLogExporter()
         else:
-            protocol = os.environ.get("OTEL_EXPORTER_OTLP_PROTOCOL", "http/protobuf")
-            if protocol == "grpc":
+            # Use configured protocol
+            if OTEL_PROTOCOL == "grpc":
                 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
             else:
                 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
@@ -163,6 +165,7 @@ def _setup_log_bridge(resource) -> None:
 
 
 def _install_auto_instrumentors() -> None:
+    """Install automatic instrumentation for common libraries."""
     try:
         from opentelemetry.instrumentation.requests import RequestsInstrumentor
         RequestsInstrumentor().instrument()
@@ -180,8 +183,6 @@ def _install_auto_instrumentors() -> None:
         SQLite3Instrumentor().instrument()
     except (ImportError, Exception):
         pass
-
-
 def shutdown_telemetry() -> None:
     try:
         from opentelemetry import trace

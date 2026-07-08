@@ -70,7 +70,7 @@ DEFAULT_CONFIG = {
     "discord_rpc_enabled": True,
     "shortcuts_enabled": False,
     "aniskip_enabled": False,
-    "telemetry_enabled": False,
+    "telemetry_enabled": True,
 }
 
 

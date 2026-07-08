@@ -14,6 +14,7 @@ lib/
 lib64/
 publish.sh
 parts/
+.vscode/
 sdist/
 var/
 wheels/
@@ -51,3 +52,8 @@ Thumbs.db
 .weeb-cli/
 weeb-downloads/
 *.log
+
+# Cloudflare Workers
+infra/otel-proxy/.dev.vars
+infra/otel-proxy/.wrangler/
+infra/otel-proxy/node_modules/
