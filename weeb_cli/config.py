@@ -64,7 +64,7 @@ DEFAULT_CONFIG = {
     "ytdlp_format": "bestvideo+bestaudio/best",
     "scraping_source": None,
     "show_description": True,
-    "debug_mode": False,
+    "debug_mode": True,
     "download_max_retries": 3,
     "download_retry_delay": 10,
     "discord_rpc_enabled": True,
