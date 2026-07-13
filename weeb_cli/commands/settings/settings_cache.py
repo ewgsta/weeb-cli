@@ -17,24 +17,24 @@ SELECT_STYLE = questionary.Style([
 def cache_settings_menu():
     while True:
         console.clear()
-        show_header(i18n.t("settings.cache.title"))
+        show_header(i18n.t("settings.cache_title"))
         
         cache = get_cache()
         stats = cache.get_stats()
         
-        console.print(f"[dim]{i18n.t('settings.cache.memory_entries')}: {stats['memory_entries']}[/dim]")
-        console.print(f"[dim]{i18n.t('settings.cache.file_entries')}: {stats['file_entries']}[/dim]")
-        console.print(f"[dim]{i18n.t('settings.cache.total_size')}: {stats['total_size_mb']} MB[/dim]\n")
+        console.print(f"[dim]{i18n.t('settings.cache_memory_entries')}: {stats['memory_entries']}[/dim]")
+        console.print(f"[dim]{i18n.t('settings.cache_file_entries')}: {stats['file_entries']}[/dim]")
+        console.print(f"[dim]{i18n.t('settings.cache_total_size')}: {stats['total_size_mb']} MB[/dim]\n")
         
         choices = [
-            i18n.t("settings.cache.clear_all"),
-            i18n.t("settings.cache.clear_provider"),
-            i18n.t("settings.cache.cleanup_old"),
+            i18n.t("settings.cache_clear_all"),
+            i18n.t("settings.cache_clear_provider"),
+            i18n.t("settings.cache_cleanup_old"),
         ]
         
         try:
             answer = questionary.select(
-                i18n.t("settings.cache.prompt"),
+                i18n.t("settings.cache_prompt"),
                 choices=choices,
                 pointer=">",
                 use_shortcuts=False,
@@ -46,24 +46,24 @@ def cache_settings_menu():
         if answer is None:
             return
         
-        if answer == i18n.t("settings.cache.clear_all"):
+        if answer == i18n.t("settings.cache_clear_all"):
             confirm = questionary.confirm(
-                i18n.t("settings.cache.confirm_clear_all"),
+                i18n.t("settings.cache_confirm_clear_all"),
                 default=False
             ).ask()
             
             if confirm:
                 cache.clear()
-                console.print(f"[green]{i18n.t('settings.cache.cleared')}[/green]")
+                console.print(f"[green]{i18n.t('settings.cache_cleared')}[/green]")
                 time.sleep(1)
         
-        elif answer == i18n.t("settings.cache.clear_provider"):
+        elif answer == i18n.t("settings.cache_clear_provider"):
             provider = config.get("scraping_source", "None")
             removed = cache.invalidate_provider(provider)
-            console.print(f"[green]{i18n.t('settings.cache.provider_cleared')}: {removed} {i18n.t('common.items')}[/green]")
+            console.print(f"[green]{i18n.t('settings.cache_provider_cleared')}: {removed} {i18n.t('common.items')}[/green]")
             time.sleep(1)
         
-        elif answer == i18n.t("settings.cache.cleanup_old"):
+        elif answer == i18n.t("settings.cache_cleanup_old"):
             removed = cache.cleanup(max_age=86400)
-            console.print(f"[green]{i18n.t('settings.cache.cleaned')}: {removed} {i18n.t('common.items')}[/green]")
+            console.print(f"[green]{i18n.t('settings.cache_cleaned')}: {removed} {i18n.t('common.items')}[/green]")
             time.sleep(1)
