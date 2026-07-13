@@ -151,7 +151,7 @@ def _extract_fireplayer_id(player_html: str) -> Optional[str]:
     return None
 
 
-@register_provider("anizle", lang="tr", region="TR")
+@register_provider("anizle", lang="tr", region="TR", disabled=True)
 class AnizleProvider(BaseProvider):
     
     def __init__(self):
