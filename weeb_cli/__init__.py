@@ -31,7 +31,7 @@ Attributes:
     __version__ (str): Current version of Weeb CLI.
 """
 
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 
 # SDK exports for easy import
 from weeb_cli.sdk import WeebSDK, list_providers, get_provider_info
